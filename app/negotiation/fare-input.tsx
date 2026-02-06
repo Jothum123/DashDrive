@@ -53,12 +53,13 @@ export default function FareInputScreen() {
                     </Marker>
                 </MapView>
 
-                <SafeAreaView className="absolute top-0 left-0">
+                {/* Overlays */}
+                <SafeAreaView className="absolute top-0 w-full px-6 pt-4 flex-row items-center pointer-events-none">
                     <TouchableOpacity
                         onPress={() => router.back()}
-                        className="ml-6 mt-4 h-12 w-12 items-center justify-center rounded-full bg-white dark:bg-zinc-800 shadow-lg"
+                        className="h-12 w-12 items-center justify-center rounded-full bg-white dark:bg-zinc-800 shadow-lg pointer-events-auto"
                     >
-                        <FontAwesome5 name="arrow-left" size={18} color={colorScheme === 'dark' ? '#adadad' : 'black'} />
+                        <FontAwesome5 name="arrow-left" size={18} color={colorScheme === 'dark' ? 'white' : 'black'} />
                     </TouchableOpacity>
                 </SafeAreaView>
             </View>

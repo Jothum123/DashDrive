@@ -1,3 +1,4 @@
+import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useColorScheme } from "nativewind";
@@ -5,6 +6,7 @@ import {
   View
 } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import "../global.css";
 
 export default function RootLayout() {
@@ -12,22 +14,26 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <View className={`flex-1 ${colorScheme === 'dark' ? 'dark' : ''} bg-white dark:bg-black`}>
-        <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="index" />
-          <Stack.Screen name="auth/login" />
-          <Stack.Screen name="auth/otp" />
-          <Stack.Screen name="setup/payment-method" />
-          <Stack.Screen name="setup/add-card" />
-          <Stack.Screen name="home" />
-          <Stack.Screen name="search" />
-          <Stack.Screen name="negotiation/fare-input" />
-          <Stack.Screen name="negotiation/broadcasting" />
-          <Stack.Screen name="negotiation/tracking" />
-          <Stack.Screen name="negotiation/completed" />
-        </Stack>
-      </View>
+      <SafeAreaProvider>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <View className="flex-1 bg-white dark:bg-black">
+            <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="index" />
+              <Stack.Screen name="auth/login" />
+              <Stack.Screen name="auth/otp" />
+              <Stack.Screen name="setup/payment-method" />
+              <Stack.Screen name="setup/add-card" />
+              <Stack.Screen name="home" />
+              <Stack.Screen name="search" />
+              <Stack.Screen name="negotiation/fare-input" />
+              <Stack.Screen name="negotiation/broadcasting" />
+              <Stack.Screen name="negotiation/tracking" />
+              <Stack.Screen name="negotiation/completed" />
+            </Stack>
+          </View>
+        </ThemeProvider>
+      </SafeAreaProvider>
     </GestureHandlerRootView>
   );
 }

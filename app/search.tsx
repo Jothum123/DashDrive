@@ -1,9 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import { useColorScheme } from "nativewind";
+import React from "react";
 import { ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { SideMenu } from "../src/components/SideMenu";
 
 const RECENT_HISTORY = [
     { id: "1", title: "Emily Homes Subd Ph 2", subtitle: "Cabantian, Davao City", icon: "time-sharp" },
@@ -13,30 +13,31 @@ const RECENT_HISTORY = [
 
 export default function SearchScreen() {
     const router = useRouter();
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const { colorScheme } = useColorScheme();
 
     return (
         <SafeAreaView className="flex-1 bg-white dark:bg-black">
             {/* Elevated Header */}
-            <View className="px-6 py-4 flex-row items-center justify-between border-b border-gray-50 dark:border-zinc-800/50">
+            <View className="px-6 pt-10 flex-row items-center justify-between z-50">
                 <View className="flex-row items-center">
                     <TouchableOpacity
                         onPress={() => router.back()}
-                        className="h-10 w-10 items-center justify-center rounded-2xl bg-secondary/5 dark:bg-white/5"
+                        className="h-12 w-12 items-center justify-center rounded-full bg-white dark:bg-secondary shadow-lg mr-4"
                     >
-                        <Ionicons name="arrow-back" size={22} color="#adadad" />
+                        <Ionicons name="arrow-back" size={22} color={colorScheme === 'dark' ? 'white' : 'black'} />
                     </TouchableOpacity>
-                    <Text className="ml-4 text-2xl font-uber-bold text-secondary dark:text-white">Ride</Text>
+
+                    <Text className="text-2xl font-uber-bold text-secondary dark:text-white">Ride</Text>
                 </View>
+
                 <TouchableOpacity
-                    onPress={() => setIsMenuOpen(true)}
-                    className="h-10 w-10 items-center justify-center rounded-2xl bg-accent-light/10 dark:bg-white/5"
+                    onPress={() => router.push("/search/map-picker" as any)}
+                    className="flex-row items-center bg-accent-light/30 dark:bg-zinc-800/30 px-4 py-2 rounded-full border border-accent-light/50 dark:border-zinc-700/50"
                 >
-                    <Ionicons name="menu" size={20} color="#adadad" />
+                    <Ionicons name="map-outline" size={16} color={colorScheme === 'dark' ? 'white' : 'black'} />
+                    <Text className="ml-2 font-uber-bold text-xs text-secondary dark:text-white">Map</Text>
                 </TouchableOpacity>
             </View>
-
-            <SideMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
 
             <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
                 {/* Modern Layered Search Area */}
@@ -59,11 +60,43 @@ export default function SearchScreen() {
                     </View>
                 </View>
 
-                {/* Refined Quick Actions */}
-                <View className="px-6 mb-8 flex-row justify-between">
-                    <QuickAction icon="home" label="Home" color="#00ff90" sub="Setup" />
-                    <QuickAction icon="briefcase" label="Work" color="#3b82f6" sub="Setup" />
-                    <QuickAction icon="add" label="New" color="#6366f1" sub="Save" />
+                {/* Refined Quick Actions with Navigation Heading */}
+                <View className="px-6 mb-4">
+                    <TouchableOpacity
+                        onPress={() => router.push("/search/choose-place" as any)}
+                        className="flex-row items-center justify-between mb-4"
+                    >
+                        <Text className="text-xl font-uber-bold text-secondary dark:text-white">Saved Places</Text>
+                        <View className="h-8 w-8 items-center justify-center rounded-full bg-gray-50 dark:bg-zinc-800">
+                            <Ionicons
+                                name="chevron-forward"
+                                size={20}
+                                color={colorScheme === 'dark' ? 'white' : 'black'}
+                            />
+                        </View>
+                    </TouchableOpacity>
+
+                    <View className="flex-row justify-between mb-6">
+                        <QuickAction icon="home" label="Home" color="#00ff90" sub="Setup" />
+                        <QuickAction icon="briefcase" label="Work" color="#3b82f6" sub="Setup" />
+                        <QuickAction icon="add" label="New" color="#6366f1" sub="Save" />
+                    </View>
+                </View>
+
+                {/* Always using the same locations? Info Section */}
+                <View className="px-6 mb-10 items-center justify-center pt-10">
+                    <View className="h-40 w-40 bg-gray-50/50 dark:bg-zinc-800/20 rounded-full items-center justify-center mb-8">
+                        <Ionicons name="location" size={80} color={colorScheme === 'dark' ? '#333' : '#eee'} />
+                        <View className="absolute top-8 right-8 h-10 w-10 bg-primary/20 rounded-full items-center justify-center">
+                            <Ionicons name="heart" size={20} color="#00ff90" />
+                        </View>
+                    </View>
+                    <Text className="text-xl font-uber-bold text-secondary dark:text-white mb-2 text-center">
+                        Always using the same locations?
+                    </Text>
+                    <Text className="text-sm font-uber text-accent-gray dark:text-zinc-500 text-center px-10">
+                        Save them and make your bookings easily.
+                    </Text>
                 </View>
 
                 {/* Premium Editorial Promo Section */}
@@ -168,6 +201,7 @@ export default function SearchScreen() {
                     </View>
                 </View>
             </ScrollView>
+
         </SafeAreaView>
     );
 }
