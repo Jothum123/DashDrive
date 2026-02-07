@@ -1,10 +1,12 @@
-import { FontAwesome5 } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from "@gorhom/bottom-sheet";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
     Dimensions,
+    Modal,
+    Pressable,
     StyleSheet,
     Text,
     TouchableOpacity,
@@ -14,6 +16,7 @@ import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import Animated, { FadeInUp, FadeOutUp, interpolate, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { SideMenu } from "../src/components/SideMenu";
+import { StyledFontAwesome5, StyledIonicons } from "../src/lib/interop";
 import { darkMapStyle, mapStyle } from "../src/styles/mapStyles";
 
 const { width, height } = Dimensions.get("window");
@@ -93,6 +96,7 @@ export default function HomeScreen() {
     });
 
     const [activeMapStyle, setActiveMapStyle] = useState(colorScheme === 'dark' ? darkMapStyle : mapStyle);
+    const [showLocationModal, setShowLocationModal] = useState(false);
 
     useEffect(() => {
         // Use a timeout to ensure the layout transition has fully settled 
@@ -100,8 +104,21 @@ export default function HomeScreen() {
         const timer = setTimeout(() => {
             setActiveMapStyle(colorScheme === 'dark' ? darkMapStyle : mapStyle);
         }, 300);
-        return () => clearTimeout(timer);
+
+        // Show location modal after 1.5s
+        const modalTimer = setTimeout(() => {
+            setShowLocationModal(true);
+        }, 1500);
+
+        return () => {
+            clearTimeout(timer);
+            clearTimeout(modalTimer);
+        };
     }, [colorScheme]);
+
+    const handleLocationPermission = () => {
+        setShowLocationModal(false);
+    };
 
     return (
         <View className="flex-1 bg-white dark:bg-black">
@@ -115,7 +132,7 @@ export default function HomeScreen() {
             >
                 <Marker coordinate={{ latitude: 51.5074, longitude: -0.1278 }}>
                     <View className="h-10 w-10 items-center justify-center rounded-full bg-secondary border-2 border-primary">
-                        <FontAwesome5 name="car" size={16} color="#00ff90" />
+                        <StyledFontAwesome5 name="car" size={16} color="#00ff90" />
                     </View>
                 </Marker>
             </MapView>
@@ -128,7 +145,7 @@ export default function HomeScreen() {
                     className="absolute top-16 left-6 right-6 z-50 bg-[#05A357] rounded-3xl p-6 shadow-2xl flex-row items-center border border-white/20"
                 >
                     <View className="h-12 w-12 rounded-full bg-white/20 items-center justify-center mr-4">
-                        <FontAwesome5 name="check" size={20} color="white" />
+                        <StyledFontAwesome5 name="check" size={20} color="white" />
                     </View>
                     <View className="flex-1">
                         <Text className="text-white font-uber-bold text-lg">You're all set, Jothum.</Text>
@@ -138,7 +155,7 @@ export default function HomeScreen() {
                         setShowSuccessPopup(false);
                         bottomSheetRef.current?.snapToIndex(2); // Back to 68%
                     }}>
-                        <FontAwesome5 name="times" size={16} color="white" />
+                        <StyledFontAwesome5 name="times" size={16} color="white" />
                     </TouchableOpacity>
                 </Animated.View>
             )}
@@ -161,7 +178,7 @@ export default function HomeScreen() {
                     />
 
                     <TouchableOpacity className="h-12 w-12 items-center justify-center rounded-full bg-white dark:bg-secondary shadow-lg">
-                        <FontAwesome5 name="user" size={20} color={colorScheme === 'dark' ? 'white' : 'black'} />
+                        <StyledFontAwesome5 name="user" size={20} color={colorScheme === 'dark' ? 'white' : 'black'} />
                     </TouchableOpacity>
                 </Animated.View>
             </SafeAreaView>
@@ -202,7 +219,7 @@ export default function HomeScreen() {
                             onPress={() => router.push("/search" as any)}
                             className="flex-row items-center rounded-2xl bg-accent-light/30 dark:bg-zinc-800/50 px-4 py-4 border border-accent-light/50 dark:border-zinc-700/50"
                         >
-                            <FontAwesome5 name="search" size={18} color={colorScheme === 'dark' ? '#71717a' : '#adadad'} />
+                            <StyledFontAwesome5 name="search" size={18} color={colorScheme === 'dark' ? '#71717a' : '#adadad'} />
                             <Text className="ml-3 flex-1 font-uber-medium text-secondary/60 dark:text-white/60 text-lg">
                                 Where to?
                             </Text>
@@ -216,7 +233,7 @@ export default function HomeScreen() {
                         </Text>
                         <TouchableOpacity className="flex-row items-center mb-4">
                             <View className="h-8 w-8 items-center justify-center rounded-full bg-accent-light/20 dark:bg-zinc-800/30 mr-3">
-                                <FontAwesome5 name="clock" size={14} color={colorScheme === 'dark' ? '#71717a' : '#adadad'} />
+                                <StyledFontAwesome5 name="clock" size={14} color={colorScheme === 'dark' ? '#71717a' : '#adadad'} />
                             </View>
                             <View className="flex-1">
                                 <Text className="font-uber-medium text-secondary dark:text-white">Avenue Mazatlan</Text>
@@ -225,7 +242,7 @@ export default function HomeScreen() {
                         </TouchableOpacity>
                         <TouchableOpacity className="flex-row items-center">
                             <View className="h-8 w-8 items-center justify-center rounded-full bg-accent-light/20 dark:bg-zinc-800/30 mr-3">
-                                <FontAwesome5 name="history" size={14} color={colorScheme === 'dark' ? '#71717a' : '#adadad'} />
+                                <StyledFontAwesome5 name="history" size={14} color={colorScheme === 'dark' ? '#71717a' : '#adadad'} />
                             </View>
                             <View className="flex-1">
                                 <Text className="font-uber-medium text-secondary dark:text-white">Cuautla 61</Text>
@@ -246,7 +263,7 @@ export default function HomeScreen() {
                                 onPress={() => router.push("/negotiation/fare-input" as any)}
                                 className="flex-1 bg-primary rounded-3xl p-5 justify-between"
                             >
-                                <FontAwesome5 name="car" size={32} color="black" />
+                                <StyledFontAwesome5 name="car" size={32} color="black" />
                                 <View>
                                     <Text className="text-xl font-uber-bold text-secondary">Ride</Text>
                                     <Text className="text-xs font-uber-medium text-secondary/70">Fast & Fair</Text>
@@ -259,7 +276,7 @@ export default function HomeScreen() {
                                     onPress={() => router.push("/negotiation/fare-input" as any)}
                                     className="flex-1 bg-accent-light/30 dark:bg-zinc-800/30 rounded-3xl p-4 justify-between border border-accent-light/50 dark:border-zinc-700/50"
                                 >
-                                    <FontAwesome5 name="city" size={20} color={colorScheme === 'dark' ? 'white' : 'black'} />
+                                    <StyledFontAwesome5 name="city" size={20} color={colorScheme === 'dark' ? 'white' : 'black'} />
                                     <Text className="font-uber-bold text-secondary dark:text-white">Intercity</Text>
                                 </TouchableOpacity>
 
@@ -268,7 +285,7 @@ export default function HomeScreen() {
                                     onPress={() => router.push("/negotiation/fare-input" as any)}
                                     className="flex-1 bg-accent-light/30 dark:bg-zinc-800/30 rounded-3xl p-4 justify-between border border-accent-light/50 dark:border-zinc-700/50"
                                 >
-                                    <FontAwesome5 name="box" size={20} color={colorScheme === 'dark' ? 'white' : 'black'} />
+                                    <StyledFontAwesome5 name="box" size={20} color={colorScheme === 'dark' ? 'white' : 'black'} />
                                     <Text className="font-uber-bold text-secondary dark:text-white">Delivery</Text>
                                 </TouchableOpacity>
                             </View>
@@ -281,7 +298,7 @@ export default function HomeScreen() {
                         >
                             <View className="flex-row items-center">
                                 <View className="h-12 w-12 items-center justify-center rounded-2xl bg-primary/20 mr-4">
-                                    <FontAwesome5 name="truck" size={22} color="#00ff90" />
+                                    <StyledFontAwesome5 name="truck" size={22} color="#00ff90" />
                                 </View>
                                 <View>
                                     <Text className="text-lg font-uber-bold text-white">Freight</Text>
@@ -289,12 +306,61 @@ export default function HomeScreen() {
                                 </View>
                             </View>
                             <View className="h-8 w-8 items-center justify-center rounded-full bg-white/10">
-                                <FontAwesome5 name="arrow-right" size={12} color="#00ff90" />
+                                <StyledFontAwesome5 name="arrow-right" size={12} color="#00ff90" />
                             </View>
                         </TouchableOpacity>
                     </View>
                 </BottomSheetView>
             </BottomSheet>
+
+            <Modal
+                transparent
+                visible={showLocationModal}
+                animationType="fade"
+            >
+                <View className="flex-1 items-center justify-center bg-black/40 px-8">
+                    <View className="w-full rounded-[20px] bg-white/95 dark:bg-[#323232] overflow-hidden shadow-2xl">
+                        <View className="pt-6 px-6 pb-4 items-center">
+                            <StyledIonicons name="location-outline" size={32} color={colorScheme === 'dark' ? 'white' : 'black'} className="mb-4" />
+                            <Text className="mb-2 text-center text-[17px] font-uber-bold text-secondary dark:text-white">
+                                Allow "DashDrive" to access your location?
+                            </Text>
+                            <Text className="text-center text-[13px] font-uber-medium text-secondary/70 dark:text-white/80 leading-5">
+                                Your location will be used to show your current position on the map and for calculating ride fares.
+                            </Text>
+                        </View>
+
+                        <View className="h-[0.5px] bg-secondary/10 dark:bg-white/10" />
+
+                        <View>
+                            <Pressable
+                                onPress={handleLocationPermission}
+                                className="items-center justify-center py-4 border-b-[0.5px] border-secondary/10 dark:border-white/10"
+                            >
+                                <Text className="text-[17px] font-uber-bold text-[#0A84FF]">
+                                    Allow Precise
+                                </Text>
+                            </Pressable>
+                            <Pressable
+                                onPress={handleLocationPermission}
+                                className="items-center justify-center py-4 border-b-[0.5px] border-secondary/10 dark:border-white/10"
+                            >
+                                <Text className="text-[17px] font-uber-medium text-[#0A84FF]">
+                                    Allow Once
+                                </Text>
+                            </Pressable>
+                            <Pressable
+                                onPress={() => setShowLocationModal(false)}
+                                className="items-center justify-center py-4"
+                            >
+                                <Text className="text-[17px] font-uber-medium text-secondary/60 dark:text-white/60">
+                                    Don't Allow
+                                </Text>
+                            </Pressable>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 }
@@ -325,7 +391,7 @@ function HomeHeaderControl({
                 className="h-14 w-14 items-center justify-center"
                 activeOpacity={0.7}
             >
-                <FontAwesome5 name="bars" size={18} color={colorScheme === 'dark' ? 'white' : 'black'} />
+                <StyledFontAwesome5 name="bars" size={18} color={colorScheme === 'dark' ? 'white' : 'black'} />
             </TouchableOpacity>
 
             <View className="h-8 w-[1px] bg-gray-100 dark:bg-zinc-700/50" />
@@ -338,7 +404,7 @@ function HomeHeaderControl({
     );
 }
 
-import { Ionicons } from "@expo/vector-icons";
+
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import {
     interpolateColor,

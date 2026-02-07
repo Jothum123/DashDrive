@@ -21,7 +21,11 @@ export default function RootLayout() {
             <Stack screenOptions={{ headerShown: false }}>
               <Stack.Screen name="index" />
               <Stack.Screen name="auth/login" />
+              <Stack.Screen name="auth/phone-login" />
               <Stack.Screen name="auth/otp" />
+              <Stack.Screen name="auth/register-options" />
+              <Stack.Screen name="auth/email" />
+              <Stack.Screen name="auth/name" />
               <Stack.Screen name="setup/payment-method" />
               <Stack.Screen name="setup/add-card" />
               <Stack.Screen name="home" />

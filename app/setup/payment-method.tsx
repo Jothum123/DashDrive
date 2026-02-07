@@ -1,4 +1,3 @@
-import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
 import {
@@ -7,6 +6,7 @@ import {
     View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { StyledFontAwesome5, StyledMaterialIcons } from "../../src/lib/interop";
 
 export default function PaymentMethodScreen() {
     const router = useRouter();
@@ -15,19 +15,19 @@ export default function PaymentMethodScreen() {
         {
             id: "cash",
             title: "Cash",
-            icon: <MaterialIcons name="payments" size={24} color="#adadad" />,
+            icon: <StyledMaterialIcons name="payments" size={24} color="#adadad" />,
             onPress: () => router.push({ pathname: "/home", params: { setupSuccess: "true" } } as any),
         },
         {
             id: "card",
             title: "Add debit/credit card",
-            icon: <FontAwesome5 name="plus" size={18} color="#adadad" />,
+            icon: <StyledFontAwesome5 name="plus" size={18} color="#adadad" />,
             onPress: () => router.push("/setup/add-card" as any),
         },
         {
             id: "ecocash",
             title: "EcoCash / Mobile Wallet",
-            icon: <MaterialIcons name="phone-iphone" size={24} color="#adadad" />,
+            icon: <StyledMaterialIcons name="phone-iphone" size={24} color="#adadad" />,
             onPress: () => router.push({ pathname: "/home", params: { setupSuccess: "true" } } as any),
         },
     ];
@@ -55,7 +55,7 @@ export default function PaymentMethodScreen() {
                             <Text className="flex-1 ml-4 text-xl font-uber-medium text-secondary dark:text-white">
                                 {method.title}
                             </Text>
-                            <MaterialIcons name="chevron-right" size={24} color="#adadad" />
+                            <StyledMaterialIcons name="chevron-right" size={24} color="#adadad" />
                         </TouchableOpacity>
                     ))}
                 </View>

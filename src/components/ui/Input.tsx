@@ -12,6 +12,7 @@ interface InputProps extends TextInputProps {
     error?: string;
     icon?: React.ReactNode;
     containerClassName?: string;
+    textClassName?: string;
 }
 
 export const Input = ({
@@ -20,12 +21,13 @@ export const Input = ({
     icon,
     className,
     containerClassName,
+    textClassName,
     ...props
 }: InputProps) => {
     return (
         <View className={cn("mb-4", containerClassName)}>
             {label && (
-                <Text className="mb-2 text-sm font-uber-medium text-secondary/60 dark:text-zinc-400">
+                <Text className="mb-2 text-sm font-uber-medium text-accent-gray dark:text-zinc-500">
                     {label}
                 </Text>
             )}
@@ -38,7 +40,10 @@ export const Input = ({
             >
                 {icon && <View className="mr-3">{icon}</View>}
                 <TextInput
-                    className="flex-1 text-base font-uber-medium text-secondary dark:text-white"
+                    className={cn(
+                        "flex-1 text-base font-uber-medium text-black dark:text-white",
+                        textClassName
+                    )}
                     placeholderTextColor="#71717a"
                     {...props}
                 />

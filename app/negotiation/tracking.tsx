@@ -1,10 +1,10 @@
-import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useEffect, useState } from "react";
 import { Dimensions, Text, TouchableOpacity, View } from "react-native";
 import MapView, { Marker, PROVIDER_GOOGLE, Polyline } from "react-native-maps";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { StyledIonicons } from "../../src/lib/interop";
 import { darkMapStyle, mapStyle } from "../../src/styles/mapStyles";
 
 const { width, height } = Dimensions.get("window");
@@ -46,7 +46,7 @@ export default function TrackingScreen() {
             >
                 <Marker coordinate={driverPos}>
                     <View className="h-10 w-10 items-center justify-center bg-white dark:bg-zinc-800 rounded-full shadow-lg border-2 border-primary">
-                        <Ionicons name="car" size={24} color={colorScheme === 'dark' ? '#00ff90' : 'black'} />
+                        <StyledIonicons name="car" size={24} color={colorScheme === 'dark' ? '#00ff90' : 'black'} />
                     </View>
                 </Marker>
 
@@ -71,7 +71,7 @@ export default function TrackingScreen() {
                         onPress={() => router.replace("/home" as any)}
                         className="h-12 w-12 bg-white dark:bg-zinc-800 rounded-full items-center justify-center shadow-lg"
                     >
-                        <Ionicons name="close" size={24} color={colorScheme === 'dark' ? '#adadad' : 'black'} />
+                        <StyledIonicons name="close" size={24} color={colorScheme === 'dark' ? '#adadad' : 'black'} />
                     </TouchableOpacity>
                     <View className="bg-white/90 dark:bg-zinc-800/90 px-4 py-2 rounded-full shadow-lg">
                         <Text className="font-uber-medium text-xs dark:text-white">Arriving in 4 mins</Text>
@@ -87,12 +87,12 @@ export default function TrackingScreen() {
                 <View className="flex-row items-center justify-between mb-6">
                     <View className="flex-row items-center">
                         <View className="w-16 h-16 bg-accent-light dark:bg-zinc-800 rounded-full items-center justify-center mr-4">
-                            <Ionicons name="person" size={32} color="#adadada" />
+                            <StyledIonicons name="person" size={32} color="#adadada" />
                         </View>
                         <View>
                             <Text className="text-xl font-uber-bold dark:text-white">Sarah M.</Text>
                             <View className="flex-row items-center">
-                                <Ionicons name="star" size={14} color="#FFD700" />
+                                <StyledIonicons name="star" size={14} color="#FFD700" />
                                 <Text className="text-sm font-uber-medium ml-1 dark:text-zinc-400">4.93</Text>
                                 <Text className="mx-2 text-gray-300 dark:text-zinc-700">•</Text>
                                 <Text className="text-sm text-gray-500 font-uber dark:text-zinc-500">Nissan Versa</Text>
@@ -102,7 +102,7 @@ export default function TrackingScreen() {
                     </View>
                     <View className="items-center">
                         <View className="h-14 w-14 bg-primary rounded-full items-center justify-center mb-1">
-                            <Ionicons name="call" size={24} color="black" />
+                            <StyledIonicons name="call" size={24} color="black" />
                         </View>
                     </View>
                 </View>
@@ -111,14 +111,14 @@ export default function TrackingScreen() {
 
                 <TouchableOpacity className="flex-row items-center mb-8">
                     <View className="h-8 w-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg items-center justify-center mr-3">
-                        <Ionicons name="chatbox" size={18} color="#2563eb" />
+                        <StyledIonicons name="chatbox" size={18} color="#2563eb" />
                     </View>
                     <Text className="flex-1 font-uber-medium text-gray-600 dark:text-zinc-400">Send a message to Sarah...</Text>
                 </TouchableOpacity>
 
                 <View className="flex-row justify-between">
                     <TouchableOpacity className="bg-gray-100 dark:bg-zinc-800 px-6 py-4 rounded-2xl flex-row items-center">
-                        <Ionicons name="shield-checkmark" size={20} color="#059669" className="mr-2" />
+                        <StyledIonicons name="shield-checkmark" size={20} color="#059669" className="mr-2" />
                         <Text className="font-uber-medium text-gray-700 dark:text-zinc-300 ml-2">Safety</Text>
                     </TouchableOpacity>
                     <TouchableOpacity

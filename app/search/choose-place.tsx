@@ -4,10 +4,12 @@ import { useColorScheme } from "nativewind";
 import React from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useSavedPlacesStore } from "../../src/lib/store";
 
 export default function ChoosePlaceScreen() {
     const router = useRouter();
     const { colorScheme } = useColorScheme();
+    const { home, work, custom } = useSavedPlacesStore();
 
     return (
         <SafeAreaView className="flex-1 bg-white dark:bg-black">
@@ -29,21 +31,34 @@ export default function ChoosePlaceScreen() {
             <ScrollView className="flex-1 px-6">
                 <PlaceRow
                     icon="home-outline"
-                    label="Add home"
-                    onPress={() => router.push("/search/map-picker" as any)}
+                    label={home ? home.title : "Add home"}
+                    sub={home?.address}
+                    onPress={() => router.push({ pathname: "/search/map-picker", params: { type: 'home' } } as any)}
                 />
                 <View className="h-[1px] bg-gray-100 dark:bg-zinc-800 ml-14 mb-4" />
                 <PlaceRow
                     icon="briefcase-outline"
-                    label="Add work"
-                    onPress={() => router.push("/search/map-picker" as any)}
+                    label={work ? work.title : "Add work"}
+                    sub={work?.address}
+                    onPress={() => router.push({ pathname: "/search/map-picker", params: { type: 'work' } } as any)}
                 />
                 <View className="h-[1px] bg-gray-100 dark:bg-zinc-800 ml-14 mb-4" />
+                {custom.map((place) => (
+                    <React.Fragment key={place.id}>
+                        <PlaceRow
+                            icon={place.icon}
+                            label={place.title}
+                            sub={place.address}
+                            onPress={() => router.push({ pathname: "/search/map-picker", params: { type: 'custom', id: place.id } } as any)}
+                        />
+                        <View className="h-[1px] bg-gray-100 dark:bg-zinc-800 ml-14 mb-4" />
+                    </React.Fragment>
+                ))}
                 <PlaceRow
                     icon="add"
                     label="Add new"
                     sub="Save your favourite places"
-                    onPress={() => router.push("/search/map-picker" as any)}
+                    onPress={() => router.push({ pathname: "/search/map-picker", params: { type: 'custom' } } as any)}
                 />
             </ScrollView>
         </SafeAreaView>

@@ -1,4 +1,3 @@
-import { FontAwesome } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -9,6 +8,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "../../src/components/ui/Button";
+import { StyledFontAwesome } from "../../src/lib/interop";
 
 export default function AddCardScreen() {
     const router = useRouter();
@@ -42,7 +42,7 @@ export default function AddCardScreen() {
                     <View className="bg-accent-light/10 dark:bg-white/5 rounded-2xl p-4 border border-accent-light/30 dark:border-white/10">
                         <Text className="text-accent-gray text-xs font-uber-medium mb-1">Card number</Text>
                         <View className="flex-row items-center">
-                            <FontAwesome name="credit-card" size={20} color="#adadad" />
+                            <StyledFontAwesome name="credit-card" size={20} color="#adadad" />
                             <TextInput
                                 className="flex-1 ml-3 text-lg font-uber-medium text-secondary dark:text-white"
                                 placeholder="1234 5678 9101 1121"
@@ -54,7 +54,7 @@ export default function AddCardScreen() {
                             />
                             {cardNumber.length > 0 && (
                                 <TouchableOpacity onPress={() => setCardNumber("")}>
-                                    <FontAwesome name="times-circle" size={18} color="#adadad" />
+                                    <StyledFontAwesome name="times-circle" size={18} color="#adadad" />
                                 </TouchableOpacity>
                             )}
                         </View>
