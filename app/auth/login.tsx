@@ -24,7 +24,8 @@ export default function LoginScreen() {
 
     const handleSocialContinue = () => {
         setSocialModal({ ...socialModal, visible: false });
-        router.push("/auth/name" as any);
+        // Redirect to phone verification after social auth
+        router.push("/auth/verify-phone" as any);
     };
 
     return (
@@ -42,7 +43,7 @@ export default function LoginScreen() {
                     className="flex-row items-center gap-2 mt-6"
                 >
                     <View className="flex-row items-center rounded-2xl border-2 border-accent-light dark:border-zinc-800 bg-accent-light/30 dark:bg-zinc-800/50 px-4 h-16">
-                        <Text className="text-lg"></Text>
+                        <Text className="text-lg">🇬🇧</Text>
                         <Text className="ml-2 text-base font-uber-medium text-black dark:text-white">
                             +44
                         </Text>

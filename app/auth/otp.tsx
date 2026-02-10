@@ -21,11 +21,12 @@ const CORRECT_CODE = "3045";
 
 export default function OTPScreen() {
     const router = useRouter();
-    const { method } = useLocalSearchParams();
+    const { method, source } = useLocalSearchParams();
     const [code, setCode] = useState(["", "", "", ""]);
     const [timer, setTimer] = useState(20);
     const [error, setError] = useState(false);
     const inputRefs = React.useRef<any>([]);
+
 
     // Notification animation state
     const translateY = useSharedValue(-200);
@@ -75,7 +76,13 @@ export default function OTPScreen() {
 
     const handleVerify = (enteredCode: string) => {
         if (enteredCode === CORRECT_CODE) {
-            router.replace("/auth/register-options" as any);
+            // Social auth users already have name from provider, go to home
+            // Phone auth users go to register-options to create account
+            if (source === "social") {
+                router.replace("/home" as any);
+            } else {
+                router.replace("/auth/register-options" as any);
+            }
         } else {
             setError(true);
         }

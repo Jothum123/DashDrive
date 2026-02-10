@@ -41,6 +41,15 @@ export const SocialAuthModal: React.FC<SocialAuthModalProps> = ({
         }
     }, [visible]);
 
+    const animatedStyle = useAnimatedStyle(() => ({
+        transform: [{ translateY: translateY.value }],
+    }));
+
+    const backdropStyle = useAnimatedStyle(() => ({
+        opacity: opacity.value,
+    }));
+
+    // Early return AFTER all hooks to comply with Rules of Hooks
     if (!provider && !visible) return null;
 
     const getProviderStyle = () => {
@@ -73,14 +82,6 @@ export const SocialAuthModal: React.FC<SocialAuthModalProps> = ({
     };
 
     const style = getProviderStyle();
-
-    const animatedStyle = useAnimatedStyle(() => ({
-        transform: [{ translateY: translateY.value }],
-    }));
-
-    const backdropStyle = useAnimatedStyle(() => ({
-        opacity: opacity.value,
-    }));
 
     return (
         <Modal
@@ -132,7 +133,7 @@ export const SocialAuthModal: React.FC<SocialAuthModalProps> = ({
                                 style={{ marginLeft: 12, fontSize: 15, fontWeight: "500", color: "#3f3f46" }}
                                 numberOfLines={1}
                             >
-                                Sign in to {style.id} with {style.domain}
+                                Sign in to DashDrive
                             </Text>
                         </View>
                         <TouchableOpacity onPress={onClose} style={{ padding: 4 }}>

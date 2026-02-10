@@ -1,4 +1,3 @@
-import { Ionicons } from "@expo/vector-icons";
 import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from "@gorhom/bottom-sheet";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useColorScheme } from "nativewind";
@@ -12,11 +11,15 @@ import {
     TouchableOpacity,
     View
 } from "react-native";
-import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import Animated, { FadeInUp, FadeOutUp, interpolate, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
+import Animated, {
+    FadeInUp, FadeOutUp, interpolate,
+    useAnimatedStyle, useSharedValue
+} from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { SideMenu } from "../src/components/SideMenu";
 import { StyledFontAwesome5, StyledIonicons } from "../src/lib/interop";
+import MapView, { Marker, PROVIDER_GOOGLE } from "../src/lib/MapView";
+import { useSavedPlacesStore } from "../src/lib/store";
 import { darkMapStyle, mapStyle } from "../src/styles/mapStyles";
 
 const { width, height } = Dimensions.get("window");
@@ -25,12 +28,22 @@ export default function HomeScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
     const { colorScheme, setColorScheme } = useColorScheme();
+    const { isBusinessMode, setIsBusinessMode } = useSavedPlacesStore();
     const [selectedSettingMode, setSelectedSettingMode] = useState<'light' | 'dark' | 'system'>('system');
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showSuccessPopup, setShowSuccessPopup] = useState(false);
     const bottomSheetRef = useRef<BottomSheet>(null);
     const animatedIndex = useSharedValue(1);
     const [mapPadding, setMapPadding] = useState(height * 0.4);
+    const [placeholderIndex, setPlaceholderIndex] = useState(0);
+    const placeholders = ["Search places", "Search food"];
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setPlaceholderIndex((prev) => (prev + 1) % placeholders.length);
+        }, 1000);
+        return () => clearInterval(interval);
+    }, []);
 
     useEffect(() => {
         if (params.setupSuccess === "true") {
@@ -53,6 +66,24 @@ export default function HomeScreen() {
         latitudeDelta: 0.0122,
         longitudeDelta: 0.0121,
     });
+
+    const [drivers, setDrivers] = useState([
+        { id: '1', latitude: 51.5085, longitude: -0.1285, heading: 45 },
+        { id: '2', latitude: 51.5065, longitude: -0.1265, heading: 180 },
+        { id: '3', latitude: 51.5070, longitude: -0.1295, heading: 270 },
+    ]);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setDrivers(prev => prev.map(d => ({
+                ...d,
+                latitude: d.latitude + (Math.random() - 0.5) * 0.0002,
+                longitude: d.longitude + (Math.random() - 0.5) * 0.0002,
+                heading: (d.heading + (Math.random() - 0.5) * 20) % 360
+            })));
+        }, 3000);
+        return () => clearInterval(interval);
+    }, []);
 
     const handleSheetChange = useCallback((index: number) => {
         // Dynamic map padding based on snap points
@@ -130,12 +161,55 @@ export default function HomeScreen() {
                 customMapStyle={activeMapStyle}
                 mapPadding={{ top: 0, right: 0, bottom: mapPadding, left: 0 }}
             >
+                {/* Current Location Marker */}
                 <Marker coordinate={{ latitude: 51.5074, longitude: -0.1278 }}>
-                    <View className="h-10 w-10 items-center justify-center rounded-full bg-secondary border-2 border-primary">
-                        <StyledFontAwesome5 name="car" size={16} color="#00ff90" />
+                    <View className="h-12 w-12 items-center justify-center">
+                        <View className="h-4 w-4 rounded-full bg-blue-500 border-2 border-white shadow-lg" />
                     </View>
                 </Marker>
+
+                {/* Live Drivers */}
+                {drivers.map(driver => (
+                    <Marker
+                        key={driver.id}
+                        coordinate={{ latitude: driver.latitude, longitude: driver.longitude }}
+                        rotation={driver.heading}
+                        tracksViewChanges={false}
+                    >
+                        <View className="h-10 w-10 items-center justify-center">
+                            <View className={`h-8 w-8 items-center justify-center rounded-full ${isBusinessMode ? 'bg-secondary' : 'bg-primary'} border-2 ${isBusinessMode ? 'border-primary' : 'border-secondary'} shadow-md`}>
+                                <StyledFontAwesome5 name="car" size={12} color={isBusinessMode ? "#00ff90" : "#000"} />
+                            </View>
+                        </View>
+                    </Marker>
+                ))}
             </MapView>
+
+            {/* Floating Search Bar */}
+            <SafeAreaView className="absolute top-12 left-6 right-6 z-40" pointerEvents="box-none">
+                <View className="flex-row items-center gap-3">
+                    <TouchableOpacity
+                        onPress={() => router.push("/search" as any)}
+                        activeOpacity={0.9}
+                        className="flex-1 flex-row items-center rounded-3xl bg-white dark:bg-zinc-900 px-5 py-4 shadow-xl border border-gray-100 dark:border-zinc-800"
+                    >
+                        <StyledFontAwesome5 name="search" size={18} color={colorScheme === 'dark' ? '#adadad' : '#71717a'} />
+                        <Text className="ml-3 flex-1 font-uber-medium text-secondary/60 dark:text-white/60 text-lg">
+                            {placeholders[placeholderIndex]}
+                        </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        onPress={() => setIsMenuOpen(true)}
+                        activeOpacity={0.8}
+                        className="h-14 w-14 rounded-full bg-white dark:bg-zinc-900 shadow-xl border border-gray-100 dark:border-zinc-800 items-center justify-center overflow-hidden"
+                    >
+                        <View className="h-full w-full items-center justify-center bg-primary">
+                            <StyledFontAwesome5 name="user-alt" size={20} color="black" />
+                        </View>
+                    </TouchableOpacity>
+                </View>
+            </SafeAreaView>
 
             {/* Success Popup */}
             {showSuccessPopup && (
@@ -160,28 +234,7 @@ export default function HomeScreen() {
                 </Animated.View>
             )}
 
-            {/* Header Overlays */}
-            <SafeAreaView className="absolute top-0 w-full px-6 pt-4" pointerEvents="box-none">
-                <Animated.View
-                    style={headerAnimatedStyle}
-                    className="flex-row items-center justify-between"
-                    pointerEvents="box-none"
-                >
-                    <HomeHeaderControl
-                        isMenuOpen={isMenuOpen}
-                        onMenuPress={() => setIsMenuOpen(true)}
-                        selectedMode={selectedSettingMode}
-                        onThemeSelect={(mode) => {
-                            setSelectedSettingMode(mode);
-                            setColorScheme(mode);
-                        }}
-                    />
 
-                    <TouchableOpacity className="h-12 w-12 items-center justify-center rounded-full bg-white dark:bg-secondary shadow-lg">
-                        <StyledFontAwesome5 name="user" size={20} color={colorScheme === 'dark' ? 'white' : 'black'} />
-                    </TouchableOpacity>
-                </Animated.View>
-            </SafeAreaView>
 
             <SideMenu
                 isOpen={isMenuOpen}
@@ -213,18 +266,7 @@ export default function HomeScreen() {
                 }}
             >
                 <BottomSheetView className="flex-1 px-6 pt-2 pb-10">
-                    {/* Integrated Search Bar inside Bottom Sheet */}
-                    <View className="mb-6">
-                        <TouchableOpacity
-                            onPress={() => router.push("/search" as any)}
-                            className="flex-row items-center rounded-2xl bg-accent-light/30 dark:bg-zinc-800/50 px-4 py-4 border border-accent-light/50 dark:border-zinc-700/50"
-                        >
-                            <StyledFontAwesome5 name="search" size={18} color={colorScheme === 'dark' ? '#71717a' : '#adadad'} />
-                            <Text className="ml-3 flex-1 font-uber-medium text-secondary/60 dark:text-white/60 text-lg">
-                                Where to?
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
+                    {/* Placeholder content or empty if needed */}
 
                     {/* Recent Searches */}
                     <View className="mb-6">
@@ -260,7 +302,7 @@ export default function HomeScreen() {
                         <View className="flex-row gap-3 h-48">
                             {/* Large Feature Tile: Ride */}
                             <TouchableOpacity
-                                onPress={() => router.push("/negotiation/fare-input" as any)}
+                                onPress={() => router.push("/search" as any)}
                                 className="flex-1 bg-primary rounded-3xl p-5 justify-between"
                             >
                                 <StyledFontAwesome5 name="car" size={32} color="black" />
@@ -321,7 +363,9 @@ export default function HomeScreen() {
                 <View className="flex-1 items-center justify-center bg-black/40 px-8">
                     <View className="w-full rounded-[20px] bg-white/95 dark:bg-[#323232] overflow-hidden shadow-2xl">
                         <View className="pt-6 px-6 pb-4 items-center">
-                            <StyledIonicons name="location-outline" size={32} color={colorScheme === 'dark' ? 'white' : 'black'} className="mb-4" />
+                            <View className="mb-4">
+                                <StyledIonicons name="location-outline" size={32} color={colorScheme === 'dark' ? 'white' : 'black'} />
+                            </View>
                             <Text className="mb-2 text-center text-[17px] font-uber-bold text-secondary dark:text-white">
                                 Allow "DashDrive" to access your location?
                             </Text>
@@ -368,191 +412,6 @@ export default function HomeScreen() {
 
 
 
-function HomeHeaderControl({
-    onMenuPress,
-    selectedMode,
-    onThemeSelect
-}: {
-    isMenuOpen: boolean,
-    onMenuPress: () => void,
-    selectedMode: 'light' | 'dark' | 'system',
-    onThemeSelect: (mode: 'light' | 'dark' | 'system') => void
-}) {
-    const { colorScheme } = useColorScheme();
-
-    return (
-        <View
-            className="flex-row items-center bg-white dark:bg-secondary rounded-full shadow-lg h-14 pr-1 overflow-hidden"
-            pointerEvents="box-none"
-        >
-            {/* Menu Trigger */}
-            <TouchableOpacity
-                onPress={onMenuPress}
-                className="h-14 w-14 items-center justify-center"
-                activeOpacity={0.7}
-            >
-                <StyledFontAwesome5 name="bars" size={18} color={colorScheme === 'dark' ? 'white' : 'black'} />
-            </TouchableOpacity>
-
-            <View className="h-8 w-[1px] bg-gray-100 dark:bg-zinc-700/50" />
-
-            {/* Integrated Theme Switcher */}
-            <View className="px-2" pointerEvents="box-none">
-                <ThemeSwitcher selectedMode={selectedMode} onSelect={onThemeSelect} mini />
-            </View>
-        </View>
-    );
-}
 
 
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import {
-    interpolateColor,
-    runOnJS,
-    withSpring
-} from "react-native-reanimated";
 
-function ThemeSwitcher({
-    selectedMode,
-    onSelect,
-    mini = false
-}: {
-    selectedMode: 'light' | 'dark' | 'system',
-    onSelect: (mode: 'light' | 'dark' | 'system') => void,
-    mini?: boolean
-}) {
-    const modes: ('light' | 'dark' | 'system')[] = ['light', 'dark', 'system'];
-    const activeIndex = modes.indexOf(selectedMode);
-    const [containerWidth, setContainerWidth] = React.useState(0);
-
-    const translationX = useSharedValue(activeIndex);
-
-    // Update shared value when selectedMode props changes
-    React.useEffect(() => {
-        translationX.value = withSpring(activeIndex, { damping: 20, stiffness: 120 });
-    }, [activeIndex]);
-
-    const activeIndexOnStart = useSharedValue(activeIndex);
-
-    const panGesture = Gesture.Pan()
-        .onStart(() => {
-            activeIndexOnStart.value = translationX.value;
-        })
-        .onUpdate((event) => {
-            const padding = 4;
-            const thumbWidth = (containerWidth - (padding * 2)) / 3;
-            if (thumbWidth > 0) {
-                const deltaIndex = event.translationX / thumbWidth;
-                translationX.value = Math.max(0, Math.min(2, activeIndexOnStart.value + deltaIndex));
-            }
-        })
-        .onEnd(() => {
-            const finalIndex = Math.round(translationX.value);
-            translationX.value = withSpring(finalIndex);
-            runOnJS(onSelect)(modes[finalIndex]);
-        });
-
-    const tapGesture = Gesture.Tap()
-        .onEnd((event) => {
-            const padding = 4;
-            const thumbWidth = (containerWidth - (padding * 2)) / 3;
-            if (thumbWidth > 0) {
-                const tappedIndex = Math.floor((event.x - padding) / thumbWidth);
-                if (tappedIndex >= 0 && tappedIndex < 3) {
-                    translationX.value = withSpring(tappedIndex);
-                    runOnJS(onSelect)(modes[tappedIndex]);
-                }
-            }
-        });
-
-    const composedGesture = Gesture.Race(panGesture, tapGesture);
-
-    const thumbStyle = useAnimatedStyle(() => {
-        const padding = 4;
-        const thumbWidth = (containerWidth - (padding * 2)) / 3;
-        return {
-            transform: [{ translateX: translationX.value * thumbWidth }],
-            width: thumbWidth || '33.33%',
-            opacity: containerWidth > 0 ? 1 : 0
-        };
-    });
-
-    return (
-        <GestureDetector gesture={composedGesture}>
-            <View
-                onLayout={(e) => setContainerWidth(e.nativeEvent.layout.width)}
-                className={`flex-row items-center bg-gray-50/50 dark:bg-zinc-800/30 p-1 rounded-full relative ${mini ? 'h-10 w-[140px]' : 'h-14'} overflow-hidden border border-gray-100/30 dark:border-zinc-700/10`}
-            >
-                <Animated.View
-                    style={[
-                        thumbStyle,
-                        {
-                            shadowColor: '#000',
-                            shadowOffset: { width: 0, height: 1 },
-                            shadowOpacity: 0.05,
-                            shadowRadius: 2,
-                            elevation: 1
-                        }
-                    ]}
-                    className="absolute top-1 bottom-1 left-1 bg-white dark:bg-zinc-600 rounded-full"
-                />
-
-                {modes.map((mode) => (
-                    <ThemeButton
-                        key={mode}
-                        mode={mode}
-                        myIndex={modes.indexOf(mode)}
-                        activeIndexShared={translationX}
-                        mini={mini}
-                    />
-                ))}
-            </View>
-        </GestureDetector>
-    );
-}
-
-const AnimatedIonicons = Animated.createAnimatedComponent(Ionicons);
-
-function ThemeButton({
-    mode,
-    myIndex,
-    activeIndexShared,
-    mini
-}: {
-    mode: 'light' | 'dark' | 'system',
-    myIndex: number,
-    activeIndexShared: any,
-    mini?: boolean
-}) {
-    const icons = { light: 'sunny-outline', dark: 'moon-outline', system: 'settings-outline' };
-    const labels = { light: 'Light', dark: 'Dark', system: 'System' };
-
-    const iconStyle = useAnimatedStyle(() => {
-        const distance = Math.abs(activeIndexShared.value - myIndex);
-        const isActive = distance < 0.5;
-
-        return {
-            color: interpolateColor(
-                distance,
-                [0, 0.5],
-                ['#00ff90', '#adadad']
-            ),
-            transform: [{ scale: withSpring(isActive ? 1.1 : 1) }]
-        };
-    });
-
-    return (
-        <View className="flex-1 items-center justify-center flex-row h-full z-10">
-            <AnimatedIonicons
-                name={icons[mode] as any}
-                size={mini ? 14 : 16}
-                style={iconStyle}
-            />
-            {!mini && (
-                <Text className={`ml-1.5 font-uber-bold text-[10px] uppercase tracking-tighter text-secondary dark:text-white`}>
-                    {labels[mode]}
-                </Text>
-            )}
-        </View>
-    );
-}

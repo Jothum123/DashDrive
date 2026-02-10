@@ -2,9 +2,10 @@ import { useRouter } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useEffect, useState } from "react";
 import { Dimensions, Text, TouchableOpacity, View } from "react-native";
-import MapView, { Marker, PROVIDER_GOOGLE, Polyline } from "react-native-maps";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StyledIonicons } from "../../src/lib/interop";
+import MapView, { Marker, PROVIDER_GOOGLE, Polyline } from "../../src/lib/MapView";
+import { useSavedPlacesStore } from "../../src/lib/store";
 import { darkMapStyle, mapStyle } from "../../src/styles/mapStyles";
 
 const { width, height } = Dimensions.get("window");
@@ -12,6 +13,7 @@ const { width, height } = Dimensions.get("window");
 export default function TrackingScreen() {
     const router = useRouter();
     const { colorScheme } = useColorScheme();
+    const { isBusinessMode } = useSavedPlacesStore();
     const [region, setRegion] = useState({
         latitude: 51.5074,
         longitude: -0.1278,
@@ -73,7 +75,8 @@ export default function TrackingScreen() {
                     >
                         <StyledIonicons name="close" size={24} color={colorScheme === 'dark' ? '#adadad' : 'black'} />
                     </TouchableOpacity>
-                    <View className="bg-white/90 dark:bg-zinc-800/90 px-4 py-2 rounded-full shadow-lg">
+                    <View className="bg-white/90 dark:bg-zinc-800/90 px-4 py-2 rounded-full shadow-lg flex-row items-center">
+                        {isBusinessMode && <StyledIonicons name="briefcase" size={12} color="#00ff90" className="mr-2" />}
                         <Text className="font-uber-medium text-xs dark:text-white">Arriving in 4 mins</Text>
                     </View>
                     <View className="w-12" />
@@ -87,7 +90,7 @@ export default function TrackingScreen() {
                 <View className="flex-row items-center justify-between mb-6">
                     <View className="flex-row items-center">
                         <View className="w-16 h-16 bg-accent-light dark:bg-zinc-800 rounded-full items-center justify-center mr-4">
-                            <StyledIonicons name="person" size={32} color="#adadada" />
+                            <StyledIonicons name={isBusinessMode ? "briefcase" : "person"} size={32} color={isBusinessMode ? "#00ff90" : "#adadad"} />
                         </View>
                         <View>
                             <Text className="text-xl font-uber-bold dark:text-white">Sarah M.</Text>
@@ -99,6 +102,11 @@ export default function TrackingScreen() {
                             </View>
                             <Text className="text-xs text-gray-400 font-uber uppercase tracking-tighter dark:text-zinc-600">ABC 1234 • Silver</Text>
                         </View>
+                        {isBusinessMode && (
+                            <View className="mt-2 flex-row items-center bg-primary/20 self-start px-2 py-0.5 rounded-full">
+                                <Text className="text-[8px] font-uber-bold text-primary uppercase">Business Trip</Text>
+                            </View>
+                        )}
                     </View>
                     <View className="items-center">
                         <View className="h-14 w-14 bg-primary rounded-full items-center justify-center mb-1">

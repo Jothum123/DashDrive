@@ -1,4 +1,3 @@
-import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -9,6 +8,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "../../src/components/ui/Button";
+import { StyledIonicons } from "../../src/lib/interop";
 
 export default function NameScreen() {
     const router = useRouter();
@@ -26,7 +26,7 @@ export default function NameScreen() {
                         onPress={() => router.back()}
                         className="mb-8 h-10 w-10 items-center justify-center bg-secondary/5 dark:bg-white/5 rounded-2xl"
                     >
-                        <Ionicons name="arrow-back" size={20} color="#adadad" />
+                        <StyledIonicons name="arrow-back" size={20} color="#adadad" />
                     </TouchableOpacity>
 
                     <Text className="mb-2 text-3xl font-uber-bold text-secondary dark:text-white">

@@ -3,8 +3,8 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React from "react";
 import { KeyboardAvoidingView, Platform, Share, Text, TextInput, TouchableOpacity, View } from "react-native";
-import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import { SafeAreaView } from "react-native-safe-area-context";
+import MapView, { PROVIDER_GOOGLE } from "../../src/lib/MapView";
 import { useSavedPlacesStore } from "../../src/lib/store";
 import { darkMapStyle, mapStyle } from "../../src/styles/mapStyles";
 

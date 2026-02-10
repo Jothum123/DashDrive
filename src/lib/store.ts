@@ -11,12 +11,20 @@ interface SavedPlacesState {
     home: SavedPlace | null;
     work: SavedPlace | null;
     custom: SavedPlace[];
+    isBusinessMode: boolean;
+    hasCompanyProfile: boolean;
+    userMode: 'rider' | 'pilot';
+    isPilotRegistered: boolean;
 }
 
 let state: SavedPlacesState = {
     home: null,
     work: null,
     custom: [],
+    isBusinessMode: false,
+    hasCompanyProfile: false,
+    userMode: 'rider',
+    isPilotRegistered: false,
 };
 
 const listeners = new Set<() => void>();
@@ -56,5 +64,9 @@ export const useSavedPlacesStore = () => {
         removeCustom: (id: string) => setState({
             custom: state.custom.filter(p => p.id !== id)
         }),
+        setIsBusinessMode: (value: boolean) => setState({ isBusinessMode: value }),
+        setHasCompanyProfile: (value: boolean) => setState({ hasCompanyProfile: value }),
+        setUserMode: (mode: 'rider' | 'pilot') => setState({ userMode: mode }),
+        setIsPilotRegistered: (value: boolean) => setState({ isPilotRegistered: value }),
     };
 };

@@ -1,5 +1,5 @@
 import { FontAwesome, FontAwesome5, Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import { cssInterop, remapProps } from "nativewind";
+import { cssInterop } from "nativewind";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 // Map className to style for SafeAreaView
@@ -9,28 +9,58 @@ cssInterop(SafeAreaView, {
 
 export const StyledSafeAreaView = SafeAreaView;
 
-// For icons, remapProps is often more compatible with NativeWind v4
-remapProps(Ionicons, {
-    className: "style",
+// For icons, cssInterop is more robust for NativeWind v4
+cssInterop(Ionicons, {
+    className: {
+        target: "style",
+        nativeStyleToProp: {
+            color: true,
+            fontSize: "size",
+        },
+    },
 });
 export const StyledIonicons = Ionicons;
 
-remapProps(FontAwesome5, {
-    className: "style",
+cssInterop(FontAwesome5, {
+    className: {
+        target: "style",
+        nativeStyleToProp: {
+            color: true,
+            fontSize: "size",
+        },
+    },
 });
 export const StyledFontAwesome5 = FontAwesome5;
 
-remapProps(MaterialCommunityIcons, {
-    className: "style",
+cssInterop(MaterialCommunityIcons, {
+    className: {
+        target: "style",
+        nativeStyleToProp: {
+            color: true,
+            fontSize: "size",
+        },
+    },
 });
 export const StyledMaterialCommunityIcons = MaterialCommunityIcons;
 
-remapProps(MaterialIcons, {
-    className: "style",
+cssInterop(MaterialIcons, {
+    className: {
+        target: "style",
+        nativeStyleToProp: {
+            color: true,
+            fontSize: "size",
+        },
+    },
 });
 export const StyledMaterialIcons = MaterialIcons;
 
-remapProps(FontAwesome, {
-    className: "style",
+cssInterop(FontAwesome, {
+    className: {
+        target: "style",
+        nativeStyleToProp: {
+            color: true,
+            fontSize: "size",
+        },
+    },
 });
 export const StyledFontAwesome = FontAwesome;

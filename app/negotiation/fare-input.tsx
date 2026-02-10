@@ -10,16 +10,18 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
-import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "../../src/components/ui/Button";
 import { Card } from "../../src/components/ui/Card";
 import { Input } from "../../src/components/ui/Input";
+import MapView, { Marker, PROVIDER_GOOGLE } from "../../src/lib/MapView";
+import { useSavedPlacesStore } from "../../src/lib/store";
 import { darkMapStyle, mapStyle } from "../../src/styles/mapStyles";
 
 export default function FareInputScreen() {
     const router = useRouter();
     const { colorScheme } = useColorScheme();
+    const { isBusinessMode } = useSavedPlacesStore();
     const [fare, setFare] = useState("");
 
     const handleNegotiate = () => {
@@ -69,6 +71,14 @@ export default function FareInputScreen() {
                 className="flex-1"
             >
                 <ScrollView className="flex-1 px-6 -mt-10">
+                    {isBusinessMode && (
+                        <View className="mb-4 bg-primary px-4 py-2 rounded-2xl flex-row items-center self-center shadow-lg border border-secondary/10">
+                            <FontAwesome5 name="briefcase" size={12} color="#000" />
+                            <Text className="ml-2 text-[10px] font-uber-bold text-secondary uppercase tracking-widest">
+                                Corporate Billing: Acme Corp
+                            </Text>
+                        </View>
+                    )}
                     <Card className="shadow-2xl mb-6">
                         <View className="flex-row items-center mb-6">
                             <View className="mr-4 items-center">
