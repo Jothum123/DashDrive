@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Header } from '../../../components/shared/Header';
 import { LiveFleetMap } from '../../ops-central/pages/LiveFleetMap';
 
 export const DashboardOverview: React.FC = () => {
@@ -245,8 +246,9 @@ export const DashboardOverview: React.FC = () => {
 
     return (
         <div className="flex-1 flex flex-col min-w-0 overflow-y-auto bg-background-light dark:bg-zinc-950 scrollbar-hide">
+            <Header title="Dashboard Overview" />
             <div className="p-8 space-y-8 flex-1">
-                {/* Header Section */}
+                {/* Secondary Header / Controls Section */}
                 <div className="flex items-center justify-between">
                     <h2 className="text-lg font-bold flex items-center gap-2 uppercase tracking-tight text-slate-900 dark:text-white">
                         <span className="material-icons text-primary text-[20px]">{mapView === 'live' ? 'public' : 'map'}</span>

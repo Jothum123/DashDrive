@@ -1,11 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-export const Header: React.FC = () => {
+interface HeaderProps {
+    title?: string;
+}
+
+export const Header: React.FC<HeaderProps> = ({ title = 'Dashboard Overview' }) => {
     return (
         <header className="h-16 flex items-center justify-between px-8 border-b border-slate-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-md sticky top-0 z-30">
             <div className="flex items-center gap-4">
-                <Link to="/" className="text-lg font-bold text-slate-900 dark:text-white hover:text-primary transition-colors">Dashboard Overview</Link>
+                <Link to="/" className="text-lg font-bold text-slate-900 dark:text-white hover:text-primary transition-colors">{title}</Link>
                 <div className="h-4 w-[1px] bg-slate-300 dark:bg-zinc-700"></div>
                 <span className="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-2">
                     <span className="w-2 h-2 bg-primary rounded-full"></span>

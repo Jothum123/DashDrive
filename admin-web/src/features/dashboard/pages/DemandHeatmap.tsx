@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Header } from '../../../components/shared/Header';
 
 export const DemandHeatmap: React.FC = () => {
     const [zoomLevel, setZoomLevel] = useState(1);
@@ -11,6 +12,7 @@ export const DemandHeatmap: React.FC = () => {
 
     return (
         <div className={`flex-1 flex flex-col min-w-0 overflow-y-auto bg-background-light dark:bg-zinc-950 scrollbar-hide ${isFullscreen ? 'z-50' : ''}`}>
+            <Header title="Demand Heatmap" />
             <div className="p-8 space-y-8 flex-1">
                 {/* KPI Section - Hide in fullscreen for better focus */}
                 {!isFullscreen && (

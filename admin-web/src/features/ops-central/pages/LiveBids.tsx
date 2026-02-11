@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Header } from '../../../components/shared/Header';
 
 export const LiveBids: React.FC = () => {
     const navigate = useNavigate();
@@ -10,6 +11,7 @@ export const LiveBids: React.FC = () => {
 
     return (
         <div className="flex-1 flex flex-col h-full overflow-hidden bg-background-light dark:bg-zinc-950 text-slate-900 dark:text-zinc-100 font-display">
+            <Header title="Live Negotiation Monitor" />
             {/* Sub-header for Bidding Status */}
             <div className="h-14 border-b border-primary/20 bg-background-light dark:bg-zinc-900/80 backdrop-blur-md flex items-center justify-between px-6 shrink-0 font-display">
                 <div className="flex items-center gap-4">
