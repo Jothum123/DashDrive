@@ -9,16 +9,20 @@ export default {
       colors: {
         primary: {
           DEFAULT: '#00ff90',
-          dark: '#00dd7b',
+          dark: '#00cc74',
           light: '#33ffa6',
         },
+        "background-light": "#f6f7f8",
+        "background-dark": "#111c21",
+        "panel-dark": "#1a262e",
+        "border-dark": "#2d3a43",
         secondary: '#000000',
         accent: {
           gray: '#adadad',
           light: '#e7e8ec',
         },
         zinc: {
-          950: '#0a0a0a', // Deepest black-gray
+          950: '#0a0a0a',
         }
       },
       fontFamily: {

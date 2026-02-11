@@ -1,4 +1,10 @@
+import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
+import { io } from 'socket.io-client';
 import { create } from 'zustand';
+import { supabase } from '../lib/supabase';
+
+const socket = io('http://localhost:3001');
+
 
 // Existing Types
 export interface ActiveTrip {
@@ -35,6 +41,7 @@ export interface Driver {
     };
     activeTrip?: ActiveTrip;
     documents: { type: string; status: 'verified' | 'pending' | 'rejected'; url: string }[];
+    serviceType: 'Standard' | 'Comfort' | 'Executive' | 'XL';
 }
 
 export interface Passenger {
@@ -80,6 +87,14 @@ export interface Strategy {
     fareMultiplier: number;
     autoAdjustFloor: boolean;
     smartCounterBids: boolean;
+}
+
+export interface RequiredDocument {
+    id: string;
+    name: string;
+    description: string;
+    isRequired: boolean;
+    category: 'identity' | 'vehicle' | 'license' | 'other';
 }
 
 export interface RideRecord {
@@ -142,6 +157,16 @@ export interface PromoCode {
     active: boolean;
 }
 
+export interface LiveLogEvent {
+    id: string;
+    type: 'entry' | 'exit' | 'violation';
+    geofenceId: string;
+    geofenceName: string;
+    driverId: string;
+    driverName: string;
+    timestamp: string;
+}
+
 export interface RideReview {
     id: string;
     rideId: string;
@@ -151,6 +176,25 @@ export interface RideReview {
     comment: string;
     target: 'driver' | 'user';
     createdAt: string;
+}
+
+export interface VenuePoint {
+    id: string;
+    name: string;
+    type: 'pickup' | 'dropoff';
+    location: { lat: number; lng: number };
+}
+
+export interface Geofence {
+    id: string;
+    name: string;
+    type: 'restricted' | 'surge' | 'preferred' | 'standard';
+    coordinates: [number, number][]; // Array of lat, lng pairs
+    active: boolean;
+    createdAt: string;
+    color?: string;
+    dispatchRule?: 'FIFO' | 'Nearest' | 'Balanced';
+    venuePoints?: VenuePoint[];
 }
 
 // Mock Data
@@ -328,6 +372,11 @@ interface AdminState {
     vehicleServices: VehicleService[];
     strategy: Strategy;
     reviews: RideReview[];
+    geofences: Geofence[];
+    liveLog: LiveLogEvent[];
+    showH3Grid: boolean;
+    h3Density: number;
+    requiredDocuments: RequiredDocument[];
 
     getStats: () => {
         totalDrivers: number;
@@ -363,10 +412,25 @@ interface AdminState {
     removeVehicleService: (id: string) => void;
     deleteReview: (id: string) => void;
     simulateMovement: () => void;
+    initializeSocket: () => void;
+    initializeSupabase: () => () => void;
+    addIncident: (incident: Omit<SafetyIncident, 'id' | 'date'>) => void;
+    resolveIncident: (id: string) => void;
+    // Geofencing Actions
+    addGeofence: (geofence: Omit<Geofence, 'id' | 'createdAt'>) => void;
+    updateGeofence: (id: string, updates: Partial<Geofence>) => void;
+    deleteGeofence: (id: string) => void;
+    toggleGeofence: (id: string) => void;
+    toggleH3Grid: () => void;
+    setH3Density: (density: number) => void;
+    addVenuePoint: (geofenceId: string, point: Omit<VenuePoint, 'id'>) => void;
+    addRequiredDocument: (doc: Omit<RequiredDocument, 'id'>) => void;
+    updateRequiredDocument: (doc: RequiredDocument) => void;
+    deleteRequiredDocument: (id: string) => void;
 }
 
 export const useAdminStore = create<AdminState>((set, get) => ({
-    drivers: [], // Initially empty, will populate with existing mock data logic if needed
+    drivers: [],
     passengers: [],
     transactions: [],
     incidents: [],
@@ -377,6 +441,17 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     vehicleServices: mockVehicleServices,
     strategy: mockStrategy,
     reviews: mockReviews,
+    geofences: [],
+    showH3Grid: false,
+    h3Density: 0.15,
+    requiredDocuments: [
+        { id: 'rd1', name: 'Driving License', description: 'Valid front and back copy of national driving license', isRequired: true, category: 'license' },
+        { id: 'rd2', name: 'Vehicle Insurance', description: 'Current insurance certificate for the registered vehicle', isRequired: true, category: 'vehicle' },
+        { id: 'rd3', name: 'National ID Proof', description: 'Government issued ID card or Passport', isRequired: true, category: 'identity' },
+        { id: 'rd4', name: 'Vehicle Registration', description: 'V5C or equivalent vehicle registration document', isRequired: true, category: 'vehicle' },
+        { id: 'rd5', name: 'Background Check', description: 'Enhanced criminal record check certificate', isRequired: false, category: 'other' },
+    ],
+    liveLog: [],
 
     // Initial population (keep existing mocks for continuity)
     ...({
@@ -410,7 +485,8 @@ export const useAdminStore = create<AdminState>((set, get) => ({
                 documents: [
                     { type: 'Driving License', status: 'verified', url: '#' },
                     { type: 'Vehicle Insurance', status: 'verified', url: '#' }
-                ]
+                ],
+                serviceType: 'Comfort'
             },
             {
                 id: 'PILOT-882',
@@ -441,7 +517,8 @@ export const useAdminStore = create<AdminState>((set, get) => ({
                 documents: [
                     { type: 'Driving License', status: 'verified', url: '#' },
                     { type: 'Insurance', status: 'verified', url: '#' }
-                ]
+                ],
+                serviceType: 'Executive'
             },
             {
                 id: 'drv-003',
@@ -461,7 +538,8 @@ export const useAdminStore = create<AdminState>((set, get) => ({
                 documents: [
                     { type: 'Driving License', status: 'pending', url: '#' },
                     { type: 'Public Hire Permit', status: 'pending', url: '#' }
-                ]
+                ],
+                serviceType: 'Standard'
             }
         ],
         passengers: [
@@ -662,4 +740,177 @@ export const useAdminStore = create<AdminState>((set, get) => ({
                 };
             }),
         })),
+
+    initializeSocket: () => {
+        const checkSpatial = (driver: Driver, geofences: Geofence[]) => {
+            const events: LiveLogEvent[] = [];
+            const previousDrivers = get().drivers;
+            const prevDriver = previousDrivers.find(d => d.id === driver.id);
+
+            geofences.forEach(gf => {
+                if (!gf.active) return;
+
+                const isInside = isPointInPoly(driver.location, gf.coordinates);
+                const wasInside = prevDriver ? isPointInPoly(prevDriver.location, gf.coordinates) : false;
+
+                if (isInside && !wasInside) {
+                    events.push({
+                        id: `log-${Date.now()}-${Math.random()}`,
+                        type: gf.type === 'restricted' ? 'violation' : 'entry',
+                        geofenceId: gf.id,
+                        geofenceName: gf.name,
+                        driverId: driver.id,
+                        driverName: driver.name,
+                        timestamp: new Date().toLocaleTimeString()
+                    });
+                } else if (!isInside && wasInside) {
+                    events.push({
+                        id: `log-${Date.now()}-${Math.random()}`,
+                        type: 'exit',
+                        geofenceId: gf.id,
+                        geofenceName: gf.name,
+                        driverId: driver.id,
+                        driverName: driver.name,
+                        timestamp: new Date().toLocaleTimeString()
+                    });
+                }
+            });
+            return events;
+        };
+
+        socket.on('driversUpdate', (updatedDrivers: Driver[]) => {
+            const currentGeofences = get().geofences;
+            let allNewEvents: LiveLogEvent[] = [];
+
+            updatedDrivers.forEach(d => {
+                const events = checkSpatial(d, currentGeofences);
+                allNewEvents = [...allNewEvents, ...events];
+            });
+
+            set((state) => ({
+                drivers: updatedDrivers,
+                liveLog: [...allNewEvents, ...state.liveLog].slice(0, 50)
+            }));
+        });
+    },
+
+    addIncident: (incident) => set((state) => ({
+        incidents: [
+            {
+                ...incident,
+                id: `INC-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`,
+                date: new Date().toISOString()
+            },
+            ...state.incidents
+        ]
+    })),
+
+    resolveIncident: (id) => set((state) => ({
+        incidents: state.incidents.map(inc => inc.id === id ? { ...inc, status: 'resolved' as const } : inc)
+    })),
+
+    initializeSupabase: () => {
+        const channel = supabase
+            .channel('realtime_negotiations')
+            .on(
+                'postgres_changes',
+                { event: '*', schema: 'public', table: 'negotiations' },
+                (payload: RealtimePostgresChangesPayload<Negotiation>) => {
+                    console.log('[Supabase Realtime] Negotiation Change:', payload);
+                    const { eventType, new: newRecord, old: oldRecord } = payload;
+
+                    set((state) => {
+                        let updatedNegotiations = [...state.negotiations];
+
+                        if (eventType === 'INSERT') {
+                            updatedNegotiations = [newRecord as Negotiation, ...updatedNegotiations];
+                        } else if (eventType === 'UPDATE') {
+                            updatedNegotiations = updatedNegotiations.map(n =>
+                                n.id === (newRecord as any).id ? { ...n, ...newRecord } : n
+                            );
+                        } else if (eventType === 'DELETE') {
+                            updatedNegotiations = updatedNegotiations.filter(n => n.id !== (oldRecord as any).id);
+                        }
+
+                        return { negotiations: updatedNegotiations.slice(0, 50) };
+                    });
+                }
+            )
+            .subscribe();
+
+        return () => supabase.removeChannel(channel);
+    },
+
+    // Geofencing Actions Implementation
+    addGeofence: (geofence) => set((state) => ({
+        geofences: [
+            ...state.geofences,
+            {
+                ...geofence,
+                id: `gf-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`,
+                createdAt: new Date().toISOString().split('T')[0]
+            }
+        ]
+    })),
+
+    updateGeofence: (id, updates) => set((state) => ({
+        geofences: state.geofences.map(gf => gf.id === id ? { ...gf, ...updates } : gf)
+    })),
+
+    deleteGeofence: (id) => set((state) => ({
+        geofences: state.geofences.filter(gf => gf.id !== id)
+    })),
+
+    toggleGeofence: (id) => set((state) => ({
+        geofences: state.geofences.map(gf => gf.id === id ? { ...gf, active: !gf.active } : gf)
+    })),
+
+    toggleH3Grid: () => set((state) => ({ showH3Grid: !state.showH3Grid })),
+
+    setH3Density: (density) => set({ h3Density: density }),
+
+    addVenuePoint: (geofenceId, point) => set((state) => ({
+        geofences: state.geofences.map(gf => gf.id === geofenceId ? {
+            ...gf,
+            venuePoints: [
+                ...(gf.venuePoints || []),
+                { ...point, id: `vp-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}` }
+            ]
+        } : gf)
+    })),
+
+    addRequiredDocument: (doc) => {
+        set((state) => ({
+            requiredDocuments: [
+                ...state.requiredDocuments,
+                { ...doc, id: `rd${Date.now()}` }
+            ]
+        }));
+    },
+
+    updateRequiredDocument: (doc) => {
+        set((state) => ({
+            requiredDocuments: state.requiredDocuments.map(d => d.id === doc.id ? doc : d)
+        }));
+    },
+
+    deleteRequiredDocument: (id) => {
+        set((state) => ({
+            requiredDocuments: state.requiredDocuments.filter(d => d.id !== id)
+        }));
+    },
 }));
+
+// Utility: Ray-casting algorithm for point-in-polygon
+function isPointInPoly(point: { lat: number; lng: number }, vs: [number, number][]) {
+    const x = point.lat, y = point.lng;
+    let inside = false;
+    for (let i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+        const xi = vs[i][0], yi = vs[i][1];
+        const xj = vs[j][0], yj = vs[j][1];
+        const intersect = ((yi > y) !== (yj > y))
+            && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+        if (intersect) inside = !inside;
+    }
+    return inside;
+}

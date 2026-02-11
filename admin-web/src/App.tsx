@@ -1,39 +1,31 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
-import AppLayout from './components/layout/AppLayout';
 import { GoogleMapsProvider } from './components/maps/GoogleMapsProvider';
-import { Dashboard } from './pages/Dashboard';
-import { Financials } from './pages/Financials';
-import { Login } from './pages/Login';
-import { Promotions } from './pages/Promotions';
+import { AppLayout } from './components/shared/AppLayout';
+import { useAdminStore } from './stores/adminStore';
 import { useAuthStore } from './stores/authStore';
+import { Login } from './v1_reference/pages/Login'; // Keep login for now
 
-import { AccessRoles } from './pages/AccessRoles';
-import { AuditLogs } from './pages/AuditLogs';
-import { AutomatedSupport } from './pages/AutomatedSupport';
-import { DocumentManagement } from './pages/DocumentManagement';
-import { FleetManagement } from './pages/FleetManagement';
-import { Growth } from './pages/Growth';
-import { LiveNetwork } from './pages/LiveNetwork';
-import { Payouts } from './pages/Payouts';
-import { PerformanceInsight } from './pages/PerformanceInsight';
-import { PriceInsights } from './pages/PriceInsights';
-import { PriceSurge } from './pages/PriceSurge';
-import { ReviewRatings } from './pages/ReviewRatings';
-import { SafetyCompliance } from './pages/SafetyCompliance';
-import { Settings } from './pages/Settings';
-import { StrategyHub } from './pages/StrategyHub';
-import { SystemHealth } from './pages/SystemHealth';
-import { SystemRules } from './pages/SystemRules';
-import { UserCenter } from './pages/UserCenter';
-import { VehicleManagement } from './pages/VehicleManagement';
+// Feature Pages
+import { Geofencing } from './features/config/pages/Geofencing';
+import { DashboardOverview } from './features/dashboard/pages/DashboardOverview';
+import { DemandHeatmap } from './features/dashboard/pages/DemandHeatmap';
+import { FinancialEngine } from './features/finance/pages/FinancialEngine';
+import { FleetDrivers } from './features/fleet/pages/FleetDrivers';
+import { VerificationHub } from './features/fleet/pages/VerificationHub';
+import { LiveBidDetail } from './features/ops-central/pages/LiveBidDetail';
+import { LiveBids } from './features/ops-central/pages/LiveBids';
+import { LiveFleetMap } from './features/ops-central/pages/LiveFleetMap';
+import { ManualDispatch } from './features/ops-central/pages/ManualDispatch';
+import { MarketplaceHealth } from './features/ops-central/pages/MarketplaceHealth';
+import { SafetyDisputes } from './features/safety/pages/SafetyDisputes';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuthStore();
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
+      <div className="min-h-screen bg-background-dark flex items-center justify-center">
         <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
       </div>
     );
@@ -48,10 +40,18 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
 function App() {
   const { checkSession } = useAuthStore();
+  const { initializeSocket, initializeSupabase } = useAdminStore();
 
   useEffect(() => {
     checkSession();
-  }, [checkSession]);
+    initializeSocket();
+    const cleanup = initializeSupabase();
+    return () => {
+      if (cleanup && typeof cleanup === 'function') {
+        cleanup();
+      }
+    };
+  }, [checkSession, initializeSocket, initializeSupabase]);
 
   return (
     <BrowserRouter>
@@ -66,51 +66,28 @@ function App() {
               </ProtectedRoute>
             }
           >
-            <Route index element={<Dashboard />} />
+            <Route index element={<DashboardOverview />} />
+            <Route path="heatmap" element={<DemandHeatmap />} />
+            <Route path="fleet-map" element={<LiveFleetMap />} />
+            <Route path="dispatch" element={<ManualDispatch />} />
+            <Route path="bids" element={<LiveBids />} />
+            <Route path="bids/:id" element={<LiveBidDetail />} />
+            <Route path="riders" element={<MarketplaceHealth />} /> {/* Placeholder */}
+            <Route path="fleet" element={<FleetDrivers />} />
+            <Route path="verification" element={<VerificationHub />} />
+            <Route path="finance" element={<FinancialEngine />} />
+            <Route path="safety" element={<SafetyDisputes />} />
+            <Route path="geofencing" element={<Geofencing />} />
+            <Route path="cms" element={<Geofencing />} /> {/* Placeholder */}
+            <Route path="settings" element={<Geofencing />} /> {/* Placeholder */}
 
-            {/* Mission Control */}
-            <Route path="network" element={<LiveNetwork />} />
-            <Route path="tracking" element={<LiveNetwork />} />
-            <Route path="documents" element={<DocumentManagement />} />
-            <Route path="support" element={<AutomatedSupport />} />
-            <Route path="health" element={<SystemHealth />} />
-
-            {/* Strategy Hub */}
-            <Route path="strategy" element={<StrategyHub />} />
-            <Route path="surge" element={<PriceSurge />} />
-            <Route path="analytics" element={<PriceInsights />} />
-
-            {/* Fleet Intelligence */}
-            <Route path="drivers" element={<FleetManagement />} />
-            <Route path="vehicles" element={<VehicleManagement />} />
-            <Route path="performance" element={<PerformanceInsight />} />
-
-            {/* User Matrix */}
-            <Route path="passengers" element={<UserCenter />} />
-            <Route path="corporate" element={<UserCenter />} />
-            <Route path="reviews" element={<ReviewRatings />} />
-
-            {/* Protection */}
-            <Route path="safety" element={<SafetyCompliance />} />
-            <Route path="compliance" element={<SafetyCompliance />} />
-            <Route path="rules" element={<SystemRules />} />
-
-            {/* Fiscal & Growth */}
-            <Route path="financials" element={<Financials />} />
-            <Route path="payouts" element={<Payouts />} />
-            <Route path="promotions" element={<Promotions />} />
-            <Route path="growth" element={<Growth />} />
-
-            {/* Infrastructure */}
-            <Route path="roles" element={<AccessRoles />} />
-            <Route path="audit" element={<AuditLogs />} />
-            <Route path="settings" element={<Settings />} />
+            {/* Fallbacks */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         </Routes>
       </GoogleMapsProvider>
     </BrowserRouter>
   );
 }
-
 
 export default App;

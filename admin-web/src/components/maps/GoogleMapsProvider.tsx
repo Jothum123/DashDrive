@@ -1,22 +1,13 @@
-import { useJsApiLoader } from '@react-google-maps/api';
-import { createContext, useContext, type ReactNode } from 'react';
-
-const GoogleMapsContext = createContext<{ isLoaded: boolean }>({ isLoaded: false });
-
-export const useGoogleMaps = () => useContext(GoogleMapsContext);
-
-const LIBRARIES: ("places" | "drawing" | "geometry" | "visualization")[] = ["places", "geometry"];
+import { APIProvider } from '@vis.gl/react-google-maps';
+import { type ReactNode } from 'react';
 
 export function GoogleMapsProvider({ children }: { children: ReactNode }) {
-    const { isLoaded } = useJsApiLoader({
-        id: 'google-map-script',
-        googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "",
-        libraries: LIBRARIES,
-    });
+    const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "";
+    console.log('[GoogleMapsProvider] Initializing with key present:', !!apiKey);
 
     return (
-        <GoogleMapsContext.Provider value={{ isLoaded }}>
+        <APIProvider apiKey={apiKey} libraries={['places', 'geometry', 'drawing', 'marker']}>
             {children}
-        </GoogleMapsContext.Provider>
+        </APIProvider>
     );
 }
