@@ -1,0 +1,117 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --font-inter: 'Inter', system-ui, sans-serif;
+  --font-outfit: Outfit, sans-serif;
+  --font-manrope: 'Manrope', sans-serif;
+
+  --breakpoint-xsm: 425px;
+  --breakpoint-2xsm: 375px;
+  --breakpoint-3xl: 2000px;
+
+  --color-primary: #00ff90;
+  /* Brand Green */
+  --color-background-light: #f6f7f8;
+  --color-background-dark: #0a0a0a;
+  /* Zinc-950 base */
+  --color-panel-dark: #09090b;
+  --color-border-light-catcher: rgba(255, 255, 255, 0.05);
+  --color-border-dark: #18181b;
+
+  --color-secondary: #000000;
+  --color-zinc-950: #0a0a0a;
+
+  /* Template Theme Mapping - Green Scale */
+  --color-brand-50: #f0fdf4;
+  --color-brand-400: #4ade80;
+  --color-brand-500: #00ff90;
+  --color-brand-600: #16a34a;
+
+  --color-success-50: #f0fdf4;
+  --color-success-500: #22c55e;
+  --color-success-600: #16a34a;
+
+  --color-error-50: #fef2f2;
+  --color-error-500: #ef4444;
+  --color-error-600: #dc2626;
+
+  --color-warning-50: #fffbeb;
+  --color-warning-500: #f59e0b;
+  --color-warning-600: #d97706;
+
+  --font-display: var(--font-outfit);
+  --font-sans: var(--font-inter);
+}
+
+:root {
+  --primary: #00ff90;
+  --primary-foreground: #000000;
+  --background: #ffffff;
+  --foreground: #09090b;
+}
+
+.dark {
+  --primary: #00ff90;
+  --primary-foreground: #000000;
+  --background: #0a0a0a;
+  --foreground: #fafafa;
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 255, 144, 0.3);
+}
+
+/* Glassmorphism Utilities */
+@utility glass-effect {
+  background: rgba(9, 9, 11, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.glass-card-2026 {
+  @apply glass-effect rounded-2xl p-6 transition-all duration-300;
+}
+
+.glass-card-2026:hover {
+  border-color: rgba(0, 255, 144, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(0, 255, 144, 0.05);
+}
+
+.light-catcher {
+  position: relative;
+}
+
+.light-catcher::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent, rgba(255, 255, 255, 0.05));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}

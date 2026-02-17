@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-green: #00ff90;
+  --color-zinc-950: #09090b;
+}
+
+:root {
+  --brand-green: #00ff90;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #fafafa;
+  /* zinc-50 */
+  color: #09090b;
+  /* zinc-950 */
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@layer base {
+  body {
+    @apply bg-zinc-50 text-zinc-900;
+  }
+}
+
+.glass-morphism {
+  @apply bg-white/80 backdrop-blur-md border border-zinc-200;
+}
+
+.glow-accent {
+  box-shadow: 0 0 20px rgba(0, 255, 144, 0.1);
+}
+
+.active-nav-glow {
+  @apply relative;
+}
+
+.active-nav-glow::after {
+  content: '';
+  @apply absolute -left-2 top-1/2 -translate-y-1/2 w-1 h-8 bg-brand-green rounded-full;
+  box-shadow: 0 0 10px rgba(0, 255, 144, 0.5);
+}

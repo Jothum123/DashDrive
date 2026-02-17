@@ -1,0 +1,9 @@
+{
+  "name": "DriveGo - Fair Price Ride Sharing",
+  "description": "A high-fidelity mobility platform inspired by inDrive and Yandex, featuring real-time booking, fare negotiation, and AI-powered trip planning.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ]
+}

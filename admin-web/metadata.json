@@ -1,8 +1,0 @@
-{
-  "name": "FleetPro Admin Suite",
-  "description": "A comprehensive multi-module admin platform for rideshare operations, featuring driver management, dynamic surge pricing, bid automation, and real-time support chat.",
-  "requestFramePermissions": [
-    "camera",
-    "microphone"
-  ]
-}
