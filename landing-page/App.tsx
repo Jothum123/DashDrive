@@ -13,23 +13,24 @@ import DeliveryPage from './components/DeliveryPage';
 import PaymentPage from './components/PaymentPage';
 import PartnersPage from './components/PartnersPage';
 import DriveGoPlus from './components/DriveGoPlus';
-import Assistant from './components/Assistant';
+import AboutUsPage from './components/AboutUsPage';
+
 
 const App: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState<'home' | 'mobility' | 'order' | 'delivery' | 'payment' | 'partners' | 'plus'>('home');
+  const [currentPage, setCurrentPage] = useState<'home' | 'mobility' | 'order' | 'delivery' | 'payment' | 'partners' | 'plus' | 'about'>('home');
 
   const navigateToHome = () => {
     setCurrentPage('home');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleNavigation = (page: 'home' | 'mobility' | 'order' | 'delivery' | 'payment' | 'partners' | 'plus') => {
+  const handleNavigation = (page: 'home' | 'mobility' | 'order' | 'delivery' | 'payment' | 'partners' | 'plus' | 'about') => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
-    <div className="min-h-screen bg-white selection:bg-[#00D665] selection:text-white antialiased">
+    <div className="min-h-screen bg-[#050505] selection:bg-[#00D665] selection:text-white antialiased">
       <Navbar
         onLogoClick={navigateToHome}
         onNavigate={handleNavigation}
@@ -52,7 +53,7 @@ const App: React.FC = () => {
           </div>
           <NewsroomSection />
 
-          <section className="py-32 md:py-48 bg-black text-center text-white overflow-hidden relative">
+          <section className="py-32 md:py-48 bg-black text-center text-white overflow-hidden relative rounded-t-[48px] md:rounded-t-[100px] -mt-12 md:-mt-24 z-20">
             <div className="container mx-auto px-6 max-w-7xl relative z-10">
               <h2 className="text-8xl md:text-[12rem] font-black tracking-tighter mb-20 leading-[0.8]">
                 Join the <br /><span className="text-[#00D665]">standard.</span>
@@ -74,9 +75,10 @@ const App: React.FC = () => {
       {currentPage === 'payment' && <PaymentPage onBack={navigateToHome} />}
       {currentPage === 'partners' && <PartnersPage onBack={navigateToHome} />}
       {currentPage === 'plus' && <DriveGoPlus onBack={navigateToHome} />}
+      {currentPage === 'about' && <AboutUsPage onBack={navigateToHome} />}
 
       <Footer />
-      <Assistant />
+
 
       <style>{`
         body { overscroll-behavior-y: none; }

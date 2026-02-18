@@ -147,34 +147,158 @@ const OrderPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   );
 
   return (
-    <div className="bg-white min-h-screen pt-24 animate-reveal">
-      {activeTab === 'food' ? <FoodHub /> : <DineOutHub />}
+    <div className="bg-white min-h-screen pt-24 animate-reveal overflow-hidden rounded-t-[48px] md:rounded-t-[100px] -mt-12 md:-mt-24 relative z-20">
+      {activeTab === 'food' ? (
+        <div className="animate-reveal">
+          <section className="relative mx-6 md:mx-12 lg:mx-20 mt-8 mb-32 rounded-[64px] overflow-hidden min-h-[700px] flex items-center bg-[#00D665] group">
+            {/* Cinematic Background Layer */}
+            <div className="absolute inset-0 z-0 opacity-20 group-hover:opacity-40 transition-opacity duration-[1.5s]">
+              <img src="https://images.unsplash.com/photo-1542831371-29b0f74f9713?auto=format&fit=crop&q=80&w=1600" className="w-full h-full object-cover grayscale group-hover:grayscale-0 scale-105 group-hover:scale-100 transition-all duration-[2s] ease-out" alt="Food" />
+            </div>
+
+            <div className="container mx-auto px-12 md:px-24 relative z-10">
+              <div className="max-w-3xl space-y-12">
+                <div className="inline-flex items-center gap-4 px-5 py-2 rounded-full bg-black/5 border border-black/10 backdrop-blur-md">
+                  <Utensils size={14} className="text-black/60" />
+                  <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-black/60">Culinary Grid v4.1</span>
+                </div>
+
+                <h1 className="text-zinc-900 text-7xl md:text-[9vw] font-light tracking-tight leading-[0.8] mb-12">
+                  Everything you crave, <br /><span className="text-white font-black tracking-tighter italic">instantly.</span>
+                </h1>
+
+                <button className="group relative bg-zinc-900 text-[#00D665] px-16 py-8 rounded-[32px] font-black text-xl overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] hover:scale-105 hover:shadow-[0_40px_80px_rgba(0,0,0,0.3)] active:scale-95 flex items-center gap-4">
+                  <span className="relative z-10 uppercase tracking-tight">View Full Menus</span>
+                  <ArrowRight size={24} className="relative z-10 group-hover:translate-x-2 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <section className="py-32 max-w-[1700px] mx-auto px-6 md:px-12 text-center">
+            <div className="mb-20 space-y-8">
+              <div className="flex items-center justify-center gap-5">
+                <span className="w-12 h-[2px] bg-[#00D665]"></span>
+                <span className="text-[11px] font-black uppercase tracking-[0.4em] text-black/20">The Catalog</span>
+              </div>
+              <h2 className="text-7xl font-black tracking-tighter">Order Food.</h2>
+            </div>
+            <HubSwitcher />
+            <p className="text-2xl text-zinc-500 font-medium leading-relaxed max-w-2xl mx-auto">
+              Choose from thousands of curated local kitchens and global brands, delivered with technical precision.
+            </p>
+          </section>
+
+          <section className="py-32 mx-6 md:mx-12 lg:mx-20">
+            <div className="bg-[#EBFFF5] border border-[#00D665]/10 rounded-[80px] p-16 md:p-32 grid lg:grid-cols-2 gap-24 items-center overflow-hidden relative group">
+              <div className="space-y-12 relative z-10">
+                <h2 className="text-6xl md:text-8xl font-black tracking-tighter leading-[0.85]">
+                  Free delivery <br />
+                  <span className="text-[#00D665] italic">with Elite.</span>
+                </h2>
+                <p className="text-2xl text-zinc-600 font-medium max-w-lg leading-relaxed">
+                  Join Elite Access for a premium standard. Pay zero delivery fees and unlock exclusive merchant perks.
+                </p>
+                <button className="bg-black text-white px-16 py-8 rounded-[32px] font-black text-xl hover:bg-[#00D665] hover:text-black transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] shadow-2xl">
+                  GO ELITE NOW
+                </button>
+              </div>
+              <div className="relative">
+                <img src="https://images.unsplash.com/photo-1542831371-29b0f74f9713?auto=format&fit=crop&q=80&w=800" className="w-full rounded-[64px] shadow-[0_64px_128px_-32px_rgba(0,0,0,0.2)] grayscale group-hover:grayscale-0 transition-all duration-1000" alt="Elite Access" />
+                <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-[#00D665] rounded-full blur-[80px] opacity-40 group-hover:opacity-60 transition-opacity"></div>
+              </div>
+            </div>
+          </section>
+        </div>
+      ) : (
+        <div className="animate-reveal">
+          <section className="relative mx-6 md:mx-12 lg:mx-20 mt-8 mb-32 rounded-[64px] overflow-hidden min-h-[700px] flex items-center bg-[#EBFFF5] group">
+            {/* Grain Overlay */}
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none z-10 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
+
+            <div className="container mx-auto px-12 md:px-24 relative z-10 grid lg:grid-cols-2 gap-24 items-center">
+              <div className="space-y-12">
+                <div className="inline-flex items-center gap-4 px-5 py-2 rounded-full bg-[#00D665]/5 border border-[#00D665]/10 backdrop-blur-md">
+                  <Smile size={14} className="text-[#00D665]" />
+                  <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#00D665]">Curation v4.0</span>
+                </div>
+
+                <h1 className="text-zinc-900 text-7xl md:text-[9vw] font-light tracking-tight leading-[0.8] mb-12">
+                  Dine better, <br /><span className="text-[#00D665] font-black tracking-tighter italic">pay less.</span>
+                </h1>
+
+                <p className="text-2xl text-zinc-500 font-medium max-w-xl leading-relaxed">Book tables at 1,000+ elite spots and save up to 50% on your total bill automatically.</p>
+
+                <button className="group relative bg-[#00D665] text-black px-16 py-8 rounded-[32px] font-black text-xl overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] hover:scale-105 hover:shadow-[0_40px_80px_rgba(0,214,101,0.3)] flex items-center gap-4">
+                  <span className="relative z-10 uppercase tracking-tight">Find a Table</span>
+                  <ArrowRight size={24} className="relative z-10 group-hover:translate-x-2 transition-transform duration-500" />
+                </button>
+              </div>
+              <div className="relative aspect-[16/10] rounded-[64px] overflow-hidden shadow-[0_64px_128px_-32px_rgba(0,0,0,0.15)] group-hover:shadow-[0_80px_160px_-40px_rgba(0,0,0,0.2)] transition-shadow duration-[1.5s]">
+                <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&q=80&w=800" className="w-full h-full object-cover grayscale group-hover:grayscale-0 scale-105 group-hover:scale-100 transition-all duration-[2s]" alt="Dining" />
+              </div>
+            </div>
+          </section>
+
+          <div className="max-w-[1700px] mx-auto px-6 md:px-12 text-center mb-40">
+            <h2 className="text-7xl font-black tracking-tighter mb-12">Eat Out.</h2>
+            <HubSwitcher />
+            <p className="text-2xl text-zinc-500 font-medium max-w-3xl mx-auto leading-relaxed">Discover local gems and unlock exclusive member-only agreements at the city's finest architectural kitchens.</p>
+          </div>
+        </div>
+      )}
 
       <MerchantGrid />
 
-      <section className="py-32 bg-[#EBFFF5] rounded-[80px] mx-6 md:mx-12 lg:mx-20 mb-32">
+      <section className="py-40 bg-[#FBFBFB] border-y border-black/[0.03] mx-6 md:mx-12 lg:mx-20 mb-40 rounded-[80px] overflow-hidden relative">
+        {/* Handcrafted Rim */}
+        <div className="absolute inset-0 border border-black/[0.02] rounded-[inherit] pointer-events-none z-20" />
+
         <div className="max-w-[1200px] mx-auto px-12">
-          <h2 className="text-7xl font-black tracking-tighter text-center mb-24">FAQs</h2>
-          <div className="space-y-6">
+          <div className="mb-24 space-y-10 group text-center">
+            <div className="flex items-center justify-center gap-5">
+              <span className="w-12 h-[2px] bg-[#00D665]"></span>
+              <span className="text-[12px] font-bold uppercase tracking-[0.4em] text-black/20">Knowledge Base</span>
+            </div>
+            <h2 className="text-7xl md:text-9xl font-black tracking-tighter leading-[0.8] text-black">
+              System <br />
+              <span className="text-[#00D665] italic">Protocol.</span>
+            </h2>
+          </div>
+
+          <div className="space-y-8">
             {[
-              { q: "Can I schedule orders?", a: "Yes, you can pre-order up to 24 hours in advance." },
-              { q: "How do I use Elite benefits?", a: "Elite benefits are applied automatically at checkout once you join." },
-              { q: "My order is wrong, what now?", a: "Contact support via the 'Help' button for an instant fix or refund." }
+              { q: "Can I schedule orders?", a: "Yes, you can pre-order up to 24 hours in advance. Our predictive grid ensures arrival within a ±5 min window." },
+              { q: "How do I use Elite benefits?", a: "Elite benefits are applied automatically at checkout once your human-verified subscription is active." },
+              { q: "My order is wrong, what now?", a: "Contact human support via the 'Refine' button for an instant manual correction or refund." }
             ].map((item, idx) => (
-              <div key={idx} className="bg-white rounded-[32px] p-10 cursor-pointer hover:border-[#00D665] border border-transparent transition-all" onClick={() => setOpenFaq(openFaq === idx ? null : idx)}>
-                <h4 className="text-3xl font-black tracking-tight">{item.q}</h4>
-                {openFaq === idx && <p className="mt-8 text-xl text-zinc-500 font-medium">{item.a}</p>}
+              <div key={idx} className="group bg-white rounded-[48px] p-12 cursor-pointer border border-black/[0.03] hover:border-[#00D665]/40 transition-all duration-[0.8s] ease-[cubic-bezier(0.23,1,0.32,1)]" onClick={() => setOpenFaq(openFaq === idx ? null : idx)}>
+                <div className="flex justify-between items-center">
+                  <h4 className="text-3xl font-black tracking-tight group-hover:text-black transition-colors">{item.q}</h4>
+                  <div className={`w-10 h-10 rounded-full border border-black/5 flex items-center justify-center transition-all duration-500 ${openFaq === idx ? 'bg-[#00D665] border-transparent text-black rotate-180' : 'group-hover:border-black/20'}`}>
+                    <ChevronDown size={20} />
+                  </div>
+                </div>
+                {openFaq === idx && <p className="mt-10 text-xl text-zinc-400 font-medium leading-relaxed animate-reveal">{item.a}</p>}
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-40 bg-zinc-950 text-white text-center rounded-[80px] mx-6 md:mx-12 lg:mx-20 mb-32">
-        <h2 className="text-8xl md:text-[10rem] font-black tracking-tighter mb-16 leading-[0.85]">
-          Eat local <br /> <span className="text-[#00D665]">with DriveGo.</span>
+      <section className="py-48 bg-zinc-950 text-white text-center rounded-[80px] mx-6 md:mx-12 lg:mx-20 mb-32 relative overflow-hidden group">
+        <div className="absolute inset-0 z-0 opacity-10 group-hover:opacity-20 transition-opacity">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-[#00D665] blur-[200px] rounded-full"></div>
+        </div>
+
+        <h2 className="relative z-10 text-8xl md:text-[11rem] font-black tracking-tighter mb-20 leading-[0.8] italic uppercase">
+          Eat local <br /> <span className="text-[#00D665] not-italic">DashDrive.</span>
         </h2>
-        <button onClick={onBack} className="bg-white text-black px-16 py-8 rounded-full font-black text-xl hover:bg-[#00D665]">Return Home</button>
+
+        <button onClick={onBack} className="relative z-10 bg-white text-black px-20 py-10 rounded-full font-black text-2xl hover:scale-105 hover:bg-[#00D665] transition-all duration-500 ease-out shadow-2xl">
+          RETURN TO GRID
+        </button>
       </section>
     </div>
   );

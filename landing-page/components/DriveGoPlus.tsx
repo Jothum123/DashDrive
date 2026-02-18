@@ -1,17 +1,17 @@
 
 import React, { useEffect, useState } from 'react';
-import { 
-  Crown, 
-  Zap, 
-  Car, 
-  Utensils, 
-  ShoppingBag, 
-  CheckCircle2, 
-  ArrowRight, 
-  ShieldCheck, 
-  Clock, 
-  Globe, 
-  Plus, 
+import {
+  Crown,
+  Zap,
+  Car,
+  Utensils,
+  ShoppingBag,
+  CheckCircle2,
+  ArrowRight,
+  ShieldCheck,
+  Clock,
+  Globe,
+  Plus,
   ChevronDown,
   Sparkles,
   Bike,
@@ -55,92 +55,107 @@ const DriveGoPlus: React.FC<DriveGoPlusProps> = ({ onBack }) => {
   ];
 
   return (
-    <div className="bg-white min-h-screen pt-32 animate-reveal">
+    <div className="bg-[#FBFBFB] min-h-screen pt-32 animate-reveal overflow-hidden rounded-t-[48px] md:rounded-t-[100px] -mt-12 md:-mt-24 relative z-20">
       {/* Hero: The Elite Upgrade */}
-      <section className="max-w-[1500px] mx-auto px-6 mb-24">
-        <div className="relative rounded-[72px] overflow-hidden min-h-[700px] flex items-center bg-[#003B21]">
-          <div className="absolute inset-0 z-0">
-            <img 
-              src="https://images.unsplash.com/photo-1512428559083-a400a3b8445e?auto=format&fit=crop&q=80&w=2400" 
-              className="w-full h-full object-cover opacity-40 grayscale group-hover:grayscale-0 transition-all duration-[2s]" 
-              alt="Elite Lifestyle" 
+      <section className="max-w-[1700px] mx-auto px-6 md:px-12 mb-40">
+        <div className="relative rounded-[80px] overflow-hidden min-h-[850px] flex items-center bg-[#050505] group">
+          {/* Grain & Depth Layers */}
+          <div className="absolute inset-0 opacity-[0.03] pointer-events-none z-10 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
+
+          <div className="absolute inset-0 z-0 opacity-40 group-hover:opacity-60 transition-opacity duration-[2s]">
+            <img
+              src="https://images.unsplash.com/photo-1512428559083-a400a3b8445e?auto=format&fit=crop&q=80&w=2400"
+              className="w-full h-full object-cover grayscale scale-105 group-hover:scale-100 transition-all duration-[3s] ease-out"
+              alt="Elite Lifestyle"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#003B21] via-[#003B21]/60 to-transparent"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-black via-black/60 to-transparent"></div>
           </div>
 
-          <div className="container mx-auto px-12 md:px-24 relative z-10">
-            <div className="max-w-3xl space-y-10">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-[#00D665] rounded-2xl flex items-center justify-center text-black shadow-lg shadow-emerald-500/20">
-                  <Crown size={24} fill="currentColor" />
+          <div className="container mx-auto px-12 md:px-24 relative z-20">
+            <div className="max-w-4xl space-y-16">
+              <div className="flex items-center gap-6">
+                <div className="w-16 h-16 bg-[#00D665] rounded-3xl flex items-center justify-center text-black shadow-[0_20px_40px_rgba(0,214,101,0.3)]">
+                  <Crown size={32} fill="currentColor" />
                 </div>
-                <span className="text-[11px] font-black uppercase tracking-[0.4em] text-white/60">The Membership Program</span>
+                <div className="space-y-1">
+                  <span className="text-[12px] font-black uppercase tracking-[0.5em] text-white">Platinum Membership</span>
+                  <div className="h-[2px] w-full bg-[#00D665]/40" />
+                </div>
               </div>
-              
-              <h1 className="text-white text-6xl md:text-[9vw] font-black tracking-tighter leading-[0.8]">
-                Upgrade your <br /> <span className="text-[#00D665]">standard.</span>
+
+              <h1 className="text-white text-7xl md:text-[10vw] font-light tracking-tight leading-[0.8]">
+                Upgrade your <br /> <span className="text-[#00D665] font-black tracking-tighter italic uppercase">standard.</span>
               </h1>
-              
-              <p className="text-white/60 text-2xl font-medium max-w-xl">
-                Unlock exclusive savings across mobility, dining, and shopping. Designed for those who move through the city with purpose.
+
+              <p className="text-zinc-400 text-2xl md:text-3xl font-medium max-w-2xl leading-relaxed">
+                Unlock peer-to-peer verified savings across mobility and commerce. Engineered for those who move with technical purpose.
               </p>
-              
-              <div className="flex flex-wrap gap-6 items-center">
-                <button className="bg-[#00D665] text-black px-16 py-8 rounded-[32px] font-black text-xl hover:scale-105 transition-all shadow-2xl shadow-emerald-500/10">
-                  Join for $19/mo
+
+              <div className="flex flex-wrap gap-10 items-center">
+                <button className="group relative bg-[#00D665] text-black px-20 py-10 rounded-full font-black text-2xl overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] hover:scale-105 hover:shadow-[0_40px_80px_rgba(0,214,101,0.3)] active:scale-95">
+                  <span className="relative z-10">JOIN FOR $19 / MO</span>
+                  <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
                 </button>
-                <div className="flex flex-col">
-                  <span className="text-white font-black text-lg">Save $100+ monthly</span>
-                  <span className="text-white/40 text-xs font-bold uppercase tracking-widest">Average member return</span>
+                <div className="flex flex-col border-l border-white/10 pl-10 space-y-2">
+                  <span className="text-white font-black text-2xl tracking-tighter">Save $100+ <span className="text-[#00D665] italic">Direct.</span></span>
+                  <span className="text-white/20 text-[10px] font-black uppercase tracking-[0.3em]">Protocol return rate</span>
                 </div>
               </div>
             </div>
           </div>
-          
-          {/* Floating Mobile UI Preview */}
-          <div className="hidden xl:block absolute right-24 bottom-[-40px] w-[340px] h-[680px] bg-white rounded-[56px] shadow-[0_64px_128px_-24px_rgba(0,0,0,0.5)] border-[12px] border-zinc-900 p-8 overflow-hidden">
-             <div className="space-y-6">
-                <div className="flex justify-between items-center">
-                   <div className="w-12 h-1 bg-zinc-100 rounded-full"></div>
-                   <div className="w-12 h-1 bg-zinc-100 rounded-full"></div>
+
+          {/* High-End Mobile Preview */}
+          <div className="hidden xl:block absolute right-32 bottom-[-100px] w-[380px] h-[760px] bg-[#0A0A0A] rounded-[72px] shadow-[0_128px_256px_-64px_rgba(0,0,0,1)] border-[1px] border-white/10 p-4 transition-transform duration-[2s] group-hover:-translate-y-10 group-hover:rotate-1">
+            <div className="w-full h-full bg-[#050505] rounded-[60px] border border-white/5 overflow-hidden p-10 space-y-8">
+              <div className="flex justify-between items-center opacity-40">
+                <div className="w-12 h-1 bg-white rounded-full"></div>
+                <div className="w-4 h-4 rounded-full border border-white/20"></div>
+              </div>
+              <div className="bg-[#00D665]/10 border border-[#00D665]/20 p-10 rounded-[48px] space-y-6 group/preview relative overflow-hidden">
+                <div className="absolute inset-0 bg-[#00D665]/5 blur-3xl rounded-full" />
+                <div className="relative z-10 w-12 h-12 bg-[#00D665] rounded-2xl flex items-center justify-center text-black shadow-2xl">
+                  <Crown size={24} fill="currentColor" />
                 </div>
-                <div className="bg-[#EBFFF5] p-8 rounded-[40px] space-y-4">
-                   <div className="w-10 h-10 bg-[#00D665] rounded-xl flex items-center justify-center text-black">
-                      <Crown size={20} fill="currentColor" />
-                   </div>
-                   <h4 className="font-black text-2xl tracking-tighter">Elite Member</h4>
-                   <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Savings this month: $124.50</p>
-                </div>
-                <div className="space-y-3">
-                   {[1, 2, 3].map(i => (
-                     <div key={i} className="flex items-center gap-3 p-4 bg-zinc-50 rounded-2xl border border-zinc-100">
-                        <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center text-zinc-300"><Zap size={14} /></div>
-                        <div className="h-2 w-24 bg-zinc-200 rounded-full"></div>
-                     </div>
-                   ))}
-                </div>
-             </div>
+                <h4 className="relative z-10 font-black text-3xl text-white tracking-tighter leading-none">ELITE <br /> MEMBER</h4>
+                <div className="relative z-10 h-[1px] w-full bg-white/10" />
+                <p className="relative z-10 text-[10px] font-black text-[#00D665] uppercase tracking-widest">Savings: $1,245.00</p>
+              </div>
+              <div className="space-y-4">
+                {[1, 2, 3].map(i => (
+                  <div key={i} className="flex items-center gap-4 p-5 bg-white/[0.02] rounded-3xl border border-white/5">
+                    <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-[#00D665]"><Sparkles size={16} /></div>
+                    <div className="h-2 w-32 bg-white/10 rounded-full"></div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Benefits Breakdown */}
-      <section className="max-w-[1500px] mx-auto px-6 mb-40">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <section className="max-w-[1700px] mx-auto px-6 md:px-12 mb-48">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           {coreBenefits.map((benefit, i) => (
-            <div key={i} className={`group relative p-12 rounded-[56px] min-h-[600px] flex flex-col justify-end overflow-hidden ${benefit.color} ${benefit.textColor}`}>
-              <div className="absolute inset-0 z-0 pointer-events-none">
-                 <img src={benefit.image} className="w-full h-full object-cover opacity-20 group-hover:scale-110 transition-transform duration-[2s]" alt={benefit.title} />
-                 <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
+            <div key={i} className={`group relative p-14 rounded-[64px] min-h-[650px] flex flex-col justify-end overflow-hidden transition-all duration-[0.8s] ease-[cubic-bezier(0.23,1,0.32,1)] hover:-translate-y-4 hover:shadow-[0_64px_128px_-32px_rgba(0,0,0,0.15)] ${benefit.color} ${benefit.textColor}`}>
+              <div className="absolute inset-0 border border-black/[0.02] group-hover:border-[#00D665]/20 rounded-[inherit] pointer-events-none z-20 transition-colors duration-700" />
+
+              <div className="absolute inset-0 z-0 pointer-events-none opacity-20 transition-opacity duration-700 group-hover:opacity-40">
+                <img src={benefit.image} className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-transform duration-[3s] ease-out" alt={benefit.title} />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
               </div>
-              <div className="relative z-10 space-y-6">
-                <h3 className="text-4xl font-black tracking-tighter leading-none">{benefit.title}</h3>
-                <div className="space-y-2">
-                  <p className="font-black text-sm uppercase tracking-widest opacity-60">{benefit.subtitle}</p>
-                  <p className="text-lg font-medium opacity-80 leading-relaxed">{benefit.desc}</p>
+
+              <div className="relative z-10 space-y-10">
+                <div className="px-4 py-1.5 bg-black/5 rounded-md w-fit border border-black/5 backdrop-blur-md">
+                  <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Elite v4.0.{i + 1}</span>
                 </div>
-                <button className={`w-14 h-14 rounded-full flex items-center justify-center border ${benefit.textColor === 'text-white' ? 'border-white/20 hover:bg-white hover:text-black' : 'border-black/10 hover:bg-black hover:text-white'} transition-all`}>
-                  <ArrowRight size={24} />
+                <h3 className="text-5xl font-black tracking-tighter leading-[0.9]">{benefit.title}</h3>
+                <div className="space-y-4">
+                  <p className="font-black text-sm uppercase tracking-[0.3em] opacity-40">{benefit.subtitle}</p>
+                  <p className="text-xl font-medium opacity-80 leading-relaxed max-w-[300px]">{benefit.desc}</p>
+                </div>
+                <button className={`w-20 h-20 rounded-full flex items-center justify-center border ${benefit.textColor === 'text-white' ? 'border-white/20 hover:bg-white hover:text-black' : 'border-black/10 hover:bg-black hover:text-white'} transition-all duration-500 group-hover:scale-110`}>
+                  <ArrowRight size={32} />
                 </button>
               </div>
             </div>
@@ -149,71 +164,108 @@ const DriveGoPlus: React.FC<DriveGoPlusProps> = ({ onBack }) => {
       </section>
 
       {/* The "Plus" Perks Grid */}
-      <section className="py-32 bg-zinc-50 rounded-[80px] mx-6 md:mx-12 mb-40">
-         <div className="max-w-[1200px] mx-auto px-6">
-            <h2 className="text-6xl font-black tracking-tighter text-center mb-24">Even more to <span className="text-[#00D665]">Elite.</span></h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {[
-                { icon: <Bike className="text-[#00D665]" />, title: "30% off Bike", desc: "Infinite city cycles." },
-                { icon: <Globe className="text-[#00D665]" />, title: "Better Rates", desc: "Elite Remittance fees." },
-                { icon: <Zap className="text-[#00D665]" />, title: "Home Pro", desc: "10% off Cleaning." },
-                { icon: <ShieldCheck className="text-[#00D665]" />, title: "Red Line", desc: "30s support response." },
-              ].map((perk, i) => (
-                <div key={i} className="bg-white p-10 rounded-[40px] text-center space-y-4 hover:shadow-2xl hover:-translate-y-2 transition-all group">
-                   <div className="w-16 h-16 bg-zinc-50 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-[#EBFFF5] transition-colors">{perk.icon}</div>
-                   <h4 className="text-2xl font-black tracking-tight">{perk.title}</h4>
-                   <p className="text-zinc-400 font-bold text-sm">{perk.desc}</p>
-                </div>
-              ))}
+      <section className="py-40 bg-zinc-950 rounded-[100px] mx-6 md:mx-12 mb-48 relative overflow-hidden group">
+        <div className="absolute inset-0 opacity-[0.05] pointer-events-none z-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
+        <div className="container mx-auto px-12 max-w-[1500px] relative z-10">
+          <div className="flex flex-col md:flex-row justify-between items-end gap-16 mb-32">
+            <div className="space-y-8">
+              <div className="flex items-center gap-5">
+                <span className="w-12 h-[2px] bg-[#00D665]"></span>
+                <span className="text-[12px] font-bold uppercase tracking-[0.4em] text-[#00D665]">The Ecosystem</span>
+              </div>
+              <h2 className="text-white text-6xl md:text-8xl font-black tracking-tighter leading-[0.95]">More to <br /><span className="text-[#00D665] italic uppercase tracking-tighter">Elite.</span></h2>
             </div>
-         </div>
+            <p className="text-white/20 text-2xl font-medium max-w-md leading-relaxed mb-4">A unified protocol of savings spanning across every technical layer of our city grid.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+            {[
+              { icon: <Bike size={32} />, title: "30% off Mobility", desc: "Infinite city cycles verified." },
+              { icon: <Globe size={32} />, title: "Zero Bridge", desc: "Eliminate remittance fees." },
+              { icon: <Zap size={32} />, title: "Home Grid", desc: "10% off human cleaning." },
+              { icon: <ShieldCheck size={32} />, title: "Red Protocol", desc: "Priority 30s response." },
+            ].map((perk, i) => (
+              <div key={i} className="bg-white/[0.03] border border-white/5 p-12 rounded-[56px] text-left space-y-8 hover:bg-white/[0.08] hover:border-[#00D665]/40 transition-all duration-[0.8s] ease-[cubic-bezier(0.23,1,0.32,1)] group/perk">
+                <div className="w-20 h-20 bg-white/5 rounded-[32px] flex items-center justify-center text-[#00D665] border border-white/5 group-hover/perk:bg-[#00D665] group-hover/perk:text-black transition-all duration-700">
+                  {perk.icon}
+                </div>
+                <div className="space-y-3">
+                  <h4 className="text-3xl font-black text-white tracking-tighter leading-none">{perk.title}</h4>
+                  <p className="text-white/20 font-medium text-lg group-hover/perk:text-white/40 transition-colors">{perk.desc}</p>
+                </div>
+                <div className="h-[1px] w-8 bg-white/10 group-hover/perk:w-full transition-all duration-700" />
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* How to Join */}
-      <section className="max-w-[1400px] mx-auto px-6 mb-40">
-        <div className="text-center mb-24 space-y-4">
-           <h2 className="text-7xl font-black tracking-tighter italic">Three steps to Elite.</h2>
-           <p className="text-xl text-zinc-400 font-medium">Instant activation, zero commitments.</p>
+      <section className="max-w-[1700px] mx-auto px-6 md:px-12 mb-48">
+        <div className="mb-32 space-y-10 group text-center">
+          <div className="flex items-center justify-center gap-5">
+            <span className="w-12 h-[2px] bg-[#00D665] origin-right group-hover:scale-x-150 transition-transform duration-700"></span>
+            <span className="text-[12px] font-bold uppercase tracking-[0.4em] text-black/20">The Onboarding</span>
+          </div>
+          <h2 className="text-7xl md:text-9xl font-black tracking-tighter leading-[0.8] text-black italic">
+            Three steps <br />
+            <span className="text-[#00D665] not-italic">to Elite.</span>
+          </h2>
         </div>
+
         <div className="grid md:grid-cols-3 gap-12">
           {[
-            { step: "01", title: "Tap Plus", desc: "Select the 'Plus' icon in your DriveGo dashboard." },
-            { step: "02", title: "Confirm", desc: "One-tap verification with your linked payment method." },
-            { step: "03", title: "Go Elite", desc: "Immediate access to all savings and priority perks." },
+            { step: "01", title: "Select Elite", desc: "Enter the 'Titan' portal in your primary DashDrive terminal." },
+            { step: "02", title: "Authorize", desc: "Single-handshake verification with your secure wallet." },
+            { step: "03", title: "Access", desc: "Immediate execution of all savings and priority perks." },
           ].map((s, i) => (
-            <div key={i} className="relative p-12 bg-white rounded-[48px] border border-zinc-100 shadow-sm overflow-hidden group">
-               <span className="absolute top-0 right-0 text-[10rem] font-black text-zinc-50 -translate-y-1/4 translate-x-1/4 group-hover:text-[#EBFFF5] transition-colors duration-700">{s.step}</span>
-               <div className="relative z-10 space-y-6">
-                  <div className="w-12 h-12 bg-black text-white rounded-xl flex items-center justify-center font-black">{s.step}</div>
-                  <h3 className="text-4xl font-black tracking-tighter">{s.title}</h3>
-                  <p className="text-xl text-zinc-500 font-medium leading-relaxed">{s.desc}</p>
-               </div>
+            <div key={i} className="relative p-14 bg-white rounded-[64px] border border-black/[0.03] shadow-sm overflow-hidden group hover:border-[#00D665]/40 transition-all duration-700">
+              <span className="absolute top-0 right-[-20%] text-[15rem] font-black text-black/[0.02] -translate-y-[20%] group-hover:text-[#00D665]/5 transition-colors duration-1000">{s.step}</span>
+              <div className="relative z-10 space-y-10">
+                <div className="w-16 h-16 bg-black text-[#00D665] rounded-3xl flex items-center justify-center font-black text-3xl shadow-2xl group-hover:scale-110 transition-transform">{s.step}</div>
+                <div className="space-y-4">
+                  <h3 className="text-4xl font-black tracking-tighter leading-none">{s.title}</h3>
+                  <p className="text-xl text-zinc-400 font-medium leading-relaxed group-hover:text-black/60 transition-colors">{s.desc}</p>
+                </div>
+              </div>
             </div>
           ))}
         </div>
       </section>
 
       {/* FAQs Section */}
-      <section className="py-32 bg-[#EBFFF5] rounded-[80px] mx-6 md:mx-12 mb-32">
-        <div className="max-w-[1000px] mx-auto px-6">
-          <h2 className="text-6xl font-black tracking-tighter text-center mb-20">Elite Questions.</h2>
-          <div className="space-y-4">
+      <section className="py-40 bg-[#FBFBFB] border-y border-black/[0.03] mx-6 md:mx-12 mb-48 rounded-[100px] overflow-hidden relative">
+        <div className="max-w-[1200px] mx-auto px-12">
+          <div className="mb-24 space-y-10 group text-center">
+            <div className="flex items-center justify-center gap-5">
+              <span className="w-12 h-[2px] bg-[#00D665]"></span>
+              <span className="text-[12px] font-bold uppercase tracking-[0.4em] text-black/20">System Protocol</span>
+            </div>
+            <h2 className="text-7xl md:text-9xl font-black tracking-tighter leading-[0.8] text-black">
+              Titan <br />
+              <span className="text-[#00D665] italic">Questions.</span>
+            </h2>
+          </div>
+
+          <div className="space-y-6 max-w-4xl mx-auto">
             {[
-              { q: "What is DriveGo Plus?", a: "DriveGo Plus is our premium membership that consolidates savings across our entire ecosystem—offering free delivery, ride rebates, and dining perks for one flat monthly fee." },
-              { q: "Can I cancel anytime?", a: "Yes. We offer total flexibility. Cancel with one tap in the app and keep your benefits until the end of your billing cycle." },
-              { q: "Do the ride rebates expire?", a: "Plus credits stay in your DriveGo Wallet for 12 months, ready for use on any service." }
+              { q: "What is DashDrive Plus?", a: "DashDrive Plus is our elite membership that consolidates all technical savings across our mesh—offering zero-fee delivery, ride rebates, and exclusive dining protocols for one flat monthly value." },
+              { q: "Can I cancel anytime?", a: "Affirmative. We offer total autonomy. Cancel with one handshake in the app and retain permissions until the end of your protocol cycle." },
+              { q: "Do the ride rebates expire?", a: "Elite credits remain in the Dash-Vault for 12 months, ready for immediate execution on any service layer." }
             ].map((item, idx) => (
-              <div key={idx} className="bg-white rounded-[32px] overflow-hidden transition-all shadow-sm">
-                <button 
+              <div key={idx} className="bg-white rounded-[48px] overflow-hidden border border-black/[0.03] hover:border-[#00D665]/40 transition-all duration-[0.8s] ease-[cubic-bezier(0.23,1,0.32,1)]">
+                <button
                   onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                  className="w-full p-10 flex items-center justify-between text-left"
+                  className="w-full p-12 flex items-center justify-between text-left group"
                 >
-                  <h4 className="text-3xl font-black tracking-tight">{item.q}</h4>
-                  <ChevronDown className={`transition-transform duration-500 ${openFaq === idx ? 'rotate-180 text-[#00D665]' : 'text-zinc-300'}`} size={32} />
+                  <h4 className="text-3xl font-black tracking-tight group-hover:text-[#00D665] transition-colors">{item.q}</h4>
+                  <div className={`w-12 h-12 rounded-full border border-black/5 flex items-center justify-center transition-all ${openFaq === idx ? 'bg-[#00D665] text-black rotate-180 border-transparent' : 'text-black/20 group-hover:border-black/20'}`}>
+                    <ChevronDown size={24} />
+                  </div>
                 </button>
                 {openFaq === idx && (
-                  <div className="px-10 pb-10 animate-reveal">
-                    <p className="text-xl text-zinc-500 font-medium leading-relaxed border-t border-zinc-50 pt-8">{item.a}</p>
+                  <div className="px-12 pb-12 animate-reveal">
+                    <p className="text-xl text-zinc-400 font-medium leading-relaxed pt-10 border-t border-black/5">{item.a}</p>
                   </div>
                 )}
               </div>
@@ -223,14 +275,15 @@ const DriveGoPlus: React.FC<DriveGoPlusProps> = ({ onBack }) => {
       </section>
 
       {/* CTA Footer Section */}
-      <section className="py-40 text-center">
-         <h2 className="text-8xl md:text-[12rem] font-black tracking-tighter mb-16 leading-[0.85] text-black">
-            Join the <br /> <span className="text-[#00D665]">Standard.</span>
-         </h2>
-         <div className="flex flex-wrap justify-center gap-6">
-            <button className="bg-black text-white px-20 py-8 rounded-full font-black text-2xl hover:bg-[#00D665] hover:text-black transition-all shadow-2xl">Start Elite Membership</button>
-            <button onClick={onBack} className="bg-zinc-100 text-black px-12 py-8 rounded-full font-black text-xl hover:bg-zinc-200 transition-all">Not Today</button>
-         </div>
+      <section className="py-48 text-center bg-white relative overflow-hidden group">
+        <h2 className="relative z-10 text-8xl md:text-[14rem] font-black tracking-tighter mb-24 leading-[0.8] text-black italic uppercase">
+          Join the <br /> <span className="text-[#00D665] not-italic">Standard.</span>
+        </h2>
+        <div className="flex flex-wrap justify-center gap-10 relative z-10">
+          <button className="bg-black text-white px-24 py-10 rounded-full font-black text-3xl hover:bg-[#00D665] hover:text-black transition-all duration-700 shadow-[0_64px_128px_-32px_rgba(0,0,0,0.3)]">ACTIVATE ELITE</button>
+          <button onClick={onBack} className="bg-zinc-50 text-black/20 px-16 py-10 rounded-full font-black text-2xl hover:bg-zinc-100 hover:text-black transition-all">Defer membership</button>
+        </div>
+        <div className="absolute inset-x-0 bottom-0 h-2 bg-[#00D665] scale-x-0 group-hover:scale-x-100 transition-transform duration-[1.5s] origin-center opacity-40"></div>
       </section>
     </div>
   );
