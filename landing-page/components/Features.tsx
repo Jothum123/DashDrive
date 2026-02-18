@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { BadgeDollarSign, Users, Scale, ArrowRight, Handshake } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const Features: React.FC = () => {
   const steps = [
@@ -30,7 +31,13 @@ const Features: React.FC = () => {
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[#00D665]/5 blur-[140px] rounded-full -translate-x-1/2 translate-y-1/2 pointer-events-none"></div>
 
       <div className="container mx-auto px-6 md:px-12 max-w-[1700px] relative z-10">
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-32 gap-16">
+        <motion.div
+          initial={{ opacity: 0, y: 100 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 1.2, ease: [0.23, 1, 0.32, 1] }}
+          className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-32 gap-16"
+        >
           <div className="flex-1 space-y-10">
             <div className="flex items-center gap-5">
               <span className="w-12 h-[2px] bg-[#00D665]"></span>
@@ -50,11 +57,18 @@ const Features: React.FC = () => {
               <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">Fairness Protocol v2.4</span>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         <div className="grid md:grid-cols-3 gap-8 md:gap-12">
           {steps.map((step, i) => (
-            <div key={i} className="group relative bg-white/[0.02] border border-white/[0.06] p-12 md:p-16 rounded-[48px] overflow-hidden transition-all duration-[0.8s] ease-[cubic-bezier(0.23,1,0.32,1)] hover:bg-white/[0.04] hover:-translate-y-3">
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1], delay: i * 0.15 }}
+              className="group relative bg-white/[0.02] border border-white/[0.06] p-12 md:p-16 rounded-[48px] overflow-hidden transition-all duration-[0.8s] ease-[cubic-bezier(0.23,1,0.32,1)] hover:bg-white/[0.04] hover:-translate-y-3"
+            >
               {/* Handcrafted Rim */}
               <div className="absolute inset-0 border border-white/[0.04] rounded-[inherit] pointer-events-none z-20 group-hover:border-[#00D665]/20 transition-colors duration-700" />
 
@@ -75,7 +89,7 @@ const Features: React.FC = () => {
               <div className="absolute bottom-0 right-0 p-8 opacity-0 group-hover:opacity-10 transition-opacity duration-700 pointer-events-none">
                 <div className="text-[60px] font-black italic">DASH</div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
 

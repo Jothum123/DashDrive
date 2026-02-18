@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const NewsroomSection: React.FC = () => {
   const news = [
@@ -31,7 +32,13 @@ const NewsroomSection: React.FC = () => {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#00D665]/5 blur-[180px] rounded-full pointer-events-none"></div>
 
       <div className="max-w-[1700px] mx-auto px-6 md:px-12 relative z-10">
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-16 mb-32">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95, y: 30 }}
+          whileInView={{ opacity: 1, scale: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 1.2, ease: [0.23, 1, 0.32, 1] }}
+          className="flex flex-col lg:flex-row lg:items-end justify-between gap-16 mb-32"
+        >
           <div className="flex-1 space-y-10 group">
             <div className="flex items-center gap-5">
               <span className="w-12 h-[2px] bg-[#00D665] origin-left group-hover:scale-x-150 transition-transform duration-700"></span>
@@ -46,11 +53,18 @@ const NewsroomSection: React.FC = () => {
             Browse newsroom
             <ArrowRight size={24} className="group-hover:translate-x-2 transition-transform duration-500" />
           </button>
-        </div>
+        </motion.div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {news.map((item, idx) => (
-            <div key={idx} className="group bg-white/[0.02] border border-white/[0.04] rounded-[56px] p-10 hover:bg-white/[0.04] transition-all duration-[0.8s] ease-[cubic-bezier(0.23,1,0.32,1)] cursor-pointer flex flex-col relative overflow-hidden">
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 1, ease: [0.23, 1, 0.32, 1], delay: idx * 0.1 }}
+              className="group bg-white/[0.02] border border-white/[0.04] rounded-[56px] p-10 hover:bg-white/[0.04] transition-all duration-[0.8s] ease-[cubic-bezier(0.23,1,0.32,1)] cursor-pointer flex flex-col relative overflow-hidden"
+            >
               {/* Handcrafted Rim */}
               <div className="absolute inset-0 border border-white/[0.02] rounded-[inherit] pointer-events-none z-20 group-hover:border-[#00D665]/20 transition-colors duration-700" />
 
@@ -81,7 +95,7 @@ const NewsroomSection: React.FC = () => {
                   <div className="w-1.5 h-1.5 rounded-full bg-[#00D665] animate-pulse" />
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
 

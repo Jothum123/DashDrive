@@ -1,6 +1,6 @@
-
-import React, { useRef, useState } from 'react';
-import { ArrowLeft, ArrowRight, ArrowUpRight } from 'lucide-react';
+import React, { useRef } from 'react';
+import { motion, useScroll, useTransform, useSpring, MotionValue } from 'framer-motion';
+import { ArrowUpRight } from 'lucide-react';
 
 interface ServiceCardProps {
   subtitle: string;
@@ -9,6 +9,8 @@ interface ServiceCardProps {
   image?: string;
   isIllustration?: boolean;
   onExplore?: () => void;
+  progress: MotionValue<number>;
+  index: number;
 }
 
 const ServiceCard: React.FC<ServiceCardProps> = ({
@@ -17,57 +19,79 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
   textColor,
   image,
   isIllustration = false,
-  onExplore
+  onExplore,
+  progress,
+  index
 }) => {
+  // Global progress is 0 to 1 over 600vh
+  // Animation phase is 0.15 to 0.85
+  const animStart = 0.15;
+  const animEnd = 0.85;
+  const step = (animEnd - animStart) / 4;
+  const start = animStart + index * step;
+  const end = animStart + (index + 1) * step;
+
+  const scale = useTransform(progress, [start - 0.05, start + 0.1, end + 0.05], [0.85, 1, 0.85]);
+  const opacity = useTransform(progress, [start - 0.05, start + 0.1, end + 0.05], [0.3, 1, 0.3]);
+  const yParallax = useTransform(progress, [start, end], [-30, 30]);
+
+  const springScale = useSpring(scale, { stiffness: 120, damping: 25, restDelta: 0.001 });
+
   return (
-    <div
+    <motion.div
+      style={{
+        scale: springScale,
+        opacity,
+        y: yParallax
+      }}
       onClick={onExplore}
       className={`
-        ${bgColor} ${textColor} snap-start shrink-0
+        ${bgColor} ${textColor} shrink-0
         rounded-[48px] md:rounded-[60px]
         p-10 md:p-16 flex flex-col justify-end
         min-h-[500px] md:min-h-[620px]
-        w-[88vw] md:w-[780px] lg:w-[1050px]
-        transition-all duration-[0.8s] ease-[cubic-bezier(0.23,1,0.32,1)]
+        w-[80vw] md:w-[700px] lg:w-[900px]
         cursor-pointer relative group overflow-hidden
         border border-white/5 select-none
         hover:shadow-[0_64px_128px_-32px_rgba(0,0,0,0.3)]
       `}
     >
-      {/* Handcrafted Depth Glass Rim */}
       <div className="absolute inset-0 border-[0.5px] border-white/10 rounded-[inherit] z-20 pointer-events-none group-hover:border-[#00D665]/20 transition-colors duration-700" />
 
-      {/* Background Image (Cinematic Fade) */}
       {image && !isIllustration && (
         <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-          <img
+          <motion.img
+            style={{
+              scale: useTransform(progress, [start, end], [1.3, 1])
+            }}
             src={image}
-            className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-all duration-[1.5s] ease-out opacity-20 group-hover:opacity-40 grayscale group-hover:grayscale-0"
+            className="w-full h-full object-cover transition-all duration-[1.5s] ease-out opacity-20 group-hover:opacity-40 grayscale group-hover:grayscale-0"
             alt={subtitle}
             draggable="false"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-700"></div>
-          {/* Subtle Grainy Overlay */}
           <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/asfalt-dark.png')]" />
         </div>
       )}
 
-      {/* Illustration (Centered/Descriptive) */}
       {image && isIllustration && (
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-3/4 md:w-1/2 aspect-square z-10 pointer-events-none group-hover:-translate-y-4 transition-transform duration-700">
+        <motion.div
+          style={{
+            y: useTransform(progress, [start, end], [-60, 60])
+          }}
+          className="absolute top-1/4 left-1/2 -translate-x-1/2 w-3/4 md:w-1/2 aspect-square z-10 pointer-events-none"
+        >
           <img src={image} className="w-full h-full object-contain drop-shadow-2xl" alt={subtitle} draggable="false" />
-        </div>
+        </motion.div>
       )}
 
-      {/* Engineering Label */}
       <div className="absolute top-10 left-10 md:top-14 md:left-16 z-20">
         <div className="flex items-center gap-3 opacity-30 group-hover:opacity-60 transition-opacity duration-500">
           <div className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
-          <span className="text-[10px] font-bold uppercase tracking-[0.3em] whitespace-nowrap">Service Module v4.0</span>
+          <span className="text-[10px] font-bold uppercase tracking-[0.3em] whitespace-nowrap">Service Module v7.0</span>
         </div>
       </div>
 
-      {/* Minimalist Top Action */}
       <div className="absolute top-10 right-10 md:top-14 md:right-16 z-20">
         <div className={`
           w-14 h-14 md:w-18 md:h-18 rounded-full
@@ -81,9 +105,8 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
         </div>
       </div>
 
-      {/* Editorial Typography */}
       <div className="relative z-20 max-w-4xl pointer-events-none">
-        <h3 className={`text-5xl sm:text-7xl lg:text-[7.5rem] leading-[0.82] tracking-[-0.05em] mb-12 select-none whitespace-pre-line lowercase italic transition-all duration-700 font-light group-hover:tracking-[-0.07em]`}>
+        <h3 className={`text-5xl sm:text-7xl lg:text-8xl leading-[0.82] tracking-[-0.05em] mb-12 select-none whitespace-pre-line lowercase italic transition-all duration-700 font-light group-hover:tracking-[-0.07em]`}>
           {subtitle.split('\n')[0]} <br />
           <span className="font-black not-italic text-[#00D665] uppercase tracking-tighter opacity-90">{subtitle.split('\n')[1]}</span>
         </h3>
@@ -95,12 +118,12 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
             shadow-[0_20px_40px_rgba(0,0,0,0.1)] active:scale-95 pointer-events-auto
             ${bgColor === 'bg-[#00D665]' ? 'bg-black text-white hover:bg-zinc-800' : 'bg-white text-black hover:bg-[#00D665]'}
           `}>
-            VIEW PROGRAM
+            EXPLORE
           </button>
           <div className={`h-[1px] flex-1 max-w-[200px] transition-all duration-1000 ease-out origin-left scale-x-50 group-hover:scale-x-100 ${textColor === 'text-white' ? 'bg-white/10' : 'bg-black/10'}`}></div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -112,56 +135,17 @@ interface CategorySliderProps {
 }
 
 const CategorySlider: React.FC<CategorySliderProps> = ({ onExploreRide, onExploreOrder, onExploreDeliver, onExplorePay }) => {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"]
+  });
 
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (!scrollContainerRef.current) return;
-    setIsDragging(true);
-    // Use pageX directly or relative to container
-    setStartX(e.pageX - scrollContainerRef.current.offsetLeft);
-    setScrollLeft(scrollContainerRef.current.scrollLeft);
-    scrollContainerRef.current.style.scrollSnapType = 'none';
-  };
-
-  const handleMouseLeave = () => {
-    if (isDragging) {
-      setIsDragging(false);
-      if (scrollContainerRef.current) {
-        scrollContainerRef.current.style.scrollSnapType = 'x mandatory';
-      }
-    }
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.style.scrollSnapType = 'x mandatory';
-    }
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging || !scrollContainerRef.current) return;
-    e.preventDefault();
-    const x = e.pageX - scrollContainerRef.current.offsetLeft;
-    const walk = (x - startX) * 2;
-    scrollContainerRef.current.scrollLeft = scrollLeft - walk;
-  };
-
-  const scroll = (direction: 'left' | 'right') => {
-    if (scrollContainerRef.current) {
-      // Precise scroll amount based on CSS widths (Card + Gap)
-      // LG: 1050 + 64 (gap-16 is 4rem/64px) = 1114 approx
-      // MD: 780 + 64 = 844 approx
-      const scrollAmount = window.innerWidth >= 1280 ? 1114 : (window.innerWidth >= 768 ? 844 : window.innerWidth * 0.9);
-      scrollContainerRef.current.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
-        behavior: 'smooth'
-      });
-    }
-  };
+  // Precise segmenting: 
+  // 0% - 15%: Start hold (header focus)
+  // 15% - 85%: Translate carousel
+  // 85% - 100%: End hold (final card focus)
+  const x = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], ["0%", "0%", "-78%", "-78%"]);
 
   const services = [
     {
@@ -199,71 +183,49 @@ const CategorySlider: React.FC<CategorySliderProps> = ({ onExploreRide, onExplor
   ];
 
   return (
-    <section className="pt-24 pb-32 md:pt-40 md:pb-56 bg-white overflow-hidden rounded-t-[48px] md:rounded-t-[100px] -mt-12 md:-mt-24 relative z-20">
-      <div className="max-w-[1700px] mx-auto px-6 md:px-12">
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-16 lg:gap-24 mb-24 md:mb-36">
-          <div className="flex-1 space-y-10 group">
-            <div className="flex items-center gap-5">
-              <span className="w-12 h-[2.5px] bg-[#00D665] origin-left group-hover:scale-x-150 transition-transform duration-700"></span>
-              <span className="text-[12px] font-black uppercase tracking-[0.4em] text-black/20">The Ecosystem</span>
+    <div ref={containerRef} className="relative h-[600vh] bg-white rounded-t-[48px] md:rounded-t-[100px] -mt-12 md:-mt-24 z-30">
+      <div className="sticky top-0 h-screen overflow-hidden flex flex-col justify-center">
+        <div className="max-w-[1700px] mx-auto w-full px-6 md:px-12 pt-16 md:pt-24 lg:pt-32">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 1, ease: [0.23, 1, 0.32, 1] }}
+            className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 lg:gap-24 mb-12 md:mb-16"
+          >
+            <div className="flex-1 space-y-6 md:space-y-10 group">
+              <div className="flex items-center gap-5">
+                <span className="w-12 h-[2px] bg-[#00D665] origin-left group-hover:scale-x-150 transition-transform duration-700"></span>
+                <span className="text-[12px] font-black uppercase tracking-[0.4em] text-black/20">The Ecosystem</span>
+              </div>
+              <h2 className="text-6xl md:text-8xl lg:text-9xl xl:text-[10rem] font-light tracking-tight leading-[0.85] text-black">
+                Simply <br />
+                <span className="font-black text-[#00D665] tracking-tighter">Better.</span>
+              </h2>
             </div>
-            <h2 className="text-7xl md:text-9xl lg:text-[11rem] font-light tracking-tight leading-[0.8] text-black">
-              Simply <br />
-              <span className="font-black text-[#00D665] tracking-tighter">Better.</span>
-            </h2>
-          </div>
+          </motion.div>
 
-          <div className="flex items-center gap-6">
-            <button
-              onClick={() => scroll('left')}
-              className="w-20 h-20 rounded-full border border-black/[0.06] flex items-center justify-center hover:bg-zinc-50 transition-all duration-500 active:scale-95 group"
-              aria-label="Previous slide"
-            >
-              <ArrowLeft size={28} className="text-black/20 group-hover:text-black transition-colors" />
-            </button>
-            <button
-              onClick={() => scroll('right')}
-              className="w-20 h-20 rounded-full bg-black text-white flex items-center justify-center hover:bg-[#00D665] hover:text-black transition-all duration-700 active:scale-95 group shadow-[0_24px_48px_rgba(0,0,0,0.12)]"
-              aria-label="Next slide"
-            >
-              <ArrowRight size={28} className="group-hover:translate-x-1.5 transition-transform duration-500 ease-out" />
-            </button>
+          <div className="overflow-visible">
+            <motion.div style={{ x }} className="flex gap-8 md:gap-16 items-start">
+              {services.map((service, idx) => (
+                <ServiceCard
+                  key={idx}
+                  index={idx}
+                  subtitle={service.subtitle}
+                  bgColor={service.bgColor}
+                  textColor={service.textColor}
+                  image={service.image}
+                  isIllustration={service.isIllustration}
+                  onExplore={service.onExplore}
+                  progress={scrollYProgress}
+                />
+              ))}
+              <div className="shrink-0 w-[50vw]" />
+            </motion.div>
           </div>
-        </div>
-
-        <div
-          ref={scrollContainerRef}
-          onMouseDown={handleMouseDown}
-          onMouseLeave={handleMouseLeave}
-          onMouseUp={handleMouseUp}
-          onMouseMove={handleMouseMove}
-          className={`
-            flex gap-12 md:gap-16
-            overflow-x-auto no-scrollbar snap-x snap-mandatory
-            pb-32 px-4 cursor-grab active:cursor-grabbing select-none
-            transition-all duration-700
-          `}
-          style={{
-            scrollbarWidth: 'none',
-            msOverflowStyle: 'none',
-            WebkitOverflowScrolling: 'touch'
-          }}
-        >
-          {services.map((service, idx) => (
-            <ServiceCard
-              key={idx}
-              subtitle={service.subtitle}
-              bgColor={service.bgColor}
-              textColor={service.textColor}
-              image={service.image}
-              isIllustration={service.isIllustration}
-              onExplore={service.onExplore}
-            />
-          ))}
-          <div className="shrink-0 w-24 md:w-48" />
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 

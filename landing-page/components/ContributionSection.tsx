@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { ArrowUpRight } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const ContributionSection: React.FC = () => {
   const contributions = [
@@ -27,7 +28,13 @@ const ContributionSection: React.FC = () => {
   return (
     <section className="py-24 md:py-48 bg-white overflow-hidden relative rounded-t-[48px] md:rounded-t-[100px] -mt-12 md:-mt-24 z-20">
       <div className="max-w-[1700px] mx-auto px-6 md:px-12">
-        <div className="mb-32 space-y-10 group">
+        <motion.div
+          initial={{ opacity: 0, y: 100 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 1.2, ease: [0.23, 1, 0.32, 1] }}
+          className="mb-32 space-y-10 group"
+        >
           <div className="flex items-center gap-5">
             <span className="w-12 h-[2px] bg-[#00D665] origin-left group-hover:scale-x-150 transition-transform duration-700"></span>
             <span className="text-[12px] font-bold uppercase tracking-[0.4em] text-black/20">Social Good</span>
@@ -36,11 +43,18 @@ const ContributionSection: React.FC = () => {
             Making an <br />
             <span className="text-[#00D665] font-black tracking-tighter italic">Impact.</span>
           </h2>
-        </div>
+        </motion.div>
 
         <div className="grid md:grid-cols-3 gap-10 md:gap-14">
           {contributions.map((item, idx) => (
-            <div key={idx} className="group flex flex-col h-full bg-[#FBFBFB] border border-black/[0.03] rounded-[56px] p-12 hover:bg-[#050505] transition-all duration-[0.8s] ease-[cubic-bezier(0.23,1,0.32,1)] cursor-pointer relative overflow-hidden">
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 60 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 1, ease: [0.23, 1, 0.32, 1], delay: idx * 0.2 }}
+              className="group flex flex-col h-full bg-[#FBFBFB] border border-black/[0.03] rounded-[56px] p-12 hover:bg-[#050505] transition-all duration-[0.8s] ease-[cubic-bezier(0.23,1,0.32,1)] cursor-pointer relative overflow-hidden"
+            >
               {/* Handcrafted Rim */}
               <div className="absolute inset-0 border border-black/[0.02] rounded-[inherit] pointer-events-none z-20 group-hover:border-[#00D665]/20 transition-colors duration-700" />
 
@@ -69,7 +83,7 @@ const ContributionSection: React.FC = () => {
                   <ArrowUpRight size={24} className="group-hover:rotate-45 transition-transform duration-700" />
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>

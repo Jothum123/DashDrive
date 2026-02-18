@@ -14,6 +14,7 @@ import PaymentPage from './components/PaymentPage';
 import PartnersPage from './components/PartnersPage';
 import DriveGoPlus from './components/DriveGoPlus';
 import AboutUsPage from './components/AboutUsPage';
+import SmoothScroll from './components/SmoothScroll';
 
 
 const App: React.FC = () => {
@@ -30,57 +31,58 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] selection:bg-[#00D665] selection:text-white antialiased">
-      <Navbar
-        onLogoClick={navigateToHome}
-        onNavigate={handleNavigation}
-      />
+    <SmoothScroll>
+      <div className="min-h-screen bg-[#050505] selection:bg-[#00D665] selection:text-white antialiased">
+        <Navbar
+          onLogoClick={navigateToHome}
+          onNavigate={handleNavigation}
+        />
 
-      {currentPage === 'home' && (
-        <main>
-          <Hero />
-          <div id="services-slider">
-            <CategorySlider
-              onExploreRide={() => setCurrentPage('mobility')}
-              onExploreOrder={() => setCurrentPage('order')}
-              onExploreDeliver={() => setCurrentPage('delivery')}
-              onExplorePay={() => setCurrentPage('payment')}
-            />
-          </div>
-          <Features />
-          <div id="impact-section">
-            <ContributionSection />
-          </div>
-          <NewsroomSection />
-
-          <section className="py-32 md:py-48 bg-black text-center text-white overflow-hidden relative rounded-t-[48px] md:rounded-t-[100px] -mt-12 md:-mt-24 z-20">
-            <div className="container mx-auto px-6 max-w-7xl relative z-10">
-              <h2 className="text-8xl md:text-[12rem] font-black tracking-tighter mb-20 leading-[0.8]">
-                Join the <br /><span className="text-[#00D665]">standard.</span>
-              </h2>
-              <button
-                onClick={() => setCurrentPage('plus')}
-                className="bg-[#00D665] text-black px-20 py-8 rounded-full text-xl font-bold hover:scale-105 transition-all shadow-[0_40px_80px_rgba(0,214,101,0.3)]"
-              >
-                Go Plus
-              </button>
+        {currentPage === 'home' && (
+          <main>
+            <Hero />
+            <div id="services-slider">
+              <CategorySlider
+                onExploreRide={() => setCurrentPage('mobility')}
+                onExploreOrder={() => setCurrentPage('order')}
+                onExploreDeliver={() => setCurrentPage('delivery')}
+                onExplorePay={() => setCurrentPage('payment')}
+              />
             </div>
-          </section>
-        </main>
-      )}
+            <Features />
+            <div id="impact-section">
+              <ContributionSection />
+            </div>
+            <NewsroomSection />
 
-      {currentPage === 'mobility' && <MobilityPage onBack={navigateToHome} />}
-      {currentPage === 'order' && <OrderPage onBack={navigateToHome} />}
-      {currentPage === 'delivery' && <DeliveryPage onBack={navigateToHome} />}
-      {currentPage === 'payment' && <PaymentPage onBack={navigateToHome} />}
-      {currentPage === 'partners' && <PartnersPage onBack={navigateToHome} />}
-      {currentPage === 'plus' && <DriveGoPlus onBack={navigateToHome} />}
-      {currentPage === 'about' && <AboutUsPage onBack={navigateToHome} />}
+            <section className="py-32 md:py-48 bg-black text-center text-white overflow-hidden relative rounded-t-[48px] md:rounded-t-[100px] -mt-12 md:-mt-24 z-20">
+              <div className="container mx-auto px-6 max-w-7xl relative z-10">
+                <h2 className="text-8xl md:text-[12rem] font-black tracking-tighter mb-20 leading-[0.8]">
+                  Join the <br /><span className="text-[#00D665]">standard.</span>
+                </h2>
+                <button
+                  onClick={() => setCurrentPage('plus')}
+                  className="bg-[#00D665] text-black px-20 py-8 rounded-full text-xl font-bold hover:scale-105 transition-all shadow-[0_40px_80px_rgba(0,214,101,0.3)]"
+                >
+                  Go Plus
+                </button>
+              </div>
+            </section>
+          </main>
+        )}
 
-      <Footer />
+        {currentPage === 'mobility' && <MobilityPage onBack={navigateToHome} />}
+        {currentPage === 'order' && <OrderPage onBack={navigateToHome} />}
+        {currentPage === 'delivery' && <DeliveryPage onBack={navigateToHome} />}
+        {currentPage === 'payment' && <PaymentPage onBack={navigateToHome} />}
+        {currentPage === 'partners' && <PartnersPage onBack={navigateToHome} />}
+        {currentPage === 'plus' && <DriveGoPlus onBack={navigateToHome} />}
+        {currentPage === 'about' && <AboutUsPage onBack={navigateToHome} />}
+
+        <Footer />
 
 
-      <style>{`
+        <style>{`
         body { overscroll-behavior-y: none; }
         .animate-reveal { animation: reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes reveal {
@@ -88,7 +90,8 @@ const App: React.FC = () => {
           to { opacity: 1; transform: translateY(0); }
         }
       `}</style>
-    </div>
+      </div>
+    </SmoothScroll>
   );
 };
 

@@ -1,48 +1,78 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { ArrowRight, ChevronDown, Play } from 'lucide-react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 
 const Hero: React.FC = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"]
+  });
+
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+
   return (
-    <section className="relative w-full min-h-screen flex flex-col justify-center pt-32 pb-20 overflow-hidden bg-[#050505]">
+    <section ref={containerRef} className="relative w-full min-h-screen flex flex-col justify-center pt-32 pb-64 overflow-hidden bg-[#050505]">
       {/* Premium Cinematic Background */}
-      <div className="absolute inset-0 z-0">
+      <motion.div style={{ y, opacity }} className="absolute inset-0 z-0">
         <img
           src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=2400&auto=format&fit=crop"
           alt="Premium Executive Travel"
-          className="w-full h-full object-cover scale-105 animate-slow-pan opacity-40 brightness-75 grayscale-[0.2]"
+          className="w-full h-full object-cover scale-105 opacity-40 brightness-75 grayscale-[0.2]"
         />
         {/* Editorial Gradients & Noise */}
         <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/60 to-transparent"></div>
         <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent"></div>
         <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[800px] h-[800px] bg-[#00D665]/10 rounded-full blur-[160px] pointer-events-none"></div>
-      </div>
+      </motion.div>
 
       <div className="container mx-auto px-6 md:px-12 lg:px-24 relative z-10">
         <div className="max-w-[1400px] mx-auto">
           <div className="animate-reveal">
             {/* Engineering Badge */}
-            <div className="inline-flex items-center gap-4 px-5 py-2 rounded-full bg-white/[0.03] border border-white/[0.08] backdrop-blur-2xl mb-12 translate-y-4 opacity-0 animate-[reveal_1s_cubic-bezier(0.23,1,0.32,1)_forwards_0.2s]">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, ease: [0.23, 1, 0.32, 1], delay: 0.2 }}
+              className="inline-flex items-center gap-4 px-5 py-2 rounded-full bg-white/[0.03] border border-white/[0.08] backdrop-blur-2xl mb-12"
+            >
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-[#00D665] animate-pulse"></span>
                 <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-white/90">System Active</span>
               </div>
               <div className="h-3 w-[1px] bg-white/10"></div>
               <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-white/40">v4.0.2-London</span>
-            </div>
+            </motion.div>
 
             <div className="relative mb-16">
-              <h1 className="text-white text-[10vw] lg:text-[8.5vw] font-black leading-[0.82] tracking-[-0.05em] select-none">
+              <motion.h1
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1.2, ease: [0.23, 1, 0.32, 1], delay: 0.3 }}
+                className="text-white text-[10vw] lg:text-[8.5vw] font-black leading-[0.82] tracking-[-0.05em] select-none"
+              >
                 MOBILITY,<br />
                 <span className="text-[#00D665] text-[8vw] lg:text-[6.5vw] opacity-90 italic">evolved.</span>
-              </h1>
+              </motion.h1>
             </div>
 
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-16">
               <div className="max-w-2xl">
-                <p className="text-white/40 text-xl md:text-2xl font-medium leading-relaxed mb-12 max-w-xl">
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 1, ease: [0.23, 1, 0.32, 1], delay: 0.5 }}
+                  className="text-white/40 text-xl md:text-2xl font-medium leading-relaxed mb-12 max-w-xl"
+                >
                   Engineered for the modern city. A unified ecosystem for travel, logistics, and digital payments, built on absolute transparency.
-                </p>
-                <div className="flex flex-wrap gap-6 text-[15px]">
+                </motion.p>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 1, ease: [0.23, 1, 0.32, 1], delay: 0.7 }}
+                  className="flex flex-wrap gap-6 text-[15px]"
+                >
                   <button className="group relative bg-[#00D665] text-black px-12 py-5 rounded-full font-bold overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] hover:scale-105 hover:shadow-[0_20px_40px_rgba(0,214,101,0.25)] active:scale-95 flex items-center gap-3">
                     <span className="relative z-10">OPEN DASHBOARD</span>
                     <ArrowRight size={18} className="relative z-10 group-hover:translate-x-1.5 transition-transform duration-500 ease-out" />
@@ -54,11 +84,16 @@ const Hero: React.FC = () => {
                     </div>
                     EXPLORE TECHNOLOGY
                   </button>
-                </div>
+                </motion.div>
               </div>
 
               {/* Live State Dashboard Element */}
-              <div className="hidden lg:flex flex-col items-end group">
+              <motion.div
+                initial={{ opacity: 0, x: 40 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 1.2, ease: [0.23, 1, 0.32, 1], delay: 0.8 }}
+                className="hidden lg:flex flex-col items-end group"
+              >
                 <div className="p-10 bg-white/[0.02] backdrop-blur-3xl rounded-[48px] border border-white/[0.06] shadow-2xl space-y-8 min-w-[340px] hover:border-[#00D665]/20 transition-colors duration-500">
                   <div className="flex justify-between items-center">
                     <div className="flex -space-x-3">
@@ -87,7 +122,7 @@ const Hero: React.FC = () => {
                     <p className="text-[10px] font-medium text-white/30 italic">Target: 2.5M by EOD</p>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             </div>
           </div>
         </div>

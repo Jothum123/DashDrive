@@ -133,7 +133,7 @@ const PartnersPage: React.FC<PartnersPageProps> = ({ onBack }) => {
                   ))}
                 </div>
                 <button className={`mt-8 w-full py-8 rounded-[32px] font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 transition-all duration-500 ${partner.id === 'merchant' ? 'bg-black text-[#00D665] hover:bg-[#00D665] hover:text-black' : 'bg-white text-black hover:scale-[1.02] active:scale-95'}`}>
-                  ENTER PROGRAM <ArrowRight size={20} />
+                  EXPLORE <ArrowRight size={20} />
                 </button>
               </div>
             </div>
