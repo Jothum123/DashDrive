@@ -35,7 +35,7 @@ export const MERCHANTS: Merchant[] = [
   },
   {
     id: 'm3',
-    name: 'DriveGo Insurance',
+    name: 'DashDrive Insurance',
     logo: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=400',
     category: 'Protection',
     offer: 'Daily Trip Cover'

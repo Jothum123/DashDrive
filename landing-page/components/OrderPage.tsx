@@ -46,7 +46,7 @@ const OrderPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
       rating: '4.8',
       reviews: '5k+',
       deliveryFee: '$1.00',
-      address: 'Central Plaza, DriveGo District',
+      address: 'Central Plaza, DashDrive District',
       description: 'Modern takes on classic Asian street food. Fresh ingredients, bold spices, and lightning-fast preparation.',
       menu: [
         {
@@ -150,7 +150,7 @@ const OrderPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
     <div className="bg-white min-h-screen pt-24 animate-reveal overflow-hidden rounded-t-[48px] md:rounded-t-[100px] -mt-12 md:-mt-24 relative z-20">
       {activeTab === 'food' ? (
         <div className="animate-reveal">
-          <section className="relative mx-6 md:mx-12 lg:mx-20 mt-8 mb-32 rounded-[64px] overflow-hidden min-h-[700px] flex items-center bg-[#00D665] group">
+          <section className="relative mx-6 md:mx-12 lg:mx-20 mt-8 mb-32 rounded-[20px_64px_20px_64px] md:rounded-[30px_100px_30px_100px] overflow-hidden min-h-[700px] flex items-center bg-[#00D665] group">
             {/* Cinematic Background Layer */}
             <div className="absolute inset-0 z-0 opacity-20 group-hover:opacity-40 transition-opacity duration-[1.5s]">
               <img src="https://images.unsplash.com/photo-1542831371-29b0f74f9713?auto=format&fit=crop&q=80&w=1600" className="w-full h-full object-cover grayscale group-hover:grayscale-0 scale-105 group-hover:scale-100 transition-all duration-[2s] ease-out" alt="Food" />
@@ -158,10 +158,6 @@ const OrderPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
 
             <div className="container mx-auto px-12 md:px-24 relative z-10">
               <div className="max-w-3xl space-y-12">
-                <div className="inline-flex items-center gap-4 px-5 py-2 rounded-full bg-black/5 border border-black/10 backdrop-blur-md">
-                  <Utensils size={14} className="text-black/60" />
-                  <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-black/60">Culinary Grid v4.1</span>
-                </div>
 
                 <h1 className="text-zinc-900 text-7xl md:text-[9vw] font-light tracking-tight leading-[0.8] mb-12">
                   Everything you crave, <br /><span className="text-white font-black tracking-tighter italic">instantly.</span>
@@ -191,7 +187,7 @@ const OrderPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
           </section>
 
           <section className="py-32 mx-6 md:mx-12 lg:mx-20">
-            <div className="bg-[#EBFFF5] border border-[#00D665]/10 rounded-[80px] p-16 md:p-32 grid lg:grid-cols-2 gap-24 items-center overflow-hidden relative group">
+            <div className="bg-[#EBFFF5] border border-[#00D665]/10 rounded-[30px_80px_30px_80px] p-16 md:p-32 grid lg:grid-cols-2 gap-24 items-center overflow-hidden relative group">
               <div className="space-y-12 relative z-10">
                 <h2 className="text-6xl md:text-8xl font-black tracking-tighter leading-[0.85]">
                   Free delivery <br />
@@ -219,10 +215,6 @@ const OrderPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
 
             <div className="container mx-auto px-12 md:px-24 relative z-10 grid lg:grid-cols-2 gap-24 items-center">
               <div className="space-y-12">
-                <div className="inline-flex items-center gap-4 px-5 py-2 rounded-full bg-[#00D665]/5 border border-[#00D665]/10 backdrop-blur-md">
-                  <Smile size={14} className="text-[#00D665]" />
-                  <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#00D665]">Curation v4.0</span>
-                </div>
 
                 <h1 className="text-zinc-900 text-7xl md:text-[9vw] font-light tracking-tight leading-[0.8] mb-12">
                   Dine better, <br /><span className="text-[#00D665] font-black tracking-tighter italic">pay less.</span>
@@ -251,7 +243,7 @@ const OrderPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
 
       <MerchantGrid />
 
-      <section className="py-40 bg-[#FBFBFB] border-y border-black/[0.03] mx-6 md:mx-12 lg:mx-20 mb-40 rounded-[80px] overflow-hidden relative">
+      <section className="py-40 bg-[#FBFBFB] border-y border-black/[0.03] mx-6 md:mx-12 lg:mx-20 mb-40 rounded-[30px_80px_30px_80px] overflow-hidden relative">
         {/* Handcrafted Rim */}
         <div className="absolute inset-0 border border-black/[0.02] rounded-[inherit] pointer-events-none z-20" />
 
@@ -287,7 +279,7 @@ const OrderPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         </div>
       </section>
 
-      <section className="py-48 bg-zinc-950 text-white text-center rounded-[80px] mx-6 md:mx-12 lg:mx-20 mb-32 relative overflow-hidden group">
+      <section className="py-48 bg-zinc-950 text-white text-center rounded-[30px_80px_30px_80px] mx-6 md:mx-12 lg:mx-20 mb-32 relative overflow-hidden group">
         <div className="absolute inset-0 z-0 opacity-10 group-hover:opacity-20 transition-opacity">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-[#00D665] blur-[200px] rounded-full"></div>
         </div>

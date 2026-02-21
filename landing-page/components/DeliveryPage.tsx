@@ -50,7 +50,7 @@ const DeliveryPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
           <div className="max-w-2xl space-y-8">
             <div className="flex items-center gap-3">
               <Zap size={40} className="text-[#00D665]" fill="#00D665" />
-              <h2 className="text-4xl font-black tracking-tighter">DriveGo <span className="text-[#00D665]">Instant</span></h2>
+              <h2 className="text-4xl font-black tracking-tighter">DashDrive <span className="text-[#00D665]">Instant</span></h2>
             </div>
             <h1 className="text-zinc-900 text-6xl md:text-[9vw] font-black tracking-tighter leading-[0.8] mb-12">
               Fresh food, <br /> <span className="text-[#00D665]">fast.</span>
@@ -100,7 +100,7 @@ const DeliveryPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
     <div className="bg-white min-h-screen pt-24 animate-reveal overflow-hidden rounded-t-[48px] md:rounded-t-[100px] -mt-12 md:-mt-24 relative z-20">
       {activeTab === 'pharmacy' ? (
         <div className="animate-reveal">
-          <section className="relative mx-6 md:mx-12 lg:mx-20 mt-8 mb-32 rounded-[64px] overflow-hidden min-h-[700px] flex items-center bg-[#312E81] group">
+          <section className="relative mx-6 md:mx-12 lg:mx-20 mt-8 mb-32 rounded-[20px_64px_20px_64px] md:rounded-[30px_100px_30px_100px] overflow-hidden min-h-[700px] flex items-center bg-[#312E81] group">
             {/* Dark Cinematic Backdrop */}
             <div className="absolute inset-0 z-0 opacity-10 group-hover:opacity-20 transition-opacity duration-[2s]">
               <img src="https://images.unsplash.com/photo-1583947215259-38e31be8751f?auto=format&fit=crop&q=80&w=1600" className="w-full h-full object-cover grayscale" alt="Pharmacy" />
@@ -108,10 +108,6 @@ const DeliveryPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
 
             <div className="container mx-auto px-12 md:px-24 relative z-20 flex flex-col lg:flex-row items-center justify-between gap-24 py-20">
               <div className="space-y-12 max-w-2xl">
-                <div className="inline-flex items-center gap-4 px-5 py-2 rounded-full bg-white/[0.05] border border-white/[0.1] backdrop-blur-md">
-                  <Stethoscope size={14} className="text-[#00D665]" />
-                  <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/60">Health Protocol v4.0</span>
-                </div>
 
                 <h1 className="text-white text-7xl md:text-[9vw] font-light tracking-tight leading-[0.8]">
                   Wellness, <br /> <span className="text-[#00D665] font-black tracking-tighter italic">delivered.</span>
@@ -139,7 +135,7 @@ const DeliveryPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         </div>
       ) : (
         <div className="animate-reveal">
-          <section className="relative mx-6 md:mx-12 lg:mx-20 mt-8 mb-32 rounded-[64px] overflow-hidden min-h-[700px] flex items-center bg-[#F1F3F2] group">
+          <section className="relative mx-6 md:mx-12 lg:mx-20 mt-8 mb-32 rounded-[20px_64px_20px_64px] md:rounded-[30px_100px_30px_100px] overflow-hidden min-h-[700px] flex items-center bg-[#F1F3F2] group">
             {/* Ambient Background */}
             <div className="absolute inset-0 z-0 opacity-20 group-hover:opacity-40 transition-opacity duration-[2s]">
               <img src="https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?auto=format&fit=crop&q=80&w=1600" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" alt="Fresh" />
@@ -147,10 +143,6 @@ const DeliveryPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
 
             <div className="container mx-auto px-12 md:px-24 relative z-20">
               <div className="max-w-3xl space-y-12">
-                <div className="inline-flex items-center gap-4 px-5 py-2 rounded-full bg-black/5 border border-black/10 backdrop-blur-md">
-                  <Zap size={18} className="text-[#00D665]" fill="#00D665" />
-                  <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-black/60">Rapid Response v4.2</span>
-                </div>
 
                 <h1 className="text-zinc-900 text-7xl md:text-[9vw] font-light tracking-tight leading-[0.8] mb-12">
                   Fresh essentials, <br /> <span className="text-[#00D665] font-black tracking-tighter italic">now.</span>
@@ -178,7 +170,7 @@ const DeliveryPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         </div>
       )}
 
-      <section className="py-40 bg-[#0A0A0A] rounded-[80px] mx-6 md:mx-12 lg:mx-20 mb-40 relative overflow-hidden">
+      <section className="py-40 bg-[#0A0A0A] rounded-[30px_80px_30px_80px] mx-6 md:mx-12 lg:mx-20 mb-40 relative overflow-hidden">
         <div className="absolute inset-0 opacity-[0.05] pointer-events-none z-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
 
         <div className="max-w-[1200px] mx-auto px-12 relative z-10">
@@ -212,7 +204,7 @@ const DeliveryPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         </div>
       </section>
 
-      <section className="py-48 bg-[#00D665] text-black text-center rounded-[80px] mx-6 md:mx-12 lg:mx-20 mb-32 relative group overflow-hidden">
+      <section className="py-48 bg-[#00D665] text-black text-center rounded-[30px_80px_30px_80px] mx-6 md:mx-12 lg:mx-20 mb-32 relative group overflow-hidden">
         <h2 className="relative z-10 text-8xl md:text-[11rem] font-black tracking-tighter mb-16 leading-[0.8] uppercase italic">
           More choice. <br /> <span className="text-white not-italic">DashDrive.</span>
         </h2>

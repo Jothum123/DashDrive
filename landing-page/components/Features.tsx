@@ -26,7 +26,7 @@ const Features: React.FC = () => {
   ];
 
   return (
-    <section className="py-24 md:py-48 bg-[#050505] text-white overflow-hidden relative rounded-t-[48px] md:rounded-t-[100px] -mt-12 md:-mt-24 z-20">
+    <section className="py-24 md:py-48 bg-[#050505] text-white overflow-hidden relative rounded-t-[48px] md:rounded-t-[100px] -mt-8 md:-mt-16 z-30">
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#00D665]/10 blur-[160px] rounded-full translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[#00D665]/5 blur-[140px] rounded-full -translate-x-1/2 translate-y-1/2 pointer-events-none"></div>
 

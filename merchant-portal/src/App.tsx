@@ -1,94 +1,262 @@
-import { useState } from 'react';
-import { useMerchantContext } from './contexts/MerchantContext';
-import { Sidebar } from './components/Sidebar';
-import { Dashboard } from './pages/Dashboard';
-import { Orders } from './pages/Orders';
-import { Menu } from './pages/Menu';
-import { Analytics } from './pages/Analytics';
-import { ZimWallet } from './pages/ZimWallet';
-import { Handshake } from './pages/Handshake';
-import { InventoryMart } from './pages/Mart/InventoryMart';
-import { PickerView } from './pages/Mart/PickerView';
-import { BookingCalendar } from './pages/Stay/BookingCalendar';
-import { Bell, Search, User, ShoppingCart, Bed, Utensils } from 'lucide-react';
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
-function App() {
-  const [activeTab, setActiveTab] = useState('dashboard');
+import React, { useState } from 'react';
+import { 
+  Home,
+  Store,
+  ClipboardList,
+  BarChart2,
+  ChevronDown,
+  ChevronUp,
+  HelpCircle,
+  LogOut,
+  Megaphone,
+  Utensils,
+  CreditCard,
+  Users as UsersIcon,
+  Settings,
+  Search,
+  Bell,
+  ChefHat,
+  Package,
+  MessageSquare,
+  Globe,
+  Calendar,
+  Clock,
+  FileText,
+  Star
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import { cn } from './types';
 
-  const { serviceType } = useMerchantContext();
+// Components
+import Dashboard from './components/Dashboard';
+import Orders from './components/Orders';
+import MenuMaker from './components/MenuMaker';
+import Analytics from './components/Analytics';
+import Feedback from './components/Feedback';
+import Kitchen from './components/Kitchen';
+import Inventory from './components/Inventory';
+import Stores, { StoreInfo } from './components/Stores';
 
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'dashboard': return <Dashboard />;
-      case 'orders':
-        if (serviceType === 'MART') return <PickerView />;
-        if (serviceType === 'STAY') return <BookingCalendar />;
-        return <Orders />;
-      case 'menu':
-        if (serviceType === 'MART') return <InventoryMart />;
-        return <Menu />;
-      case 'analytics': return <Analytics />;
-      case 'wallet': return <ZimWallet />;
-      case 'delivery': return <Handshake />;
-      default: return <Dashboard />;
-    }
-  };
+type Tab = 'home' | 'stores-list' | 'webshop' | 'orders' | 'kitchen' | 'inventory' | 'performance' | 'analytics' | 'feedback' | 'reports' | 'insights' | 'top-eats' | 'marketing' | 'menu' | 'payments' | 'users' | 'settings' | 'store-info' | 'holiday-hours' | 'prep-times' | 'documents';
 
-  const getHeaderIcon = () => {
-    switch (serviceType) {
-      case 'MART': return <ShoppingCart className="text-brand-green" size={20} />;
-      case 'STAY': return <Bed className="text-brand-green" size={20} />;
-      default: return <Utensils className="text-brand-green" size={20} />;
-    }
+export default function App() {
+  const [activeTab, setActiveTab] = useState<Tab>('menu');
+  const [isPerformanceOpen, setIsPerformanceOpen] = useState(false);
+  const [isStoresOpen, setIsStoresOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isPizzaPlaceOpen, setIsPizzaPlaceOpen] = useState(true);
+  const [selectedStore, setSelectedStore] = useState<any>(null);
+
+  const sidebarItems = [
+    { id: 'home', label: 'Home', icon: Home },
+    { 
+      id: 'stores', 
+      label: 'Stores', 
+      icon: Store, 
+      hasChevron: true, 
+      isOpen: isStoresOpen, 
+      setOpen: setIsStoresOpen,
+      subItems: [
+        { id: 'stores-list', label: 'Stores', icon: Store },
+        { id: 'webshop', label: 'Webshop', icon: Globe },
+      ]
+    },
+    { id: 'analytics', label: 'Analytics', icon: BarChart2 },
+    { id: 'feedback', label: 'Feedback', icon: Star },
+    { id: 'reports', label: 'Reports', icon: ClipboardList },
+    { id: 'payments', label: 'Payments', icon: CreditCard },
+    { id: 'menu', label: 'Menu', icon: Utensils },
+    { id: 'holiday-hours', label: 'Holiday Hours', icon: Calendar },
+    { id: 'marketing', label: 'Marketing', icon: Megaphone },
+    { id: 'prep-times', label: 'Preparation Times', icon: Clock },
+    { id: 'users', label: 'Users', icon: UsersIcon },
+    { id: 'documents', label: 'Documents', icon: FileText },
+    { id: 'settings', label: 'Settings', icon: Settings },
+  ];
+
+  const performanceItems = [
+    { id: 'analytics', label: 'Analytics' },
+    { id: 'feedback', label: 'Feedback' },
+    { id: 'reports', label: 'Reports' },
+    { id: 'insights', label: 'Insights' },
+    { id: 'top-eats', label: 'Top Eats' },
+  ];
+
+  const pizzaPlaceItems = [
+    { id: 'marketing', label: 'Marketing', icon: Megaphone },
+    { id: 'menu', label: 'Menu', icon: Utensils },
+    { id: 'payments', label: 'Payments', icon: CreditCard },
+    { id: 'users', label: 'Users', icon: UsersIcon },
+    { id: 'settings', label: 'Settings', icon: Settings, hasChevron: true, isOpen: isSettingsOpen, setOpen: setIsSettingsOpen },
+  ];
+
+  const handleSelectStore = (store: any) => {
+    setSelectedStore(store);
+    setActiveTab('store-info');
   };
 
   return (
-    <div className="min-h-screen bg-zinc-50 text-zinc-900 flex">
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+    <div className="flex h-screen bg-white text-black font-sans overflow-hidden">
+      {/* Sidebar */}
+      <aside className="w-64 bg-white flex flex-col border-r border-gray-200 overflow-y-auto shrink-0">
+        <div className="p-6 pb-2">
+          <div className="text-2xl font-bold tracking-tight mb-8">
+            Uber <span className="text-emerald-600">Eats</span> Manager
+          </div>
 
-      <main className="flex-1 ml-64 p-8">
-        <header className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-brand-green/10 rounded-lg">
-              {getHeaderIcon()}
-            </div>
+          <nav className="space-y-1">
+            {sidebarItems.map((item) => (
+              <div key={item.id}>
+                <button
+                  onClick={() => {
+                    if (item.setOpen) {
+                      item.setOpen(!item.isOpen);
+                    } else {
+                      setActiveTab(item.id as Tab);
+                    }
+                  }}
+                  className={cn(
+                    "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors relative",
+                    activeTab === item.id || (item.subItems && item.subItems.some(s => s.id === activeTab)) ? "bg-gray-100" : "hover:bg-gray-50 text-gray-700"
+                  )}
+                >
+                  {(activeTab === item.id || (item.subItems && item.subItems.some(s => s.id === activeTab))) && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-emerald-600 rounded-r-full"></div>}
+                  <item.icon size={20} className={cn(activeTab === item.id ? "text-emerald-600" : "text-gray-500")} />
+                  <span className="flex-1 text-left">{item.label}</span>
+                  {item.hasChevron && (item.isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />)}
+                </button>
+                
+                {item.subItems && item.isOpen && (
+                  <div className="ml-9 mt-1 space-y-1">
+                    {item.subItems.map((sub) => (
+                      <button
+                        key={sub.id}
+                        onClick={() => setActiveTab(sub.id as Tab)}
+                        className={cn(
+                          "w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors relative",
+                          activeTab === sub.id ? "bg-gray-100 text-black" : "text-gray-600 hover:bg-gray-50"
+                        )}
+                      >
+                        {activeTab === sub.id && <div className="absolute -left-9 top-1/2 -translate-y-1/2 w-1 h-6 bg-emerald-600 rounded-r-full"></div>}
+                        {sub.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </nav>
+        </div>
+
+        <div className="p-6 pt-2">
+          <div className="h-[1px] bg-gray-100 mb-6"></div>
+          <button
+            onClick={() => setIsPizzaPlaceOpen(!isPizzaPlaceOpen)}
+            className="w-full flex items-center justify-between px-2 mb-4 text-left"
+          >
             <div>
-              <h1 className="text-2xl font-bold capitalize">{activeTab}</h1>
-              <p className="text-zinc-500 text-sm">DashDrive {serviceType} Hub</p>
+              <div className="text-sm font-bold">Starbucks (82) Lyn...</div>
+              <div className="text-xs text-gray-500">Switch location</div>
             </div>
+            {isPizzaPlaceOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+          </button>
+          
+          <AnimatePresence>
+            {isPizzaPlaceOpen && (
+              <motion.nav
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="overflow-hidden space-y-1"
+              >
+                {pizzaPlaceItems.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => setActiveTab(item.id as Tab)}
+                    className={cn(
+                      "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors relative",
+                      activeTab === item.id ? "bg-gray-100" : "hover:bg-gray-50 text-gray-700"
+                    )}
+                  >
+                    {activeTab === item.id && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-emerald-600 rounded-r-full"></div>}
+                    <item.icon size={20} className={cn(activeTab === item.id ? "text-emerald-600" : "text-gray-500")} />
+                    <span className="flex-1 text-left">{item.label}</span>
+                    {item.hasChevron && (item.isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />)}
+                  </button>
+                ))}
+              </motion.nav>
+            )}
+          </AnimatePresence>
+        </div>
+
+        <div className="mt-auto p-6">
+          <button 
+            onClick={() => setActiveTab('feedback')}
+            className={cn(
+              "w-full flex items-center gap-3 px-4 py-2 bg-gray-100 rounded-full text-sm font-bold hover:bg-gray-200 transition-colors",
+              activeTab === 'feedback' && "ring-2 ring-black"
+            )}
+          >
+            <MessageSquare size={18} />
+            Feedback
+          </button>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col overflow-hidden">
+        {/* Header */}
+        <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-end px-8 shrink-0 gap-6">
+          <div className="flex items-center gap-2 px-4 py-1.5 bg-gray-100 text-gray-600 rounded-full text-xs font-bold">
+            <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+            Emulation in progress
+            <ChevronDown size={14} className="ml-1" />
           </div>
-
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" size={18} />
-              <input
-                type="text"
-                placeholder="Search orders, items..."
-                className="bg-zinc-200/50 border border-zinc-200 rounded-xl py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-brand-green/20 w-64 transition-all"
-              />
-            </div>
-
-            <button className="p-2 rounded-xl bg-white border border-zinc-200 text-zinc-400 hover:text-zinc-900 transition-colors relative shadow-sm">
-              <Bell size={20} />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-brand-green rounded-full border-2 border-white"></span>
-            </button>
-
-            <div className="flex items-center gap-3 pl-4 border-l border-zinc-200">
-              <div className="text-right">
-                <p className="text-sm font-medium">The London Grill</p>
-                <p className="text-xs text-brand-green font-semibold">Store Open</p>
-              </div>
-              <div className="w-10 h-10 rounded-full bg-white border border-zinc-200 flex items-center justify-center shadow-sm">
-                <User size={20} className="text-zinc-600" />
-              </div>
-            </div>
+          <button className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-black transition-colors">
+            <HelpCircle size={18} />
+            Help
+          </button>
+          <div className="relative">
+            <Bell size={20} className="text-gray-600" />
+            <span className="absolute -top-1 -right-1 w-4 h-4 bg-blue-500 text-white text-[10px] flex items-center justify-center rounded-full font-bold border-2 border-white">3</span>
           </div>
+          <button className="text-sm font-medium text-gray-600 hover:text-black transition-colors">Log Out</button>
         </header>
 
-        {renderContent()}
+        {/* Scrollable Content Area */}
+        <div className="flex-1 overflow-y-auto">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              className="h-full"
+            >
+              {activeTab === 'home' && <Dashboard />}
+              {activeTab === 'orders' && <Orders />}
+              {activeTab === 'stores-list' && <Stores onSelectStore={handleSelectStore} />}
+              {activeTab === 'store-info' && <StoreInfo store={selectedStore} onBack={() => setActiveTab('stores-list')} />}
+              {activeTab === 'kitchen' && <Kitchen />}
+              {activeTab === 'inventory' && <Inventory />}
+              {activeTab === 'menu' && <MenuMaker />}
+              {activeTab === 'analytics' && <Analytics />}
+              {activeTab === 'feedback' && <Feedback />}
+              {['stores', 'webshop', 'reports', 'insights', 'top-eats', 'marketing', 'payments', 'users', 'settings', 'holiday-hours', 'prep-times', 'documents'].includes(activeTab) && (
+                <div className="flex items-center justify-center h-full text-gray-400">
+                  {activeTab.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} screen coming soon.
+                </div>
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </div>
       </main>
     </div>
   );
 }
-
-export default App;

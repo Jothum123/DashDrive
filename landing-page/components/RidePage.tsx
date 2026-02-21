@@ -30,7 +30,7 @@ const RidePage: React.FC<RidePageProps> = ({ onBack, onTaxiClick, onRentalClick,
 
   return (
     <div className="bg-white min-h-screen pt-24 animate-reveal overflow-hidden rounded-t-[48px] md:rounded-t-[100px] -mt-12 md:-mt-24 relative z-20">
-      <section className="relative mx-6 md:mx-12 lg:mx-20 mt-8 mb-32 rounded-[64px] overflow-hidden min-h-[700px] flex items-center bg-[#050505] group">
+      <section className="relative mx-6 md:mx-12 lg:mx-20 mt-8 mb-32 rounded-[20px_64px_20px_64px] md:rounded-[30px_100px_30px_100px] overflow-hidden min-h-[700px] flex items-center bg-[#050505] group">
         {/* Cinematic Background */}
         <div className="absolute inset-0 z-0 opacity-40 group-hover:opacity-50 transition-opacity duration-[1.5s] ease-out">
           <img src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&q=80&w=1600" className="w-full h-full object-cover grayscale group-hover:grayscale-0 scale-105 group-hover:scale-100 transition-all duration-[2s] ease-out" alt="Ride" />
@@ -39,10 +39,6 @@ const RidePage: React.FC<RidePageProps> = ({ onBack, onTaxiClick, onRentalClick,
 
         <div className="container mx-auto px-12 md:px-24 relative z-10 grid lg:grid-cols-2 gap-20 items-center text-white">
           <div className="space-y-12">
-            <div className="inline-flex items-center gap-4 px-5 py-2 rounded-full bg-white/[0.03] border border-white/[0.08] backdrop-blur-md">
-              <div className="w-2 h-2 rounded-full bg-[#00D665] animate-ping" />
-              <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/60">Mobility Hub v4.0</span>
-            </div>
 
             <h1 className="text-white text-7xl md:text-[9vw] font-light tracking-tight leading-[0.8] mb-12">
               Ride <br />
@@ -53,7 +49,7 @@ const RidePage: React.FC<RidePageProps> = ({ onBack, onTaxiClick, onRentalClick,
               Professional ride-hailing with a peer-to-peer approach. Connect with verified drivers instantly for any trip style.
             </p>
 
-            <button className="group relative bg-[#00D665] text-black px-16 py-8 rounded-[32px] font-black text-xl overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] hover:scale-105 hover:shadow-[0_40px_80px_rgba(0,214,101,0.3)] active:scale-95 flex items-center gap-4">
+            <button className="group relative bg-[#00D665] text-black px-16 py-8 rounded-[12px_32px_12px_32px] font-black text-xl overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] hover:scale-105 hover:shadow-[0_40px_80px_rgba(0,214,101,0.3)] active:scale-95 flex items-center gap-4">
               <span className="relative z-10 uppercase tracking-tight">Request a Ride</span>
               <ArrowRight size={24} className="relative z-10 group-hover:translate-x-2 transition-transform duration-500" />
               <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
@@ -100,7 +96,7 @@ const RidePage: React.FC<RidePageProps> = ({ onBack, onTaxiClick, onRentalClick,
               { name: 'Executive', img: 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&q=80&w=800' },
               { name: 'Max', img: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=800' }
             ].map((service, i) => (
-              <div key={i} className="group relative bg-[#050505] rounded-[56px] overflow-hidden min-h-[500px] flex flex-col justify-end p-12 cursor-pointer transition-all duration-[0.8s] ease-[cubic-bezier(0.23,1,0.32,1)] hover:shadow-[0_64px_128px_-32px_rgba(0,0,0,0.3)] hover:-translate-y-4">
+              <div key={i} className="group relative bg-[#050505] rounded-[20px_56px_20px_56px] overflow-hidden min-h-[500px] flex flex-col justify-end p-12 cursor-pointer transition-all duration-[0.8s] ease-[cubic-bezier(0.23,1,0.32,1)] hover:shadow-[0_64px_128px_-32px_rgba(0,0,0,0.3)] hover:-translate-y-4">
                 {/* Handcrafted Rim */}
                 <div className="absolute inset-0 border border-white/[0.04] rounded-[inherit] pointer-events-none z-20 group-hover:border-[#00D665]/20 transition-colors duration-700" />
 
@@ -110,9 +106,6 @@ const RidePage: React.FC<RidePageProps> = ({ onBack, onTaxiClick, onRentalClick,
                 </div>
 
                 <div className="relative z-10 space-y-4">
-                  <div className="px-3 py-1 bg-black/40 backdrop-blur-md rounded-full border border-white/10 w-fit">
-                    <span className="text-[9px] font-bold uppercase tracking-widest text-white/80">Class A-0{i + 1}</span>
-                  </div>
                   <h4 className="text-4xl font-black tracking-tight text-white">{service.name}</h4>
                   <div className="w-12 h-[2px] bg-[#00D665] rounded-full group-hover:w-24 transition-all duration-700"></div>
                 </div>

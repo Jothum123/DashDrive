@@ -1,51 +1,67 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DriveGo | Your Ride, Your Price</title>
+  <title>DashDrive | Your Ride, Your Price</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
   <style>
     :root {
       --drive-teal: #00D665;
       --drive-carbon: #1A1A1A;
       --drive-bg: #F8F9FA;
     }
+
     html {
       scroll-behavior: smooth;
     }
+
     body {
       font-family: 'Inter', sans-serif;
       -webkit-font-smoothing: antialiased;
       background-color: white;
       color: #000;
     }
+
     .brand-teal {
       background-color: var(--drive-teal);
     }
+
     .brand-teal-text {
       color: var(--drive-teal);
     }
+
     @keyframes reveal {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
+
     .animate-reveal {
       animation: reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
+
     .map-pattern {
       background-image: radial-gradient(#ccc 1px, transparent 1px);
       background-size: 20px 20px;
     }
+
     .no-scrollbar::-webkit-scrollbar {
       display: none;
     }
   </style>
-<script type="importmap">
+  <script type="importmap">
 {
   "imports": {
     "lucide-react": "https://esm.sh/lucide-react@^0.564.0",
@@ -56,10 +72,12 @@
   }
 }
 </script>
-<link rel="stylesheet" href="/index.css">
+  <link rel="stylesheet" href="/index.css">
 </head>
+
 <body class="overflow-x-hidden">
   <div id="root"></div>
-<script type="module" src="/index.tsx"></script>
+  <script type="module" src="/index.tsx"></script>
 </body>
+
 </html>

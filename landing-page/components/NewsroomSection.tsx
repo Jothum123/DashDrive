@@ -18,7 +18,7 @@ const NewsroomSection: React.FC = () => {
     {
       image: "https://images.unsplash.com/photo-1551288049-bbbda536339a?auto=format&fit=crop&q=80&w=600",
       date: "Feb 09, 2025",
-      title: "DriveGo and Partners Announce Strategic Tech Alignment for Smart Cities",
+      title: "DashDrive and Partners Announce Strategic Tech Alignment for Smart Cities",
     },
     {
       image: "https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?auto=format&fit=crop&q=80&w=600",
@@ -28,7 +28,7 @@ const NewsroomSection: React.FC = () => {
   ];
 
   return (
-    <section className="py-32 md:py-48 bg-[#030303] text-white relative overflow-hidden rounded-t-[48px] md:rounded-t-[100px] -mt-12 md:-mt-24 z-20">
+    <section className="py-32 md:py-48 bg-[#030303] text-white relative overflow-hidden rounded-t-[48px] md:rounded-t-[100px] -mt-12 md:-mt-24 z-50">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#00D665]/5 blur-[180px] rounded-full pointer-events-none"></div>
 
       <div className="max-w-[1700px] mx-auto px-6 md:px-12 relative z-10">

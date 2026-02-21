@@ -103,7 +103,7 @@ const PartnersPage: React.FC<PartnersPageProps> = ({ onBack }) => {
           {partnerTypes.map((partner) => (
             <div
               key={partner.id}
-              className={`group relative p-12 rounded-[64px] min-h-[550px] flex flex-col justify-between transition-all duration-[0.8s] ease-[cubic-bezier(0.23,1,0.32,1)] hover:shadow-[0_64px_128px_-32px_rgba(0,0,0,0.1)] hover:-translate-y-4 border border-black/[0.03] ${partner.color} ${partner.textColor || 'text-white'} overflow-hidden`}
+              className={`group relative p-12 rounded-[20px_64px_20px_64px] min-h-[550px] flex flex-col justify-between transition-all duration-[0.8s] ease-[cubic-bezier(0.23,1,0.32,1)] hover:shadow-[0_64px_128px_-32px_rgba(0,0,0,0.1)] hover:-translate-y-4 border border-black/[0.03] ${partner.color} ${partner.textColor || 'text-white'} overflow-hidden`}
             >
               {/* Handcrafted Rim */}
               <div className="absolute inset-0 border border-white/[0.04] rounded-[inherit] pointer-events-none z-20 group-hover:border-[#00D665]/20 transition-colors duration-700" />
@@ -113,9 +113,6 @@ const PartnersPage: React.FC<PartnersPageProps> = ({ onBack }) => {
                   {partner.icon}
                 </div>
                 <div>
-                  <div className="px-3 py-1 bg-black/5 rounded-md w-fit mb-4 border border-black/5">
-                    <span className="text-[9px] font-bold uppercase tracking-widest opacity-40">Partner v4.{partner.id.length % 5}</span>
-                  </div>
                   <h2 className="text-4xl md:text-5xl font-black tracking-tighter mb-6 leading-none">{partner.title}</h2>
                   <p className={`text-xl font-medium opacity-60 leading-relaxed`}>{partner.desc}</p>
                 </div>
@@ -142,7 +139,7 @@ const PartnersPage: React.FC<PartnersPageProps> = ({ onBack }) => {
       </section>
 
       {/* Why Choose Us Metrics */}
-      <section className="bg-zinc-950 py-40 md:py-56 rounded-[100px] mx-6 md:mx-12 mb-40 overflow-hidden relative group">
+      <section className="bg-zinc-950 py-40 md:py-56 rounded-[30px_100px_30px_100px] mx-6 md:mx-12 mb-40 overflow-hidden relative group">
         <div className="absolute inset-0 opacity-[0.05] pointer-events-none z-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
         <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-[#00D665]/10 blur-[200px] rounded-full group-hover:bg-[#00D665]/20 transition-all duration-1000"></div>
 
@@ -167,7 +164,7 @@ const PartnersPage: React.FC<PartnersPageProps> = ({ onBack }) => {
               { icon: <Users className="text-[#00D665]" />, label: "Support", value: "24/7", desc: "Priority partner assistance" },
               { icon: <Zap className="text-[#00D665]" />, label: "Payouts", value: "Real-time", desc: "Access your capital instantly" },
             ].map((stat, i) => (
-              <div key={i} className="bg-white/[0.02] border border-white/5 p-12 rounded-[56px] text-center space-y-6 group/stat hover:bg-[#00D665]/5 hover:border-[#00D665]/20 transition-all duration-700">
+              <div key={i} className="bg-white/[0.02] border border-white/5 p-12 rounded-[20px_56px_20px_56px] text-center space-y-6 group/stat hover:bg-[#00D665]/5 hover:border-[#00D665]/20 transition-all duration-700">
                 <div className="w-20 h-20 bg-white/5 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-white/5 group-hover/stat:scale-110 transition-all">
                   {stat.icon}
                 </div>

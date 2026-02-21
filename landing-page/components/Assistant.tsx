@@ -7,7 +7,7 @@ import { ChatMessage } from '../types';
 const Assistant: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: 'assistant', content: "Welcome to DriveGo Concierge. How may I assist your journey today?" }
+    { role: 'assistant', content: "Welcome to DashDrive Concierge. How may I assist your journey today?" }
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -43,7 +43,7 @@ const Assistant: React.FC = () => {
                 <Wand2 size={24} />
               </div>
               <div className="flex flex-col">
-                <span className="font-black text-black text-xl tracking-tight leading-none">DriveGo Concierge</span>
+                <span className="font-black text-black text-xl tracking-tight leading-none">DashDrive Concierge</span>
                 <span className="text-black/50 text-xs font-black uppercase tracking-widest mt-1 flex items-center gap-1">
                   AI Powered <Sparkles size={10} />
                 </span>
@@ -84,15 +84,15 @@ const Assistant: React.FC = () => {
           {/* Input */}
           <div className="p-8 border-t border-gray-100 bg-white/50">
             <div className="flex items-center gap-4 bg-gray-50 rounded-[32px] px-6 py-3 border border-gray-100 focus-within:ring-2 focus-within:ring-[#00D665]/20 focus-within:bg-white transition-all">
-              <input 
-                type="text" 
+              <input
+                type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                 placeholder="Where would you like to go?"
                 className="flex-1 bg-transparent outline-none text-[15px] font-bold py-2 placeholder:text-gray-400"
               />
-              <button 
+              <button
                 onClick={handleSend}
                 disabled={isLoading}
                 className={`p-3 rounded-2xl ${isLoading ? 'text-gray-300' : 'bg-black text-white hover:scale-105'} transition-all shadow-lg active:scale-95`}
@@ -103,7 +103,7 @@ const Assistant: React.FC = () => {
           </div>
         </div>
       ) : (
-        <button 
+        <button
           onClick={() => setIsOpen(true)}
           className="brand-teal text-black w-20 h-20 rounded-[32px] shadow-[0_16px_48px_rgba(0,214,101,0.4)] flex items-center justify-center hover:scale-110 hover:shadow-[0_24px_64px_rgba(0,214,101,0.5)] transition-all duration-500 group relative"
         >

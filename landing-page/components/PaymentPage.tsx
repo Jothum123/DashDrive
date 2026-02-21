@@ -112,17 +112,13 @@ const PaymentPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
 
       {activeTab === 'pay' ? (
         <div className="animate-reveal">
-          <section className="mx-6 md:mx-12 lg:mx-20 mt-8 mb-32 rounded-[64px] overflow-hidden min-h-[700px] flex items-center bg-[#0A0A0A] group relative">
+          <section className="mx-6 md:mx-12 lg:mx-20 mt-8 mb-32 rounded-[20px_64px_20px_64px] md:rounded-[30px_100px_30px_100px] overflow-hidden min-h-[700px] flex items-center bg-[#0A0A0A] group relative">
             <div className="absolute inset-0 z-0 opacity-10 group-hover:opacity-20 transition-opacity duration-1000">
               <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=1600" className="w-full h-full object-cover grayscale" alt="Fintech" />
             </div>
 
             <div className="container mx-auto px-12 md:px-24 relative z-20 flex flex-col lg:flex-row items-center justify-between gap-24 py-20">
               <div className="space-y-12 max-w-2xl">
-                <div className="inline-flex items-center gap-4 px-5 py-2 rounded-full bg-white/[0.05] border border-white/[0.1] backdrop-blur-md">
-                  <ShieldCheck size={14} className="text-[#00D665]" />
-                  <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/60">Dash-Secure v4.0</span>
-                </div>
 
                 <h1 className="text-white text-7xl md:text-[9vw] font-light tracking-tight leading-[0.8] mb-12">
                   Pay anything, <br /> <span className="text-[#00D665] font-black tracking-tighter italic">seamlessly.</span>
@@ -148,7 +144,7 @@ const PaymentPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                 { title: "Instant Settle", desc: "Technical mesh settlements in under 400ms globally.", icon: <Zap size={40} /> },
                 { title: "Pure Logic", desc: "No middle-man fees. Just peer-to-peer transparency.", icon: <CheckCircle2 size={40} /> }
               ].map((item, i) => (
-                <div key={i} className="group bg-[#FBFBFB] border border-black/[0.03] p-16 rounded-[64px] hover:bg-[#0A0A0A] transition-all duration-[0.8s] ease-[cubic-bezier(0.23,1,0.32,1)] hover:-translate-y-4">
+                <div key={i} className="group bg-[#FBFBFB] border border-black/[0.03] p-16 rounded-[20px_64px_20px_64px] hover:bg-[#0A0A0A] transition-all duration-[0.8s] ease-[cubic-bezier(0.23,1,0.32,1)] hover:-translate-y-4">
                   <div className="w-20 h-20 bg-black/5 group-hover:bg-[#00D665] rounded-3xl flex items-center justify-center text-black/20 group-hover:text-black mx-auto mb-12 transition-all duration-700 group-hover:scale-110">
                     {item.icon}
                   </div>
@@ -161,13 +157,9 @@ const PaymentPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         </div>
       ) : (
         <div className="animate-reveal">
-          <section className="mx-6 md:mx-12 lg:mx-20 mt-8 mb-32 rounded-[64px] overflow-hidden min-h-[700px] flex items-center bg-[#0F172A] group relative">
+          <section className="mx-6 md:mx-12 lg:mx-20 mt-8 mb-32 rounded-[20px_64px_20px_64px] md:rounded-[30px_100px_30px_100px] overflow-hidden min-h-[700px] flex items-center bg-[#0F172A] group relative">
             <div className="container mx-auto px-12 md:px-24 relative z-20 flex flex-col lg:flex-row items-center justify-between gap-24 py-20">
               <div className="space-y-12 max-w-xl">
-                <div className="inline-flex items-center gap-4 px-5 py-2 rounded-full bg-white/[0.05] border border-white/[0.1] backdrop-blur-md">
-                  <Globe size={14} className="text-[#00D665]" />
-                  <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/60">Bridge Protocol v2.4</span>
-                </div>
 
                 <h1 className="text-white text-7xl md:text-[9vw] font-light tracking-tight leading-[0.8] mb-12">
                   Send home, <br /> <span className="text-[#00D665] font-black tracking-tighter italic">instantly.</span>
@@ -211,7 +203,7 @@ const PaymentPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         </div>
       )}
 
-      <section className="py-40 bg-[#0A0A0A] rounded-[80px] mx-6 md:mx-12 lg:mx-20 mb-40 relative overflow-hidden group">
+      <section className="py-40 bg-[#0A0A0A] rounded-[30px_80px_30px_80px] mx-6 md:mx-12 lg:mx-20 mb-40 relative overflow-hidden group">
         <div className="absolute inset-0 opacity-[0.05] pointer-events-none z-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
 
         <div className="max-w-4xl mx-auto px-12 relative z-10">
@@ -240,7 +232,7 @@ const PaymentPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         </div>
       </section>
 
-      <section className="py-48 bg-black text-white text-center rounded-[80px] mx-6 md:mx-12 lg:mx-20 mb-32 relative group overflow-hidden">
+      <section className="py-48 bg-black text-white text-center rounded-[30px_80px_30px_80px] mx-6 md:mx-12 lg:mx-20 mb-32 relative group overflow-hidden">
         <h2 className="relative z-10 text-8xl md:text-[11rem] font-black tracking-tighter mb-20 leading-[0.8] uppercase italic">
           Zero stress. <br /> <span className="text-[#00D665] not-italic">Pure Value.</span>
         </h2>
