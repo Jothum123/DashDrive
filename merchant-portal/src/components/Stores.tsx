@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
-import { 
-  ChevronRight, 
-  ChevronLeft, 
-  Moon, 
-  CheckCircle2, 
+import {
+  ChevronRight,
+  ChevronLeft,
+  Moon,
+  CheckCircle2,
   MessageCircle,
   X,
   ArrowLeft,
   MapPin,
   Phone,
   Edit2,
-  Store as StoreIcon
+  Store as StoreIcon,
+  Clock,
+  Calendar
 } from 'lucide-react';
 import { cn } from '../types';
 
@@ -88,8 +90,8 @@ const Stores = ({ onSelectStore }: { onSelectStore: (store: Store) => void }) =>
         {/* Open Stores */}
         <div className="space-y-0 mb-12">
           {openStores.map((store) => (
-            <div 
-              key={store.id} 
+            <div
+              key={store.id}
               onClick={() => onSelectStore(store)}
               className="flex items-center gap-6 py-6 border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer group"
             >
@@ -99,7 +101,7 @@ const Stores = ({ onSelectStore }: { onSelectStore: (store: Store) => void }) =>
                   <CheckCircle2 size={16} className="text-emerald-500 fill-white" />
                 </div>
               </div>
-              
+
               <div className="flex-1 min-w-0">
                 <h3 className="font-bold text-sm truncate">{store.name}</h3>
                 <p className="text-xs text-gray-500 truncate">{store.address}</p>
@@ -152,8 +154,8 @@ const Stores = ({ onSelectStore }: { onSelectStore: (store: Store) => void }) =>
           <h2 className="text-lg font-bold mb-6">Closed ({closedStores.length})</h2>
           <div className="space-y-0">
             {closedStores.map((store) => (
-              <div 
-                key={store.id} 
+              <div
+                key={store.id}
                 onClick={() => onSelectStore(store)}
                 className="flex items-center gap-6 py-6 border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer group"
               >
@@ -163,7 +165,7 @@ const Stores = ({ onSelectStore }: { onSelectStore: (store: Store) => void }) =>
                     <Moon size={16} className="text-gray-400 fill-gray-400" />
                   </div>
                 </div>
-                
+
                 <div className="flex-1 min-w-0">
                   <h3 className="font-bold text-sm truncate">{store.name}</h3>
                   <p className="text-xs text-gray-500 truncate">{store.address}</p>
@@ -211,19 +213,19 @@ const Stores = ({ onSelectStore }: { onSelectStore: (store: Store) => void }) =>
   );
 };
 
-export const StoreInfo = ({ store, onBack }: { store: Store, onBack: () => void }) => {
+export const StoreInfo = ({ store, onBack, setActiveTab }: { store: Store, onBack: () => void, setActiveTab: (tab: any) => void }) => {
   return (
     <div className="flex-1 bg-white overflow-y-auto">
       <div className="max-w-7xl mx-auto py-8 px-8">
-        <button 
+        <button
           onClick={onBack}
           className="p-2 hover:bg-gray-100 rounded-full transition-colors mb-4"
         >
           <ArrowLeft size={24} />
         </button>
-        
+
         <h1 className="text-4xl font-bold mb-4">Store info</h1>
-        
+
         <div className="flex items-center gap-2 text-sm text-gray-500 mb-8">
           <Moon size={16} />
           <span>Closed</span>
@@ -250,6 +252,30 @@ export const StoreInfo = ({ store, onBack }: { store: Store, onBack: () => void 
               <h2 className="text-2xl font-bold mb-2">{store.name}</h2>
               <p className="text-gray-500 text-sm">{store.address}</p>
               <p className="text-gray-500 text-sm">San Francisco, 94103</p>
+            </div>
+
+            <div className="space-y-4 pt-4 border-t border-gray-100">
+              <button
+                onClick={() => setActiveTab('store-hours')}
+                className="w-full px-6 py-3 bg-gray-100 rounded-xl text-sm font-bold hover:bg-gray-200 transition-colors flex items-center justify-between group"
+              >
+                <div className="flex items-center gap-3">
+                  <Clock size={18} className="text-gray-500" />
+                  <span>Manage Regular Hours</span>
+                </div>
+                <ChevronRight size={18} className="text-gray-300 group-hover:text-black transition-colors" />
+              </button>
+
+              <button
+                onClick={() => setActiveTab('holiday-hours')}
+                className="w-full px-6 py-3 bg-gray-100 rounded-xl text-sm font-bold hover:bg-gray-200 transition-colors flex items-center justify-between group"
+              >
+                <div className="flex items-center gap-3">
+                  <Calendar size={18} className="text-gray-500" />
+                  <span>Manage Holiday Hours</span>
+                </div>
+                <ChevronRight size={18} className="text-gray-300 group-hover:text-black transition-colors" />
+              </button>
             </div>
 
             <div>

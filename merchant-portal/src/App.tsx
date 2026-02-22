@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { 
+import {
   Home,
   Store,
   ClipboardList,
@@ -41,11 +41,16 @@ import Feedback from './components/Feedback';
 import Kitchen from './components/Kitchen';
 import Inventory from './components/Inventory';
 import Stores, { StoreInfo } from './components/Stores';
+import StoreHours from './components/StoreHours';
+import HolidayHours from './components/HolidayHours';
+import Sales from './components/Sales';
+import Operations from './components/Operations';
+import TopEats from './components/TopEats';
 
-type Tab = 'home' | 'stores-list' | 'webshop' | 'orders' | 'kitchen' | 'inventory' | 'performance' | 'analytics' | 'feedback' | 'reports' | 'insights' | 'top-eats' | 'marketing' | 'menu' | 'payments' | 'users' | 'settings' | 'store-info' | 'holiday-hours' | 'prep-times' | 'documents';
+type Tab = 'home' | 'stores-list' | 'webshop' | 'orders' | 'kitchen' | 'inventory' | 'performance-sales' | 'performance-operations' | 'performance-top-eats' | 'feedback' | 'reports' | 'insights' | 'marketing' | 'menu' | 'payments' | 'users' | 'settings' | 'store-info' | 'holiday-hours' | 'store-hours' | 'prep-times' | 'documents';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<Tab>('menu');
+  const [activeTab, setActiveTab] = useState<Tab>('orders');
   const [isPerformanceOpen, setIsPerformanceOpen] = useState(false);
   const [isStoresOpen, setIsStoresOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -54,24 +59,38 @@ export default function App() {
 
   const sidebarItems = [
     { id: 'home', label: 'Home', icon: Home },
-    { 
-      id: 'stores', 
-      label: 'Stores', 
-      icon: Store, 
-      hasChevron: true, 
-      isOpen: isStoresOpen, 
+    { id: 'orders', label: 'Orders', icon: ClipboardList },
+    {
+      id: 'stores',
+      label: 'Stores',
+      icon: Store,
+      hasChevron: true,
+      isOpen: isStoresOpen,
       setOpen: setIsStoresOpen,
       subItems: [
         { id: 'stores-list', label: 'Stores', icon: Store },
+        { id: 'store-hours', label: 'Store Hours', icon: Clock },
+        { id: 'holiday-hours', label: 'Holiday Hours', icon: Calendar },
         { id: 'webshop', label: 'Webshop', icon: Globe },
       ]
     },
-    { id: 'analytics', label: 'Analytics', icon: BarChart2 },
+    {
+      id: 'performance',
+      label: 'Performance',
+      icon: BarChart2,
+      hasChevron: true,
+      isOpen: isPerformanceOpen,
+      setOpen: setIsPerformanceOpen,
+      subItems: [
+        { id: 'performance-sales', label: 'Sales' },
+        { id: 'performance-operations', label: 'Operations' },
+        { id: 'performance-top-eats', label: 'Top Eats' },
+      ]
+    },
     { id: 'feedback', label: 'Feedback', icon: Star },
     { id: 'reports', label: 'Reports', icon: ClipboardList },
     { id: 'payments', label: 'Payments', icon: CreditCard },
     { id: 'menu', label: 'Menu', icon: Utensils },
-    { id: 'holiday-hours', label: 'Holiday Hours', icon: Calendar },
     { id: 'marketing', label: 'Marketing', icon: Megaphone },
     { id: 'prep-times', label: 'Preparation Times', icon: Clock },
     { id: 'users', label: 'Users', icon: UsersIcon },
@@ -130,7 +149,7 @@ export default function App() {
                   <span className="flex-1 text-left">{item.label}</span>
                   {item.hasChevron && (item.isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />)}
                 </button>
-                
+
                 {item.subItems && item.isOpen && (
                   <div className="ml-9 mt-1 space-y-1">
                     {item.subItems.map((sub) => (
@@ -165,7 +184,7 @@ export default function App() {
             </div>
             {isPizzaPlaceOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
           </button>
-          
+
           <AnimatePresence>
             {isPizzaPlaceOpen && (
               <motion.nav
@@ -195,7 +214,7 @@ export default function App() {
         </div>
 
         <div className="mt-auto p-6">
-          <button 
+          <button
             onClick={() => setActiveTab('feedback')}
             className={cn(
               "w-full flex items-center gap-3 px-4 py-2 bg-gray-100 rounded-full text-sm font-bold hover:bg-gray-200 transition-colors",
@@ -242,13 +261,17 @@ export default function App() {
               {activeTab === 'home' && <Dashboard />}
               {activeTab === 'orders' && <Orders />}
               {activeTab === 'stores-list' && <Stores onSelectStore={handleSelectStore} />}
-              {activeTab === 'store-info' && <StoreInfo store={selectedStore} onBack={() => setActiveTab('stores-list')} />}
+              {activeTab === 'store-info' && <StoreInfo store={selectedStore} onBack={() => setActiveTab('stores-list')} setActiveTab={setActiveTab} />}
               {activeTab === 'kitchen' && <Kitchen />}
               {activeTab === 'inventory' && <Inventory />}
               {activeTab === 'menu' && <MenuMaker />}
-              {activeTab === 'analytics' && <Analytics />}
+              {activeTab === 'performance-sales' && <Sales />}
+              {activeTab === 'performance-operations' && <Operations />}
+              {activeTab === 'performance-top-eats' && <TopEats />}
               {activeTab === 'feedback' && <Feedback />}
-              {['stores', 'webshop', 'reports', 'insights', 'top-eats', 'marketing', 'payments', 'users', 'settings', 'holiday-hours', 'prep-times', 'documents'].includes(activeTab) && (
+              {activeTab === 'store-hours' && <StoreHours store={selectedStore} />}
+              {activeTab === 'holiday-hours' && <HolidayHours store={selectedStore} />}
+              {['stores', 'webshop', 'reports', 'insights', 'marketing', 'payments', 'users', 'settings', 'prep-times', 'documents'].includes(activeTab) && (
                 <div className="flex items-center justify-center h-full text-gray-400">
                   {activeTab.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} screen coming soon.
                 </div>

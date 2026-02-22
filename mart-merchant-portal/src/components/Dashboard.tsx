@@ -1,0 +1,265 @@
+import { TrendingUp, TrendingDown, DollarSign, ShoppingCart, Package, Users, Filter } from 'lucide-react';
+import {
+    XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area,
+    PieChart, Pie, Cell
+} from 'recharts';
+import { cn } from '../utils/cn';
+
+const statCards = [
+    {
+        title: 'Total Revenue',
+        value: '$24,582',
+        trend: '+18.2%',
+        isPositive: true,
+        icon: DollarSign,
+        color: 'bg-emerald-500',
+        lightColor: 'bg-emerald-50'
+    },
+    {
+        title: 'Total Orders',
+        value: '3,842',
+        trend: '+12.5%',
+        isPositive: true,
+        icon: ShoppingCart,
+        color: 'bg-blue-500',
+        lightColor: 'bg-blue-50'
+    },
+    {
+        title: 'Total Product',
+        value: '1,247',
+        trend: '-2.3%',
+        isPositive: false,
+        icon: Package,
+        color: 'bg-indigo-500',
+        lightColor: 'bg-indigo-50'
+    },
+    {
+        title: 'Active Customers',
+        value: '8,234',
+        trend: '+24.6%',
+        isPositive: true,
+        icon: Users,
+        color: 'bg-orange-500',
+        lightColor: 'bg-orange-50'
+    },
+];
+
+const lineData = [
+    { name: 'Mon', value: 4400 },
+    { name: 'Tue', value: 4500 },
+    { name: 'Wed', value: 4450 },
+    { name: 'Thu', value: 4650 },
+    { name: 'Fri', value: 4500 },
+    { name: 'Sat', value: 4420 },
+    { name: 'Sun', value: 4480 },
+];
+
+const pieData = [
+    { name: 'Fruits', value: 34000, color: '#00b050' },
+    { name: 'Vegetables', value: 25600, color: '#a7f3d0' },
+    { name: 'Dairy', value: 25500, color: '#fcd34d' },
+    { name: 'Meat', value: 17000, color: '#fca5a5' },
+];
+
+const products = [
+    { name: 'Fresh Milk', sold: '342 sold', price: '$684.00', image: 'https://images.unsplash.com/photo-1550583724-125581cc255b?w=100&h=100&fit=crop' },
+    { name: 'Wheat Bread', sold: '256 sold', price: '$512.00', image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=100&h=100&fit=crop' },
+    { name: 'Emerald Velvet', sold: '154 sold', price: '$355.90', image: 'https://images.unsplash.com/photo-1621236304198-651a21733b09?w=100&h=100&fit=crop' },
+];
+
+const recentOrders = [
+    { id: '1', product: 'Fresh Dairy', date: 'May 5', status: 'Received', price: '$145.80', customer: 'M-Starlight', image: 'https://images.unsplash.com/photo-1550583724-125581cc255b?w=50&h=50&fit=crop' },
+    { id: '2', product: 'Vegetables', date: 'May 4', status: 'Received', price: '$210.30', customer: 'Serene W', image: 'https://images.unsplash.com/photo-1540148426945-6cf22a6b2383?w=50&h=50&fit=crop' },
+    { id: '3', product: 'Rang Eggs', date: 'May 3', status: 'Received', price: '$298.40', customer: 'James D', image: 'https://images.unsplash.com/photo-1518562180175-34a163b1a9a6?w=50&h=50&fit=crop' },
+];
+
+export function Dashboard() {
+    return (
+        <div className="space-y-8">
+            {/* Stat Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {statCards.map((card, idx) => (
+                    <div key={idx} className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                        <div className="flex items-center justify-between mb-4">
+                            <div className={cn("p-2.5 rounded-xl text-white", card.color)}>
+                                <card.icon size={20} />
+                            </div>
+                            <div className={cn(
+                                "flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold",
+                                card.isPositive ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600"
+                            )}>
+                                {card.isPositive ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+                                {card.trend}
+                            </div>
+                        </div>
+                        <p className="text-gray-400 text-sm font-medium">{card.title}</p>
+                        <h3 className="text-2xl font-bold text-gray-800 mt-1">{card.value}</h3>
+                        <p className="text-[10px] text-gray-400 mt-1">this week</p>
+                    </div>
+                ))}
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Line Chart */}
+                <div className="lg:col-span-2 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                    <div className="flex items-center justify-between mb-8">
+                        <div>
+                            <h3 className="text-lg font-bold text-gray-800">Sales By Category</h3>
+                            <p className="text-2xl font-bold text-gray-900 mt-1">$18,200.82 <span className="text-xs font-semibold text-emerald-500 ml-2">↑ 8.24%</span></p>
+                        </div>
+                        <select className="bg-gray-50 border-none text-xs font-semibold text-gray-500 rounded-lg px-3 py-1.5 outline-none">
+                            <option>Weekly</option>
+                            <option>Monthly</option>
+                        </select>
+                    </div>
+                    <div className="h-[300px] w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <AreaChart data={lineData}>
+                                <defs>
+                                    <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#00b050" stopOpacity={0.1} />
+                                        <stop offset="95%" stopColor="#00b050" stopOpacity={0} />
+                                    </linearGradient>
+                                </defs>
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                                <XAxis
+                                    dataKey="name"
+                                    axisLine={false}
+                                    tickLine={false}
+                                    tick={{ fontSize: 10, fill: '#94a3b8' }}
+                                    dy={10}
+                                />
+                                <YAxis
+                                    axisLine={false}
+                                    tickLine={false}
+                                    tick={{ fontSize: 10, fill: '#94a3b8' }}
+                                    domain={['dataMin - 100', 'dataMax + 100']}
+                                />
+                                <Tooltip
+                                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                                />
+                                <Area
+                                    type="monotone"
+                                    dataKey="value"
+                                    stroke="#00b050"
+                                    strokeWidth={3}
+                                    fillOpacity={1}
+                                    fill="url(#colorValue)"
+                                />
+                            </AreaChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
+
+                {/* Pie Chart */}
+                <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                    <div className="flex items-center justify-between mb-8">
+                        <h3 className="text-lg font-bold text-gray-800">Sales By Category</h3>
+                        <select className="bg-gray-50 border-none text-xs font-semibold text-gray-500 rounded-lg px-3 py-1.5 outline-none">
+                            <option>Monthly</option>
+                            <option>Yearly</option>
+                        </select>
+                    </div>
+                    <div className="h-[240px] relative">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                                <Pie
+                                    data={pieData}
+                                    cx="50%"
+                                    cy="50%"
+                                    innerRadius={60}
+                                    outerRadius={100}
+                                    paddingAngle={5}
+                                    dataKey="value"
+                                >
+                                    {pieData.map((entry, index) => (
+                                        <Cell key={`cell-${index}`} fill={entry.color} />
+                                    ))}
+                                </Pie>
+                                <Tooltip />
+                            </PieChart>
+                        </ResponsiveContainer>
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
+                            <p className="text-2xl font-bold text-gray-800">16,100</p>
+                            <p className="text-[10px] font-bold text-white bg-emerald-500 rounded-full px-2 py-0.5">+ 45%</p>
+                        </div>
+                    </div>
+                    <div className="mt-4 text-center">
+                        <p className="text-xs text-gray-400">Total Number of Sales</p>
+                        <p className="text-xl font-bold text-gray-800">3,40,0031</p>
+                    </div>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Top Products */}
+                <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                    <div className="flex items-center justify-between mb-8">
+                        <h3 className="text-lg font-bold text-gray-800">Top Products</h3>
+                        <select className="bg-gray-50 border-none text-xs font-semibold text-gray-500 rounded-lg px-3 py-1.5 outline-none">
+                            <option>Monthly</option>
+                        </select>
+                    </div>
+                    <div className="space-y-6">
+                        {products.map((product, idx) => (
+                            <div key={idx} className="flex items-center gap-4">
+                                <img src={product.image} alt={product.name} className="size-12 rounded-xl object-cover" />
+                                <div className="flex-1">
+                                    <p className="text-sm font-bold text-gray-800">{product.name}</p>
+                                    <p className="text-xs text-gray-400">{product.sold}</p>
+                                </div>
+                                <p className="text-sm font-bold text-gray-800">{product.price}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Recent Orders */}
+                <div className="lg:col-span-2 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                    <div className="flex items-center justify-between mb-8">
+                        <h3 className="text-lg font-bold text-gray-800">Recent Order</h3>
+                        <button className="flex items-center gap-2 text-xs font-semibold text-gray-500 hover:text-gray-800">
+                            <Filter size={14} />
+                            Filter
+                        </button>
+                    </div>
+                    <div className="overflow-x-auto">
+                        <table className="w-full">
+                            <thead>
+                                <tr className="text-left border-b border-gray-50">
+                                    <th className="pb-4 text-xs font-semibold text-gray-400">#</th>
+                                    <th className="pb-4 text-xs font-semibold text-gray-400">Product</th>
+                                    <th className="pb-4 text-xs font-semibold text-gray-400">Date</th>
+                                    <th className="pb-4 text-xs font-semibold text-gray-400">Status</th>
+                                    <th className="pb-4 text-xs font-semibold text-gray-400">Price</th>
+                                    <th className="pb-4 text-xs font-semibold text-gray-400">Customer</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-50">
+                                {recentOrders.map((order) => (
+                                    <tr key={order.id} className="group hover:bg-gray-50/50 transition-colors">
+                                        <td className="py-4 text-sm text-gray-500">{order.id}</td>
+                                        <td className="py-4">
+                                            <div className="flex items-center gap-3">
+                                                <img src={order.image} alt={order.product} className="size-8 rounded-lg object-cover" />
+                                                <span className="text-sm font-medium text-gray-800">{order.product}</span>
+                                            </div>
+                                        </td>
+                                        <td className="py-4 text-sm text-gray-800">{order.date}</td>
+                                        <td className="py-4">
+                                            <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-600">
+                                                {order.status}
+                                            </span>
+                                        </td>
+                                        <td className="py-4 text-sm font-bold text-gray-800">{order.price}</td>
+                                        <td className="py-4 text-sm text-gray-800">{order.customer}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
