@@ -7,11 +7,19 @@ const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || "https://your-node-ba
 
 export const orderService = {
     /**
-     * Update order status in Supabase and sync with external backend
-     */
-    async updateOrderStatus(orderId: string, status: string, externalOrderId?: string, userId?: string) {
+   * Update order status in Supabase and sync with external backend
+   */
+    async updateOrderStatus(orderId: string, status: string, externalOrderId?: string, userId?: string, reason?: string) {
         try {
-            // 1. Update Supabase (immediate UI feedback via Realtime/Store)
+            // 1. Update Supabase
+            const { data: orderData, error: fetchError } = await supabase
+                .from("orders")
+                .select("total_amount")
+                .eq("id", orderId)
+                .single();
+
+            if (fetchError) throw fetchError;
+
             const { error: supabaseError } = await supabase
                 .from("orders")
                 .update({
@@ -23,20 +31,32 @@ export const orderService = {
 
             if (supabaseError) throw supabaseError;
 
-            // 2. Audit Logging
+            // 2. If rejected/unfulfilled, log to unfulfilled_orders
+            if (status === 'unfulfilled') {
+                await supabase
+                    .from("unfulfilled_orders")
+                    .insert({
+                        order_id: orderId,
+                        reason: reason || 'Unknown',
+                        revenue_loss: orderData.total_amount,
+                    });
+            }
+
+            // 3. Audit Logging
             if (userId) {
                 await auditLogService.logAction(
                     'order',
                     orderId,
-                    `Status changed to ${status}`,
+                    `Status changed to ${status}${reason ? ` (Reason: ${reason})` : ''}`,
                     userId
                 );
             }
 
-            // 3. Sync back to Node backend if external ID is present
+            // 4. Sync back to Node backend
             if (externalOrderId) {
                 await axios.patch(`${BACKEND_URL}/orders/${externalOrderId}/status`, {
                     status,
+                    reason,
                 });
             }
 

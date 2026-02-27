@@ -1,9 +1,9 @@
 import React from 'react';
 import { StyleSheet, View, Pressable, ScrollView, Image } from 'react-native';
-import { Text } from '@/components/Themed';
+import { Text } from '../../components/Themed';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { supabase } from '@/src/lib/supabase';
+import { supabase } from '../../src/lib/supabase';
 
 export default function AccountScreen() {
     const handleLogout = async () => {

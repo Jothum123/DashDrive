@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Text } from '@/components/Themed';
+import { Text } from '../../components/Themed';
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
     new: { label: 'New', color: '#2196F3', bg: 'rgba(33, 150, 243, 0.1)' },

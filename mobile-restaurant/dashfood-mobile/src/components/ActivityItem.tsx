@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Text } from '@/components/Themed';
+import { Text } from '../../components/Themed';
 import { Ionicons } from '@expo/vector-icons';
 
 interface ActivityItemProps {

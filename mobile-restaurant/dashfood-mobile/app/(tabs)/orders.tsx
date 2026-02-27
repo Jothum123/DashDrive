@@ -5,25 +5,34 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useOrderStore } from '../../src/store/useOrderStore';
 import { useRealtimeOrders } from '../../src/hooks/useRealtimeOrders';
 import OrderCard from '../../src/components/OrderCard';
+import { useStoreContext } from '../../src/store/useStoreContext';
 
 const TABS = [
     { id: 'new', label: 'New' },
-    { id: 'in_progress', label: 'In Progress' },
+    { id: 'in_progress', label: 'Prep' },
     { id: 'ready', label: 'Ready' },
-    { id: 'completed', label: 'History' },
-    { id: 'unfulfilled', label: 'Unfulfilled' },
+    { id: 'history', label: 'History' },
+    { id: 'unfulfilled', label: 'Issues' },
 ];
 
 export default function OrdersScreen() {
     const [activeTab, setActiveTab] = useState('new');
     const { orders } = useOrderStore();
-
+    const { activeStoreId } = useStoreContext();
     // Realtime subscription (using an example storeId)
     useRealtimeOrders();
 
     const filteredOrders = useMemo(() => {
-        return orders.filter(order => order.status === activeTab);
-    }, [orders, activeTab]);
+        return orders.filter(order => {
+            const matchesTab = activeTab === 'history'
+                ? order.status === 'completed'
+                : order.status === activeTab;
+
+            const matchesStore = !activeStoreId || order.store_id === activeStoreId;
+
+            return matchesTab && matchesStore;
+        });
+    }, [orders, activeTab, activeStoreId]);
 
     return (
         <SafeAreaView style={styles.container} edges={['top']}>
@@ -141,4 +150,6 @@ const styles = StyleSheet.create({
     },
     emptyText: {
         opacity: 0.4,
-        fontSize: 16
+        fontSize: 16,
+    },
+});

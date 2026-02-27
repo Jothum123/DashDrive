@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, FlatList, Switch, Pressable } from 'react-native';
 import { Text } from '@/components/Themed';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { supabase } from '@/src/lib/supabase';
+import { supabase } from '../../src/lib/supabase';
 import { Ionicons } from '@expo/vector-icons';
+import { useAuthStore } from '../../src/store/useAuthStore';
 
 interface Store {
     id: string;
@@ -15,6 +16,7 @@ interface Store {
 export default function StoresScreen() {
     const [stores, setStores] = useState<Store[]>([]);
     const [loading, setLoading] = useState(true);
+    const { hasRole } = useAuthStore();
 
     useEffect(() => {
         fetchStores();
@@ -79,6 +81,7 @@ export default function StoresScreen() {
                             <Switch
                                 value={item.status === 'open'}
                                 onValueChange={() => toggleStoreStatus(item.id, item.status)}
+                                disabled={!hasRole(['manager', 'owner'])}
                                 trackColor={{ false: '#767577', true: '#4CAF50' }}
                                 thumbColor="#f4f3f4"
                             />

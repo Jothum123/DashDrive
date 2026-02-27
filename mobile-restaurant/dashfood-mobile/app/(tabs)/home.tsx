@@ -1,19 +1,71 @@
-import React from 'react';
-import { StyleSheet, ScrollView, View, Pressable } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, ScrollView, View, Pressable, Modal, FlatList } from 'react-native';
 import { Text } from '../../components/Themed';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import KPIWidget from '../../src/components/KPIWidget';
 import ActivityItem from '../../src/components/ActivityItem';
+import { useStoreContext } from '../../src/store/useStoreContext';
+import { supabase } from '../../src/lib/supabase';
 
 export default function HomeScreen() {
+    const { activeStoreId, setActiveStoreId } = useStoreContext();
+    const [stores, setStores] = useState<any[]>([]);
+    const [showSelector, setShowSelector] = useState(false);
+
+    useEffect(() => {
+        fetchStores();
+    }, []);
+
+    const fetchStores = async () => {
+        const { data } = await supabase.from('stores').select('id, name');
+        setStores(data || []);
+        if (data && data.length > 0 && !activeStoreId) {
+            setActiveStoreId(data[0].id);
+        }
+    };
+
+    const activeStore = stores.find(s => s.id === activeStoreId);
+
     return (
         <SafeAreaView style={styles.container} edges={['top']}>
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 <View style={styles.header}>
-                    <Text style={styles.title}>Dashboard</Text>
+                    <View>
+                        <Text style={styles.title}>Dashboard</Text>
+                        <Pressable style={styles.storeSelector} onPress={() => setShowSelector(true)}>
+                            <Text style={styles.storeName}>{activeStore?.name || 'All Stores'}</Text>
+                            <Ionicons name="chevron-down" size={16} color="#888" style={{ marginLeft: 4 }} />
+                        </Pressable>
+                    </View>
                     <Text style={styles.subtitle}>Overview of your restaurant's performance</Text>
                 </View>
+
+                <Modal visible={showSelector} transparent animationType="fade">
+                    <Pressable style={styles.modalOverlay} onPress={() => setShowSelector(false)}>
+                        <View style={styles.modalContent}>
+                            <Text style={styles.modalTitle}>Switch Store</Text>
+                            <FlatList
+                                data={[{ id: null, name: 'All Stores' }, ...stores]}
+                                keyExtractor={(item) => (item.id || 'all')}
+                                renderItem={({ item }) => (
+                                    <Pressable
+                                        style={styles.storeOption}
+                                        onPress={() => {
+                                            setActiveStoreId(item.id);
+                                            setShowSelector(false);
+                                        }}
+                                    >
+                                        <Text style={[styles.storeOptionText, activeStoreId === item.id && styles.activeStoreOption]}>
+                                            {item.name}
+                                        </Text>
+                                        {activeStoreId === item.id && <Ionicons name="checkmark" size={20} color="#2196F3" />}
+                                    </Pressable>
+                                )}
+                            />
+                        </View>
+                    </Pressable>
+                </Modal>
 
                 <View style={styles.kpiGrid}>
                     <KPIWidget
@@ -118,10 +170,55 @@ const styles = StyleSheet.create({
         fontSize: 28,
         fontWeight: 'bold',
     },
+    storeSelector: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 4,
+    },
+    storeName: {
+        fontSize: 16,
+        color: '#2196F3',
+        fontWeight: '600',
+    },
     subtitle: {
         fontSize: 16,
         opacity: 0.6,
         marginTop: 4,
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalContent: {
+        width: '80%',
+        backgroundColor: '#1C1C1E',
+        borderRadius: 20,
+        padding: 20,
+        maxHeight: '60%',
+    },
+    modalTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 20,
+        textAlign: 'center',
+    },
+    storeOption: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingVertical: 15,
+        borderBottomWidth: 1,
+        borderBottomColor: 'rgba(150,150,150,0.1)',
+    },
+    storeOptionText: {
+        fontSize: 18,
+        opacity: 0.8,
+    },
+    activeStoreOption: {
+        color: '#2196F3',
+        fontWeight: 'bold',
     },
     kpiGrid: {
         flexDirection: 'row',

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Pressable } from 'react-native';
-import { Text } from '@/components/Themed';
+import { StyleSheet, View, Pressable, Alert } from 'react-native';
+import { Text } from '../../components/Themed';
 import { Ionicons } from '@expo/vector-icons';
 import StatusBadge from './StatusBadge';
-import { orderService } from '@/src/services/orderService';
+import { orderService } from '../services/orderService';
+import { useAuthStore } from '../store/useAuthStore';
 
 interface OrderItem {
     name: string;
@@ -40,9 +41,24 @@ export default function OrderCard({ order }: { order: Order }) {
         return () => clearInterval(timer);
     }, [order.created_at, order.accepted_at, order.status]);
 
-    const handleAction = async (nextStatus: string) => {
-        // For demo purposes, we'll use a placeholder user ID
-        await orderService.updateOrderStatus(order.id, nextStatus, order.external_order_id, 'manager_01');
+    const { user, hasRole } = useAuthStore();
+
+    const handleAction = async (nextStatus: string, reason?: string) => {
+        if (!user) return;
+        await orderService.updateOrderStatus(order.id, nextStatus, order.external_order_id, user.id, reason);
+    };
+
+    const handleReject = () => {
+        Alert.alert(
+            "Reject Order",
+            "Please select a reason for rejection",
+            [
+                { text: "Out of Stock", onPress: () => handleAction('unfulfilled', 'out_of_stock') },
+                { text: "Too Busy", onPress: () => handleAction('unfulfilled', 'too_busy') },
+                { text: "Kitchen Closed", onPress: () => handleAction('unfulfilled', 'kitchen_closed') },
+                { text: "Cancel", style: "cancel" }
+            ]
+        );
     };
 
     const renderActions = () => {
@@ -56,12 +72,14 @@ export default function OrderCard({ order }: { order: Order }) {
                         >
                             <Text style={styles.buttonText}>Accept</Text>
                         </Pressable>
-                        <Pressable
-                            style={[styles.button, styles.rejectButton]}
-                            onPress={() => handleAction('unfulfilled')}
-                        >
-                            <Text style={styles.rejectButtonText}>Reject</Text>
-                        </Pressable>
+                        {hasRole(['manager', 'owner']) && (
+                            <Pressable
+                                style={[styles.button, styles.rejectButton]}
+                                onPress={handleReject}
+                            >
+                                <Text style={styles.rejectButtonText}>Reject</Text>
+                            </Pressable>
+                        )}
                     </View>
                 );
             case 'in_progress':

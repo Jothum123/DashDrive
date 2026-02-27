@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Text } from '@/components/Themed';
+import { StyleSheet, View, Pressable } from 'react-native';
+import { Text } from '../../components/Themed';
 import { Ionicons } from '@expo/vector-icons';
 
 interface Issue {
@@ -63,8 +63,6 @@ export default function IssueCard({ issue }: { issue: Issue }) {
         </View>
     );
 }
-
-import { Pressable } from 'react-native';
 
 const styles = StyleSheet.create({
     container: {
