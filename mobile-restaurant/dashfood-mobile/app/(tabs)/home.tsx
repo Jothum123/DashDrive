@@ -29,22 +29,24 @@ export default function HomeScreen() {
 
     return (
         <SafeAreaView style={styles.container} edges={['top']}>
-            <ScrollView contentContainerStyle={styles.scrollContent}>
+            <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
                 <View style={styles.header}>
-                    <View>
+                    <View style={styles.headerLeft}>
                         <Text style={styles.title}>Dashboard</Text>
                         <Pressable style={styles.storeSelector} onPress={() => setShowSelector(true)}>
                             <Text style={styles.storeName}>{activeStore?.name || 'All Stores'}</Text>
-                            <Ionicons name="chevron-down" size={16} color="#888" style={{ marginLeft: 4 }} />
+                            <Ionicons name="chevron-down" size={16} color="#007AFF" style={{ marginLeft: 4 }} />
                         </Pressable>
                     </View>
-                    <Text style={styles.subtitle}>Overview of your restaurant's performance</Text>
+                    <View style={styles.avatar}>
+                        <Ionicons name="person" size={24} color="#8E8E93" />
+                    </View>
                 </View>
 
-                <Modal visible={showSelector} transparent animationType="fade">
+                <Modal visible={showSelector} transparent animationType="slide">
                     <Pressable style={styles.modalOverlay} onPress={() => setShowSelector(false)}>
                         <View style={styles.modalContent}>
-                            <Text style={styles.modalTitle}>Switch Store</Text>
+                            <Text style={styles.modalTitle}>Select Location</Text>
                             <FlatList
                                 data={[{ id: null, name: 'All Stores' }, ...stores]}
                                 keyExtractor={(item) => (item.id || 'all')}
@@ -59,7 +61,7 @@ export default function HomeScreen() {
                                         <Text style={[styles.storeOptionText, activeStoreId === item.id && styles.activeStoreOption]}>
                                             {item.name}
                                         </Text>
-                                        {activeStoreId === item.id && <Ionicons name="checkmark" size={20} color="#2196F3" />}
+                                        {activeStoreId === item.id && <Ionicons name="checkmark-circle" size={24} color="#007AFF" />}
                                     </Pressable>
                                 )}
                             />
@@ -70,84 +72,89 @@ export default function HomeScreen() {
                 <View style={styles.kpiGrid}>
                     <KPIWidget
                         label="Orders Today"
-                        value="42"
+                        value="48"
+                        trend="+15%"
+                        icon="receipt"
+                        color="#34C759"
+                    />
+                    <KPIWidget
+                        label="Net Revenue"
+                        value="$1,420"
                         trend="+12%"
-                        icon="receipt-outline"
-                        color="#4CAF50"
+                        icon="stats-chart"
+                        color="#007AFF"
                     />
                     <KPIWidget
-                        label="Revenue"
-                        value="$1,280"
-                        trend="+8.5%"
-                        icon="cash-outline"
-                        color="#2196F3"
+                        label="Avg Prep"
+                        value="12m"
+                        trend="-3m"
+                        icon="timer"
+                        color="#FF9500"
                     />
                     <KPIWidget
-                        label="Avg Prep Time"
-                        value="14 min"
-                        trend="-2 min"
-                        icon="time-outline"
-                        color="#FF9800"
-                    />
-                    <KPIWidget
-                        label="Issues"
-                        value="2"
-                        trend="-1"
-                        icon="alert-circle-outline"
-                        color="#F44336"
+                        label="Live Issues"
+                        value="1"
+                        trend="0"
+                        icon="warning"
+                        color="#FF3B30"
                     />
                 </View>
 
                 <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Quick Actions</Text>
+                    <View style={styles.sectionHeader}>
+                        <Text style={styles.sectionTitle}>Quick Actions</Text>
+                    </View>
                     <View style={styles.quickActionsGrid}>
                         <Pressable style={styles.quickAction}>
-                            <View style={[styles.actionIcon, { backgroundColor: '#F4433615' }]}>
-                                <Ionicons name="pause-circle-outline" size={24} color="#F44336" />
+                            <View style={[styles.actionIcon, { backgroundColor: 'rgba(255, 59, 48, 0.15)' }]}>
+                                <Ionicons name="pause" size={26} color="#FF3B30" />
                             </View>
-                            <Text style={styles.actionLabel}>Pause Orders</Text>
+                            <Text style={styles.actionLabel}>Break</Text>
                         </Pressable>
                         <Pressable style={styles.quickAction}>
-                            <View style={[styles.actionIcon, { backgroundColor: '#FF980015' }]}>
-                                <Ionicons name="fast-food-outline" size={24} color="#FF9800" />
+                            <View style={[styles.actionIcon, { backgroundColor: 'rgba(255, 149, 0, 0.15)' }]}>
+                                <Ionicons name="restaurant" size={26} color="#FF9500" />
                             </View>
-                            <Text style={styles.actionLabel}>Mark Stockout</Text>
+                            <Text style={styles.actionLabel}>Stock</Text>
                         </Pressable>
                         <Pressable style={styles.quickAction}>
-                            <View style={[styles.actionIcon, { backgroundColor: '#2196F315' }]}>
-                                <Ionicons name="chatbubble-ellipses-outline" size={24} color="#2196F3" />
+                            <View style={[styles.actionIcon, { backgroundColor: 'rgba(0, 122, 255, 0.15)' }]}>
+                                <Ionicons name="headset" size={26} color="#007AFF" />
                             </View>
-                            <Text style={styles.actionLabel}>Support</Text>
+                            <Text style={styles.actionLabel}>Help</Text>
                         </Pressable>
                         <Pressable style={styles.quickAction}>
-                            <View style={[styles.actionIcon, { backgroundColor: '#4CAF5015' }]}>
-                                <Ionicons name="print-outline" size={24} color="#4CAF50" />
+                            <View style={[styles.actionIcon, { backgroundColor: 'rgba(52, 199, 89, 0.15)' }]}>
+                                <Ionicons name="grid" size={26} color="#34C759" />
                             </View>
-                            <Text style={styles.actionLabel}>Terminal</Text>
+                            <Text style={styles.actionLabel}>More</Text>
                         </Pressable>
                     </View>
                 </View>
 
                 <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Live Activity</Text>
+                    <View style={styles.sectionHeader}>
+                        <Text style={styles.sectionTitle}>Live Activity</Text>
+                        <Pressable><Text style={styles.sectionLink}>View All</Text></Pressable>
+                    </View>
                     <View style={styles.activityCard}>
                         <ActivityItem
                             type="order"
-                            title="New Order #F23A"
-                            time="2m ago"
-                            description="John Doe • $28.50"
+                            title="Accepted Order #F23A"
+                            time="Now"
+                            description="Main St. Kitchen • $42.00"
                         />
                         <ActivityItem
                             type="issue"
-                            title="Refund Requested"
-                            time="15m ago"
-                            description="Order #A12B • $14.20"
+                            title="Operational Alert"
+                            time="15m"
+                            description="Late Delivery: Order #B192"
                         />
                         <ActivityItem
                             type="system"
-                            title="Store Status Changed"
-                            time="1h ago"
-                            description="Main St. Store marked as Busy"
+                            title="Payout Processed"
+                            time="2h"
+                            description="Weekly disbursement initiated"
                         />
                     </View>
                 </View>
@@ -159,108 +166,148 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: '#000000',
     },
     scrollContent: {
-        padding: 20,
+        padding: 24,
     },
     header: {
-        marginBottom: 20,
+        marginBottom: 32,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+    },
+    headerLeft: {
+        flex: 1,
     },
     title: {
-        fontSize: 28,
-        fontWeight: 'bold',
+        fontSize: 34,
+        fontWeight: '800',
+        color: '#FFFFFF',
+        letterSpacing: -0.5,
     },
     storeSelector: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginTop: 4,
+        marginTop: 6,
+        backgroundColor: 'rgba(0, 122, 255, 0.1)',
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+        borderRadius: 8,
+        alignSelf: 'flex-start',
     },
     storeName: {
-        fontSize: 16,
-        color: '#2196F3',
-        fontWeight: '600',
+        fontSize: 15,
+        color: '#007AFF',
+        fontWeight: '700',
     },
-    subtitle: {
-        fontSize: 16,
-        opacity: 0.6,
-        marginTop: 4,
+    avatar: {
+        width: 48,
+        height: 48,
+        borderRadius: 24,
+        backgroundColor: '#1C1C1E',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth: 1,
+        borderColor: 'rgba(255, 255, 255, 0.1)',
     },
     modalOverlay: {
         flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.5)',
-        justifyContent: 'center',
-        alignItems: 'center',
+        backgroundColor: 'rgba(0,0,0,0.8)',
+        justifyContent: 'flex-end',
     },
     modalContent: {
-        width: '80%',
+        width: '100%',
         backgroundColor: '#1C1C1E',
-        borderRadius: 20,
-        padding: 20,
-        maxHeight: '60%',
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
+        padding: 24,
+        maxHeight: '80%',
+        paddingBottom: 40,
     },
     modalTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 20,
+        fontSize: 22,
+        fontWeight: '800',
+        color: '#FFFFFF',
+        marginBottom: 24,
         textAlign: 'center',
     },
     storeOption: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingVertical: 15,
+        paddingVertical: 18,
         borderBottomWidth: 1,
-        borderBottomColor: 'rgba(150,150,150,0.1)',
+        borderBottomColor: 'rgba(255,255,255,0.05)',
     },
     storeOptionText: {
         fontSize: 18,
-        opacity: 0.8,
+        color: '#FFFFFF',
+        opacity: 0.7,
     },
     activeStoreOption: {
-        color: '#2196F3',
-        fontWeight: 'bold',
+        color: '#007AFF',
+        fontWeight: '800',
+        opacity: 1,
     },
     kpiGrid: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-between',
-        marginBottom: 20,
+        marginBottom: 16,
     },
     section: {
-        marginTop: 10,
-        marginBottom: 20,
+        marginTop: 24,
+        marginBottom: 16,
+    },
+    sectionHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 16,
     },
     sectionTitle: {
-        fontSize: 20,
+        fontSize: 22,
+        fontWeight: '800',
+        color: '#FFFFFF',
+    },
+    sectionLink: {
+        fontSize: 14,
+        color: '#007AFF',
         fontWeight: '600',
-        marginBottom: 12,
     },
     quickActionsGrid: {
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
     quickAction: {
-        width: '23%',
+        width: '22%',
         alignItems: 'center',
     },
     actionIcon: {
-        width: 60,
-        height: 60,
-        borderRadius: 30,
+        width: 64,
+        height: 64,
+        borderRadius: 20,
         alignItems: 'center',
         justifyContent: 'center',
-        marginBottom: 8,
+        marginBottom: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 6,
     },
     actionLabel: {
-        fontSize: 12,
-        fontWeight: '500',
+        fontSize: 13,
+        fontWeight: '600',
         textAlign: 'center',
-        opacity: 0.7,
+        color: '#8E8E93',
     },
     activityCard: {
-        backgroundColor: 'rgba(150, 150, 150, 0.05)',
-        borderRadius: 16,
+        backgroundColor: '#1C1C1E',
+        borderRadius: 24,
         paddingHorizontal: 16,
+        borderWidth: 1,
+        borderColor: 'rgba(255, 255, 255, 0.05)',
     },
 });
 

@@ -54,7 +54,7 @@ export const orderService = {
 
             // 4. Sync back to Node backend
             if (externalOrderId) {
-                await axios.patch(`${BACKEND_URL}/orders/${externalOrderId}/status`, {
+                await axios.patch(`${BACKEND_URL}/api/orders/${externalOrderId}/status`, {
                     status,
                     reason,
                 });

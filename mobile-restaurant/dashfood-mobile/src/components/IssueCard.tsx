@@ -3,7 +3,7 @@ import { StyleSheet, View, Pressable } from 'react-native';
 import { Text } from '../../components/Themed';
 import { Ionicons } from '@expo/vector-icons';
 
-interface Issue {
+export interface Issue {
     id: string;
     type: 'missing_item' | 'late' | 'wrong_order' | 'refund' | 'complaint';
     severity: 'low' | 'medium' | 'high' | 'critical';
@@ -66,57 +66,73 @@ export default function IssueCard({ issue }: { issue: Issue }) {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: 'rgba(150, 150, 150, 0.05)',
-        borderRadius: 16,
-        padding: 16,
-        marginBottom: 12,
+        backgroundColor: '#1C1C1E',
+        borderRadius: 24,
+        padding: 24,
+        marginBottom: 16,
+        borderWidth: 1,
+        borderColor: 'rgba(255, 255, 255, 0.05)',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.3,
+        shadowRadius: 12,
+        elevation: 6,
     },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 12,
+        marginBottom: 16,
     },
     severityBadge: {
-        paddingHorizontal: 8,
-        paddingVertical: 2,
-        borderRadius: 4,
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+        borderRadius: 8,
     },
     severityText: {
-        fontSize: 10,
-        fontWeight: 'bold',
-        color: '#fff',
+        fontSize: 11,
+        fontWeight: '800',
+        color: '#FFFFFF',
+        letterSpacing: 0.5,
     },
     date: {
-        fontSize: 12,
-        opacity: 0.4,
+        fontSize: 13,
+        color: '#8E8E93',
+        fontWeight: '600',
     },
     type: {
-        fontSize: 18,
-        fontWeight: 'bold',
+        fontSize: 22,
+        fontWeight: '800',
+        color: '#FFFFFF',
         marginBottom: 8,
+        letterSpacing: -0.3,
     },
     orderInfo: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 16,
+        marginBottom: 20,
+        backgroundColor: 'rgba(255, 255, 255, 0.03)',
+        borderRadius: 12,
+        padding: 12,
     },
     customerName: {
-        fontSize: 14,
-        opacity: 0.6,
-        marginLeft: 6,
+        fontSize: 15,
+        color: '#8E8E93',
+        marginLeft: 8,
+        fontWeight: '600',
     },
     orderAmount: {
-        fontSize: 14,
-        opacity: 0.6,
+        fontSize: 15,
+        color: '#FFFFFF',
+        fontWeight: '700',
     },
     footer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         borderTopWidth: 1,
-        borderTopColor: 'rgba(150, 150, 150, 0.1)',
-        paddingTop: 12,
+        borderTopColor: 'rgba(255, 255, 255, 0.05)',
+        paddingTop: 16,
     },
     statusContainer: {
         flexDirection: 'row',
@@ -126,21 +142,26 @@ const styles = StyleSheet.create({
         width: 8,
         height: 8,
         borderRadius: 4,
-        marginRight: 6,
+        marginRight: 8,
     },
     statusText: {
-        fontSize: 13,
-        fontWeight: '600',
+        fontSize: 15,
+        fontWeight: '700',
+        color: '#FFFFFF',
         textTransform: 'capitalize',
     },
     detailLink: {
         flexDirection: 'row',
         alignItems: 'center',
+        backgroundColor: 'rgba(0, 122, 255, 0.1)',
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 10,
     },
     detailLinkText: {
         fontSize: 14,
-        color: '#2196F3',
-        fontWeight: '600',
-        marginRight: 2,
+        color: '#007AFF',
+        fontWeight: '700',
+        marginRight: 4,
     },
 });

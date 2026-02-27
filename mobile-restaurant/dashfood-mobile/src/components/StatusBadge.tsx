@@ -22,13 +22,14 @@ export default function StatusBadge({ status }: { status: string }) {
 
 const styles = StyleSheet.create({
     container: {
-        paddingHorizontal: 10,
-        paddingVertical: 4,
-        borderRadius: 6,
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 10,
     },
     text: {
-        fontSize: 12,
-        fontWeight: 'bold',
+        fontSize: 11,
+        fontWeight: '700',
         textTransform: 'uppercase',
+        letterSpacing: 0.8,
     },
 });

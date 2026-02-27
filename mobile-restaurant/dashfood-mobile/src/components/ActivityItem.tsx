@@ -38,17 +38,18 @@ export default function ActivityItem({ type, title, time, description }: Activit
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
-        paddingVertical: 12,
+        paddingVertical: 16,
+        paddingHorizontal: 8,
         borderBottomWidth: 1,
-        borderBottomColor: 'rgba(150, 150, 150, 0.1)',
+        borderBottomColor: 'rgba(255, 255, 255, 0.03)',
     },
     iconContainer: {
-        width: 36,
-        height: 36,
-        borderRadius: 18,
+        width: 40,
+        height: 40,
+        borderRadius: 12,
         alignItems: 'center',
         justifyContent: 'center',
-        marginRight: 12,
+        marginRight: 16,
     },
     content: {
         flex: 1,
@@ -57,18 +58,20 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 4,
+        marginBottom: 2,
     },
     title: {
         fontSize: 16,
         fontWeight: '600',
+        color: '#FFFFFF',
     },
     time: {
         fontSize: 12,
-        opacity: 0.4,
+        color: '#8E8E93',
     },
     description: {
         fontSize: 14,
-        opacity: 0.6,
+        color: '#8E8E93',
+        lineHeight: 18,
     },
 });

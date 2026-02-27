@@ -4,10 +4,10 @@ import { Text } from '@/components/Themed';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { supabase } from '@/src/lib/supabase';
 import { Ionicons } from '@expo/vector-icons';
-import IssueCard from '@/src/components/IssueCard';
+import IssueCard, { Issue } from '../../src/components/IssueCard';
 
 export default function IssuesScreen() {
-    const [issues, setIssues] = useState([]);
+    const [issues, setIssues] = useState<Issue[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -69,42 +69,57 @@ export default function IssuesScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: '#000000',
     },
     header: {
-        paddingHorizontal: 20,
-        paddingVertical: 10,
+        paddingHorizontal: 24,
+        paddingTop: 20,
+        paddingBottom: 24,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 10,
     },
     title: {
-        fontSize: 28,
-        fontWeight: 'bold',
+        fontSize: 34,
+        fontWeight: '800',
+        color: '#FFFFFF',
+        letterSpacing: -0.5,
     },
     subtitle: {
         fontSize: 16,
-        opacity: 0.6,
-        marginTop: 4,
+        color: '#8E8E93',
+        fontWeight: '500',
+        marginTop: 6,
     },
     filterButton: {
-        width: 44,
-        height: 44,
-        borderRadius: 22,
-        backgroundColor: '#2196F3',
+        width: 48,
+        height: 48,
+        borderRadius: 16,
+        backgroundColor: '#1C1C1E',
         alignItems: 'center',
         justifyContent: 'center',
+        borderWidth: 1,
+        borderColor: 'rgba(255, 255, 255, 0.05)',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 8,
     },
     listContent: {
-        padding: 15,
+        padding: 24,
+        paddingBottom: 40,
     },
     emptyContainer: {
-        marginTop: 100,
+        marginTop: 120,
         alignItems: 'center',
+        paddingHorizontal: 40,
     },
     emptyText: {
-        opacity: 0.4,
-        marginTop: 16,
-        fontSize: 16,
+        color: '#8E8E93',
+        fontSize: 17,
+        fontWeight: '600',
+        textAlign: 'center',
+        marginTop: 20,
+        lineHeight: 24,
     },
 });
