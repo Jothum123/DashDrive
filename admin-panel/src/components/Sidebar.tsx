@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { 
-  LayoutDashboard, 
-  Map, 
-  Car, 
-  MapPin, 
-  Navigation, 
-  Package, 
-  Image as ImageIcon, 
-  Ticket, 
-  Percent, 
+import {
+  LayoutDashboard,
+  Map,
+  Car,
+  MapPin,
+  Navigation,
+  Package,
+  Box,
+  Image as ImageIcon,
+  Ticket,
+  Percent,
   Bell,
   Rocket,
   Utensils,
@@ -23,275 +24,368 @@ import {
   Wallet,
   Send,
   AlertCircle,
-  FileText,
-  Mail,
   Settings,
-  List,
-  ClipboardList,
-  PlusCircle,
-  DollarSign,
-  BarChart,
-  PieChart,
+  HelpCircle,
+  LogOut,
+  ChevronLeft,
+  Search,
+  Plus,
+  ArrowRight,
+  TrendingUp,
   Activity,
-  PenTool,
-  FileCode,
-  Image,
+  User,
+  Star,
+  Zap,
+  Clock,
+  CheckCircle2,
+  Calendar,
   MessageSquare,
-  Building,
-  Sliders,
-  Lock,
+  Shield,
+  FileText,
+  Smartphone,
+  Info,
+  Truck,
+  Flag,
+  Mail,
+  FileEdit,
+  ShieldAlert,
+  List,
+  PlusSquare,
+  BarChart3,
+  BookOpen,
+  LifeBuoy,
+  ClipboardList,
+  History,
+  Dna,
+  Layers,
+  FileSearch,
+  Award,
   Settings2,
-  ChevronDown,
-  ChevronRight,
-  BarChart3
+  Lock,
+  Building2
 } from 'lucide-react';
 import { cn } from '../utils';
 
-interface SidebarItem {
+interface NavItem {
   icon: any;
   label: string;
   subItems?: string[];
 }
 
-interface SidebarGroup {
-  title: string;
-  items: SidebarItem[];
-}
-
-const sidebarGroups: SidebarGroup[] = [
-  {
-    title: 'MAIN DASHBOARD',
-    items: [
-      { icon: LayoutDashboard, label: 'Dashboard' },
-      { icon: Map, label: 'Heat Map' },
-      { icon: Car, label: 'Fleet View' },
-      { icon: BarChart3, label: 'Analytics' },
-    ]
-  },
-  {
-    title: 'SERVICES',
-    items: [
-      {
-        icon: Rocket,
-        label: 'Ride Hailing',
-        subItems: ['Trips', 'Ride Requests', 'Drivers', 'Fare Setup', 'Surge Pricing']
-      },
-      {
-        icon: Utensils,
-        label: 'Food Delivery',
-        subItems: ['Orders', 'Restaurants', 'Menu Management', 'Delivery Zones', 'Promotions']
-      },
-      {
-        icon: ShoppingBag,
-        label: 'Mart Delivery',
-        subItems: ['Mart Orders', 'Stores', 'Products / Inventory', 'Categories', 'Delivery Fees']
-      },
-      {
-        icon: ShoppingCart,
-        label: 'Shopping',
-        subItems: ['Products', 'Categories', 'Orders', 'Vendors / Merchants', 'Reviews & Ratings']
-      },
-      {
-        icon: Package,
-        label: 'Parcel Delivery',
-        subItems: ['Parcel Orders', 'Parcel Categories', 'Parcel Weights', 'Parcel Attributes', 'Refund Requests']
-      },
-      {
-        icon: CreditCard,
-        label: 'Payments & Fintech',
-        subItems: ['Transactions', 'Customer Wallet', 'Driver Wallet', 'Withdraw Requests', 'Cashless Payments', 'Pay Bills', 'PayLater', 'Donations', 'Payment Reports']
-      }
-    ]
-  },
-  {
-    title: 'USER MANAGEMENT',
-    items: [
-      { icon: Users, label: 'Customers' },
-      { icon: UserCheck, label: 'Drivers' },
-      { icon: ShieldCheck, label: 'Driver Level Setup' },
-      { icon: UserPlus, label: 'Customer Level Setup' },
-      { icon: Briefcase, label: 'Employees' },
-      { icon: Wallet, label: 'User Wallet' },
-    ]
-  },
-  {
-    title: 'OPERATIONS',
-    items: [
-      { icon: MapPin, label: 'Zone Setup' },
-      { icon: Send, label: 'Dispatch Management' },
-      { icon: AlertCircle, label: 'Solved Alert List' },
-      { icon: Navigation, label: 'Live Tracking' },
-      { icon: FileText, label: 'System Logs' },
-    ]
-  },
-  {
-    title: 'PROMOTION & MARKETING',
-    items: [
-      { icon: ImageIcon, label: 'Banner Setup' },
-      { icon: Ticket, label: 'Coupon Setup' },
-      { icon: Percent, label: 'Discount Setup' },
-      { icon: Bell, label: 'Send Notifications' },
-      { icon: Mail, label: 'Newsletter' },
-    ]
-  },
-  {
-    title: 'VEHICLE MANAGEMENT',
-    items: [
-      { icon: Settings, label: 'Vehicle Attribute' },
-      { icon: List, label: 'Vehicle List' },
-      { icon: ClipboardList, label: 'Vehicle Request' },
-      { icon: PlusCircle, label: 'Add New Vehicle' },
-    ]
-  },
-  {
-    title: 'FINANCE & REPORTS',
-    items: [
-      { icon: DollarSign, label: 'Transactions' },
-      { icon: BarChart, label: 'Earnings Reports' },
-      { icon: PieChart, label: 'Commission Reports' },
-      { icon: Activity, label: 'Financial Analytics' },
-    ]
-  },
-  {
-    title: 'CONTENT MANAGEMENT',
-    items: [
-      { icon: PenTool, label: 'Blog Setup' },
-      { icon: FileCode, label: 'Pages' },
-      { icon: Image, label: 'Media Library' },
-    ]
-  },
-  {
-    title: 'HELP & SUPPORT',
-    items: [
-      { icon: MessageSquare, label: 'Support Tickets' },
-    ]
-  },
-  {
-    title: 'BUSINESS & CONFIG',
-    items: [
-      { icon: Building, label: 'Business Setup' },
-      { icon: Sliders, label: 'Configuration' },
-      { icon: Lock, label: 'Roles & Permissions' },
-      { icon: Settings2, label: 'System Settings' },
-    ]
-  }
-];
-
 interface SidebarProps {
   currentView: string;
   onNavigate: (view: string) => void;
+  isCollapsed: boolean;
+  setIsCollapsed: (collapsed: boolean) => void;
 }
 
-export const Sidebar = ({ currentView, onNavigate }: SidebarProps) => {
-  const [expandedItems, setExpandedItems] = useState<string[]>(['SERVICES', 'MAIN DASHBOARD']);
+export const Sidebar: React.FC<SidebarProps> = ({
+  currentView,
+  onNavigate,
+  isCollapsed,
+  setIsCollapsed
+}) => {
+  const [expandedItems, setExpandedItems] = useState<string[]>(['Insights', 'Management', 'Shopping', 'Parcel Delivery', 'SERVICES']);
+
+  const navGroups: { group: string; items: NavItem[] }[] = [
+    {
+      group: 'MAIN DASHBOARD',
+      items: [
+        { icon: LayoutDashboard, label: 'Dashboard' },
+        { icon: Map, label: 'Heat Map' },
+        { icon: Navigation, label: 'Fleet View' },
+        { icon: TrendingUp, label: 'Analytics' }
+      ]
+    },
+    {
+      group: 'SERVICES',
+      items: [
+        {
+          icon: Car,
+          label: 'Ride Hailing',
+          subItems: ['Ride Dashboard', 'Ride Requests', 'Trips', 'Ride Drivers', 'Fare Setup', 'Surge Pricing']
+        },
+        {
+          icon: Utensils,
+          label: 'Food Delivery',
+          subItems: ['Food Dashboard', 'Food Orders', 'Restaurant Management', 'Menu Management', 'Food Delivery Zones', 'Promotions Management']
+        },
+        {
+          icon: ShoppingBag,
+          label: 'Mart Delivery',
+          subItems: ['Mart Orders', 'Stores', 'Products / Inventory', 'Categories', 'Delivery Fees']
+        },
+        {
+          icon: ShoppingCart,
+          label: 'Shopping',
+          subItems: ['PShopping Dashboard', 'Shopping Products', 'Shopping Categories', 'Shopping Orders', 'Vendors / Merchants', 'Reviews & Ratings']
+        },
+        {
+          icon: Box,
+          label: 'Parcel Delivery',
+          subItems: ['Parcel Dashboard', 'Parcel Orders', 'Parcel Categories', 'Parcel Weights', 'Parcel Attributes', 'Refund Requests']
+        },
+        {
+          icon: CreditCard,
+          label: 'Payments & Fintech',
+          subItems: [
+            'Fintech Dashboard',
+            'Transactions',
+            'Customer Wallet',
+            'Driver Wallet',
+            'Withdraw Requests',
+            'Cashless Payments',
+            'Pay Bills',
+            'PayLater (BNPL)',
+            'Loans',
+            'Donations',
+            'Payment Reports',
+            'DFS (Financial Scores)'
+          ]
+        },
+      ]
+    },
+    {
+      group: 'DRIVERS',
+      items: [
+        { icon: UserCheck, label: 'Driver List' },
+        { icon: ShieldCheck, label: 'Driver Verification' },
+        {
+          icon: Award,
+          label: 'Driver Rewards',
+          subItems: ['Tier Overview', 'Tier Rules', 'Benefits Setup', 'Tier History', 'Global Settings']
+        },
+      ]
+    },
+    {
+      group: 'USER MANAGEMENT',
+      items: [
+        { icon: Users, label: 'Customers' },
+        { icon: UserPlus, label: 'Customer Level Setup' },
+        { icon: Briefcase, label: 'Employees' },
+        { icon: Wallet, label: 'User Wallet' }
+      ]
+    },
+    {
+      group: 'OPERATIONS',
+      items: [
+        { icon: MapPin, label: 'Zone Setup' },
+        { icon: Zap, label: 'Dispatch Management' },
+        { icon: ShieldAlert, label: 'Solved Alert List' },
+        { icon: History, label: 'Live Tracking' },
+        { icon: FileSearch, label: 'System Logs' }
+      ]
+    },
+    {
+      group: 'PROMOTION & MARKETING',
+      items: [
+        { icon: Flag, label: 'Banner Setup' },
+        { icon: Ticket, label: 'Coupon Setup' },
+        { icon: Percent, label: 'Discount Setup' },
+        { icon: Send, label: 'Send Notifications' },
+        { icon: Mail, label: 'Newsletter' }
+      ]
+    },
+    {
+      group: 'VEHICLE MANAGEMENT',
+      items: [
+        { icon: Layers, label: 'Vehicle Attribute' },
+        { icon: List, label: 'Vehicle List' },
+        { icon: Dna, label: 'Vehicle Request' },
+        { icon: PlusSquare, label: 'Add New Vehicle' }
+      ]
+    },
+    {
+      group: 'FINANCE & REPORTS',
+      items: [
+        { icon: ClipboardList, label: 'Transactions' },
+        { icon: BarChart3, label: 'Earnings Reports' },
+        { icon: FileText, label: 'Commission Reports' },
+        { icon: TrendingUp, label: 'Financial Analytics' }
+      ]
+    },
+    {
+      group: 'CONTENT MANAGEMENT',
+      items: [
+        { icon: BookOpen, label: 'Blog Setup' },
+        { icon: FileEdit, label: 'Pages' },
+        { icon: ImageIcon, label: 'Media Library' }
+      ]
+    },
+    {
+      group: 'HELP & SUPPORT',
+      items: [
+        {
+          icon: LifeBuoy,
+          label: 'Support Tickets',
+          subItems: ['Active', 'Agents', 'Performance', 'Settings']
+        }
+      ]
+    },
+    {
+      group: 'ENTERPRISE & GOVERNANCE',
+      items: [
+        {
+          icon: Building2,
+          label: 'Enterprise Business Setup',
+          subItems: [
+            'Business Info', 'Operations', 'Driver Setup', 'Customer Setup',
+            'Fare & Penalty', 'Trips Logic', 'Parcel Logic', 'Mart Logic',
+            'Refund Policy', 'Safety & Security', 'Referral Logic',
+            'Shopping Logic', 'Food Delivery Logic', 'Chatting Setup'
+          ]
+        },
+        {
+          icon: Settings2,
+          label: 'Configuration',
+          subItems: [
+            'Logic Engine', 'Service Groups', 'Feature Flags', 'App Versioning',
+            'Notifications', '3rd Party', 'Face Verification API', 'AI Setup',
+            'Blog Setup', 'App Download Setup', 'Priority Setup'
+          ]
+        },
+        {
+          icon: Lock,
+          label: 'Roles & Permissions',
+          subItems: ['Roles Overview', 'Employee Management', 'Permission Matrix']
+        },
+        {
+          icon: Settings,
+          label: 'System Settings',
+          subItems: ['Infrastructure', 'Integrations', 'Security Policies', 'Webhooks']
+        }
+      ]
+    }
+  ];
 
   const toggleExpand = (label: string) => {
-    setExpandedItems(prev => 
-      prev.includes(label) 
-        ? prev.filter(i => i !== label) 
+    setExpandedItems(prev =>
+      prev.includes(label)
+        ? prev.filter(i => i !== label)
         : [...prev, label]
     );
   };
 
   return (
-    <aside className="w-64 h-screen bg-bg-sidebar border-r border-slate-200 fixed left-0 top-0 flex flex-col overflow-y-auto scrollbar-hide z-50">
-      <div className="p-6 sticky top-0 bg-bg-sidebar z-10 border-b border-slate-100/50">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-lg shadow-primary/20">
-            <Car className="text-white w-5 h-5" />
+    <div className={cn(
+      "fixed left-0 top-0 bottom-0 flex flex-col bg-white border-r border-slate-100 transition-all duration-500 ease-in-out z-50 shadow-2xl shadow-slate-200/50",
+      isCollapsed ? "w-24" : "w-72"
+    )}>
+      {/* Sidebar Header */}
+      <div className="p-8 pb-4 flex items-center justify-between">
+        {!isCollapsed && (
+          <div className="flex items-center gap-3 animate-in fade-in slide-in-from-left-4 duration-500">
+            <div className="w-10 h-10 bg-slate-900 rounded-2xl flex items-center justify-center shadow-lg shadow-slate-900/10">
+              <Rocket className="w-5 h-5 text-primary" />
+            </div>
+            <span className="text-xl font-display font-black text-slate-900 tracking-tight">DashDrive</span>
           </div>
-          <span className="text-xl font-bold text-slate-800 tracking-tight">GoGrab</span>
-        </div>
+        )}
+        <button
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className={cn(
+            "p-2.5 rounded-xl bg-slate-50 text-slate-400 hover:text-slate-900 transition-all duration-300 border border-slate-100",
+            isCollapsed && "mx-auto"
+          )}
+        >
+          <ChevronLeft className={cn("w-5 h-5 transition-transform duration-500", isCollapsed && "rotate-180")} />
+        </button>
       </div>
 
-      <nav className="flex-1 px-3 py-4 space-y-6">
-        {sidebarGroups.map((group) => (
-          <div key={group.title} className="space-y-1">
-            <div className="px-4 mb-2">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em]">
-                {group.title}
-              </span>
-            </div>
-            
-            <div className="space-y-0.5">
-              {group.items.map((item) => {
-                const isExpanded = expandedItems.includes(item.label);
-                const hasSubItems = item.subItems && item.subItems.length > 0;
-                const isActive = currentView === item.label || (hasSubItems && item.subItems?.includes(currentView));
-
-                return (
-                  <div key={item.label} className="space-y-0.5">
-                    <button
-                      onClick={() => {
-                        if (hasSubItems) {
-                          toggleExpand(item.label);
-                        } else {
-                          onNavigate(item.label);
-                        }
-                      }}
-                      className={cn(
-                        "w-full flex items-center justify-between px-4 py-2.5 rounded-xl transition-all duration-200 group",
-                        isActive && !hasSubItems
-                          ? "bg-primary/10 text-primary font-semibold" 
-                          : "text-slate-600 hover:bg-slate-100/80 hover:text-slate-900"
-                      )}
-                    >
-                      <div className="flex items-center gap-3">
-                        <item.icon className={cn(
-                          "w-4.5 h-4.5 transition-colors",
-                          isActive ? "text-primary" : "text-slate-400 group-hover:text-slate-600"
-                        )} />
-                        <span className="text-[13px] font-medium">{item.label}</span>
-                      </div>
-                      {hasSubItems && (
-                        <div className={cn(
-                          "transition-transform duration-200",
-                          isExpanded ? "rotate-180" : ""
-                        )}>
-                          <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
-                        </div>
-                      )}
-                    </button>
-
-                    {hasSubItems && isExpanded && (
-                      <div className="ml-9 mt-0.5 space-y-0.5 border-l border-slate-100">
-                        {item.subItems?.map((subItem) => (
-                          <button
-                            key={subItem}
-                            onClick={() => onNavigate(subItem)}
-                            className={cn(
-                              "w-full text-left px-4 py-2 text-[12px] rounded-lg transition-all",
-                              currentView === subItem
-                                ? "text-primary font-bold bg-primary/5"
-                                : "text-slate-500 hover:text-slate-800 hover:bg-slate-50"
-                            )}
-                          >
-                            {subItem}
-                          </button>
-                        ))}
-                      </div>
+      {/* Nav Groups */}
+      <div className="flex-1 overflow-y-auto px-6 py-4 scrollbar-hide space-y-8">
+        {navGroups.map((group) => (
+          <div key={group.group} className="space-y-4">
+            {!isCollapsed && (
+              <h3 className="text-[10px] font-bold text-slate-300 uppercase tracking-[0.2em] ml-2 animate-in fade-in slide-in-from-bottom-2 duration-700">
+                {group.group}
+              </h3>
+            )}
+            <div className="space-y-1">
+              {group.items.map((item) => (
+                <div key={item.label}>
+                  <button
+                    onClick={() => {
+                      if (item.subItems) {
+                        toggleExpand(item.label);
+                      } else {
+                        onNavigate(item.label);
+                      }
+                    }}
+                    className={cn(
+                      "w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-300 group relative",
+                      currentView === item.label
+                        ? "bg-slate-900 text-white shadow-xl shadow-slate-900/20"
+                        : "text-slate-400 hover:text-slate-900 hover:bg-slate-50",
+                      isCollapsed && "justify-center"
                     )}
-                  </div>
-                );
-              })}
+                  >
+                    <item.icon className={cn(
+                      "w-5 h-5 transition-transform duration-300",
+                      currentView === item.label ? "scale-110" : "group-hover:scale-110"
+                    )} />
+                    {!isCollapsed && (
+                      <span className="text-sm font-bold tracking-tight flex-1 text-left">{item.label}</span>
+                    )}
+                    {!isCollapsed && item.subItems && (
+                      <Plus className={cn(
+                        "w-3.5 h-3.5 transition-transform duration-500 text-slate-300",
+                        expandedItems.includes(item.label) && "rotate-45"
+                      )} />
+                    )}
+                  </button>
+
+                  {!isCollapsed && item.subItems && expandedItems.includes(item.label) && (
+                    <div className="mt-2 ml-10 space-y-1 animate-in slide-in-from-top-2 duration-300">
+                      {item.subItems.map((subItem) => (
+                        <button
+                          key={subItem}
+                          onClick={() => onNavigate(subItem)}
+                          className={cn(
+                            "w-full text-left px-4 py-2 text-xs font-bold transition-all duration-300 rounded-xl relative",
+                            currentView === subItem
+                              ? "text-primary"
+                              : "text-slate-400 hover:text-slate-900 hover:translate-x-1"
+                          )}
+                        >
+                          <div className={cn(
+                            "absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full transition-all duration-300 scale-0",
+                            currentView === subItem && "bg-primary scale-100"
+                          )} />
+                          {subItem}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         ))}
-      </nav>
+      </div>
 
-      <div className="p-4 mt-auto sticky bottom-0 bg-bg-sidebar border-t border-slate-100/50">
-        <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-              <Settings2 className="w-4 h-4 text-primary" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[11px] font-bold text-slate-800 truncate">System Admin</p>
-              <p className="text-[9px] text-slate-400 truncate">admin@gograb.com</p>
-            </div>
+      {/* Profile Section */}
+      <div className="p-6 border-t border-slate-50 bg-slate-50/30">
+        <div className={cn(
+          "flex items-center gap-4",
+          isCollapsed && "flex-col items-center"
+        )}>
+          <div className="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center text-white font-black shadow-lg">
+            A
           </div>
+          {!isCollapsed && (
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-black text-slate-900 truncate">Alex J.</p>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Admin v2.4</p>
+            </div>
+          )}
+          {!isCollapsed && (
+            <button className="p-2 text-slate-300 hover:text-rose-500 transition-colors">
+              <LogOut className="w-5 h-5" />
+            </button>
+          )}
         </div>
       </div>
-    </aside>
+    </div>
   );
 };

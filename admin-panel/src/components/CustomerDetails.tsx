@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { 
-  User, Phone, Mail, CheckCircle2, XCircle, 
-  TrendingUp, Star, Download, FileText, 
+import {
+  User, Phone, Mail, CheckCircle2, XCircle,
+  TrendingUp, Star, Download, FileText,
   Search, Filter, ChevronRight, ArrowLeft,
   CreditCard, History, ShieldCheck, AlertCircle,
-  Eye, MoreVertical
+  Eye, MoreVertical, Zap, Car, Utensils,
+  ShoppingBag, Box, MessageSquare, ShieldAlert,
+  Wallet, Award, Clock
 } from 'lucide-react';
 import { cn } from '../utils';
 
@@ -15,23 +17,27 @@ interface CustomerDetailsProps {
 
 export const CustomerDetails: React.FC<CustomerDetailsProps> = ({ customerId, onBack }) => {
   const [activeTab, setActiveTab] = useState('Overview');
-  const [reviewTab, setReviewTab] = useState('Given');
+  const [historyCategory, setHistoryCategory] = useState<'All' | 'Ride' | 'Food' | 'Mart' | 'Shopping' | 'Parcel'>('All');
 
   const customer = {
     id: customerId,
-    name: 'Test User',
-    phone: '+1 555-****-0202',
-    email: 'test.user@example.com',
-    avatar: `https://picsum.photos/seed/${customerId}/200/200`,
+    name: 'Sarah Jenkins',
+    phone: '+1 555-****-901',
+    email: 's****@gmail.com',
+    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200',
+    isDashPlus: true,
+    loyaltyLevel: 'Power Customer',
+    dfsScore: 842,
+    kycStatus: 'Verified',
     stats: {
-      digitalPayment: 22.22,
-      successRate: 77.78,
-      reviewGiven: 44.44,
-      cancellationRate: 16.67,
-      completedTrips: 14,
+      digitalPayment: 92.5,
+      successRate: 98.2,
+      reviewGiven: 4.8,
+      cancellationRate: 2.1,
+      completedTrips: 154,
       cancelTrips: 3,
-      lowestPrice: 12.50,
-      highestPrice: 85.00
+      totalSpend: 12450.00,
+      walletBalance: 450.25
     },
     documents: [
       { name: 'Identity_Verification.jpg', type: 'JPG', size: '1.2 MB' },
@@ -39,284 +45,307 @@ export const CustomerDetails: React.FC<CustomerDetailsProps> = ({ customerId, on
     ]
   };
 
-  const trips = [
-    { id: 'TRP-9021', date: '2024-02-20 14:30', driver: 'Alex Rivera', type: 'Ride Request', cost: 25.00, discount: 5.00, status: 'Completed', payment: 'Paid' },
-    { id: 'TRP-9022', date: '2024-02-19 09:15', driver: 'Sarah Chen', type: 'Ride Request', cost: 18.50, discount: 0.00, status: 'Completed', payment: 'Paid' },
-    { id: 'TRP-9023', date: '2024-02-18 18:45', driver: 'Marco Rossi', type: 'Ride Request', cost: 42.00, discount: 10.00, status: 'Cancelled', payment: 'Unpaid' },
+  const serviceHistory = [
+    { id: 'ORD-9021', date: 'Feb 23, 14:30', service: 'Food', provider: 'Burger King', amount: 25.00, status: 'Delivered', icon: Utensils },
+    { id: 'TRP-8821', date: 'Feb 23, 11:20', service: 'Ride', provider: 'Alex Rivera', amount: 18.50, status: 'Completed', icon: Car },
+    { id: 'ORD-7742', date: 'Feb 22, 18:45', service: 'Mart', provider: 'Whole Foods', amount: 112.00, status: 'Completed', icon: ShoppingBag },
+    { id: 'PKG-1102', date: 'Feb 22, 10:15', service: 'Parcel', provider: 'Express Delivery', amount: 15.00, status: 'In Transit', icon: Box },
+    { id: 'ORD-4401', date: 'Feb 21, 16:30', service: 'Shopping', provider: 'Apple Store', amount: 1200.00, status: 'Processing', icon: ShoppingBag },
   ];
 
-  const transactions = [
-    { id: 'TXN-8821-4421', type: 'Wallet balance', to: 'Customer', debit: 0, credit: 50.00, balance: 125.50 },
-    { id: 'TXN-8821-4422', type: 'Trip Payment', to: 'System', debit: 25.00, credit: 0, balance: 100.50 },
+  const complaints = [
+    { id: 'TKT-441', subject: 'Late Delivery', category: 'Food', date: 'Feb 20', status: 'Resolved' },
+    { id: 'TKT-229', subject: 'Wrong Item', category: 'Mart', date: 'Feb 15', status: 'Refunded' },
   ];
-
-  const reviews = [
-    { id: 'TRP-9021', reviewer: 'Alex Rivera', rating: 5, comment: 'Very polite customer, arrived on time.', date: '2024-02-20' },
-    { id: 'TRP-9022', reviewer: 'Sarah Chen', rating: 4, comment: 'Good trip, but had some trouble finding the pickup point.', date: '2024-02-19' },
-  ];
-
-  const handleExportTrips = () => {
-    const headers = ['Trip ID', 'Date', 'Driver', 'Type', 'Cost', 'Status'];
-    const csvContent = [
-      headers.join(','),
-      ...trips.map(trip => [
-        trip.id,
-        trip.date,
-        trip.driver,
-        trip.type,
-        trip.cost,
-        trip.status
-      ].join(','))
-    ].join('\n');
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', `customer_${customerId}_trips.csv`);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  const handleExportTransactions = () => {
-    const headers = ['Transaction ID', 'Type', 'To', 'Debit', 'Credit', 'Balance'];
-    const csvContent = [
-      headers.join(','),
-      ...transactions.map(txn => [
-        txn.id,
-        txn.type,
-        txn.to,
-        txn.debit,
-        txn.credit,
-        txn.balance
-      ].join(','))
-    ].join('\n');
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', `customer_${customerId}_transactions.csv`);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
 
   return (
-    <div className="flex flex-col h-full space-y-6">
-      {/* Header with Back Button */}
-      <div className="flex items-center gap-4">
-        <button 
-          onClick={onBack}
-          className="p-2 hover:bg-slate-100 rounded-xl transition-colors text-slate-500"
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </button>
-        <div>
-          <h2 className="text-xl font-bold text-slate-800">Customer Details</h2>
-          <p className="text-sm text-slate-500">Monitor activity, behavior, and history</p>
-        </div>
-      </div>
-
-      {/* Top Section: Info Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Customer Info Card */}
-        <div className="bg-white p-6 rounded-[24px] shadow-soft border border-slate-100 flex items-center gap-6">
-          <div className="w-24 h-24 rounded-full border-4 border-slate-50 overflow-hidden shadow-inner">
-            <img src={customer.avatar} alt={customer.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-          </div>
-          <div className="space-y-2">
-            <h3 className="text-2xl font-bold text-slate-800">{customer.name}</h3>
-            <div className="flex flex-col gap-1">
-              <div className="flex items-center gap-2 text-slate-500">
-                <Phone className="w-3.5 h-3.5" />
-                <span className="text-xs font-medium">{customer.phone}</span>
-              </div>
-              <div className="flex items-center gap-2 text-slate-500">
-                <Mail className="w-3.5 h-3.5" />
-                <span className="text-xs font-medium">{customer.email}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Rate Info Card */}
-        <div className="bg-white p-6 rounded-[24px] shadow-soft border border-slate-100 space-y-4">
-          <div className="grid grid-cols-2 gap-x-8 gap-y-4">
-            {[
-              { label: 'Total Digital Payment', value: customer.stats.digitalPayment, color: 'bg-primary' },
-              { label: 'Success Rate', value: customer.stats.successRate, color: 'bg-emerald-500' },
-              { label: 'Total Review Given', value: customer.stats.reviewGiven, color: 'bg-blue-500' },
-              { label: 'Cancellation Rate', value: customer.stats.cancellationRate, color: 'bg-red-500' },
-            ].map((stat) => (
-              <div key={stat.label} className="space-y-1.5">
-                <div className="flex justify-between items-center">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{stat.label}</span>
-                  <span className="text-[10px] font-bold text-slate-800">{stat.value}%</span>
-                </div>
-                <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                  <div 
-                    className={cn("h-full rounded-full", stat.color)} 
-                    style={{ width: `${stat.value}%` }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Tab Navigation */}
-      <div className="flex border-b border-slate-100">
-        {['Overview', 'Trips', 'Transaction', 'Review'].map((tab) => (
+    <div className="flex flex-col h-full space-y-6 animate-in fade-in duration-700">
+      {/* Header with Dashboard Context */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="flex items-center gap-5">
           <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={cn(
-              "px-8 py-4 text-sm font-bold transition-all relative",
-              activeTab === tab 
-                ? "text-primary" 
-                : "text-slate-400 hover:text-slate-600"
-            )}
+            onClick={onBack}
+            className="p-3 bg-white hover:bg-slate-50 border border-slate-100 rounded-2xl shadow-sm text-slate-500 hover:text-slate-900 transition-all group"
           >
-            {tab}
-            {activeTab === tab && (
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-t-full" />
-            )}
+            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
           </button>
-        ))}
+          <div>
+            <div className="flex items-center gap-3 mb-1">
+              <h2 className="text-2xl font-display font-black text-slate-900 tracking-tight">Customer Intelligence</h2>
+              {customer.isDashPlus && (
+                <div className="flex items-center gap-1.5 px-3 py-1 bg-rose-500 text-white rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg shadow-rose-500/20">
+                  <Zap className="w-3 h-3 fill-current" />
+                  DashPlus MEMBER
+                </div>
+              )}
+            </div>
+            <p className="text-slate-500 text-sm font-medium italic truncate max-w-md">Comprehensive 360&deg; audit of {customer.name}&apos;s activity.</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <button className="flex items-center gap-2 px-6 py-2.5 bg-slate-50 text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-100 transition-all">
+            <ShieldAlert className="w-4 h-4" />
+            Risk Analysis
+          </button>
+          <button className="flex items-center gap-2 px-6 py-2.5 bg-slate-900 text-white rounded-xl text-xs font-bold shadow-lg shadow-slate-900/20 hover:scale-105 transition-all">
+            <Edit className="w-4 h-4 text-primary" />
+            Manage Profile
+          </button>
+        </div>
       </div>
 
-      {/* Tab Content */}
-      <div className="flex-1 min-h-0">
-        {activeTab === 'Overview' && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 space-y-6">
-              <div className="bg-white p-6 rounded-[24px] shadow-soft border border-slate-100">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider">Customer Details</h3>
-                  <div className="flex bg-slate-50 rounded-lg p-1">
-                    {['Trip', 'Duty & Review', 'Wallet'].map(s => (
-                      <button key={s} className="px-3 py-1 text-[10px] font-bold rounded-md hover:bg-white hover:shadow-sm transition-all text-slate-500 hover:text-slate-800">
-                        {s}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                  {[
-                    { label: 'Completed Trips', value: customer.stats.completedTrips, icon: <CheckCircle2 className="text-emerald-500" /> },
-                    { label: 'Cancel Trips', value: customer.stats.cancelTrips, icon: <XCircle className="text-red-500" /> },
-                    { label: 'Lowest Price', value: `$${customer.stats.lowestPrice}`, icon: <TrendingUp className="text-blue-500 rotate-180" /> },
-                    { label: 'Highest Price', value: `$${customer.stats.highestPrice}`, icon: <TrendingUp className="text-primary" /> },
-                  ].map((item) => (
-                    <div key={item.label} className="space-y-2">
-                      <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center">
-                        {React.cloneElement(item.icon as React.ReactElement, { className: "w-5 h-5" })}
-                      </div>
-                      <div>
-                        <p className="text-lg font-bold text-slate-800">{item.value}</p>
-                        <p className="text-[10px] text-slate-400 font-bold uppercase">{item.label}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+      {/* Primary Identity Section */}
+      <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+        {/* Profile Card */}
+        <div className="xl:col-span-1 bg-white p-8 rounded-[40px] border border-slate-100 shadow-xl shadow-slate-200/50 flex flex-col items-center text-center relative overflow-hidden group">
+          <div className="absolute top-0 left-0 w-full h-24 bg-slate-50 group-hover:bg-primary/5 transition-colors" />
+          <div className="relative mt-4 mb-6">
+            <div className="w-32 h-32 rounded-3xl overflow-hidden border-4 border-white shadow-2xl relative z-10">
+              <img src={customer.avatar} alt={customer.name} className="w-full h-full object-cover" />
+            </div>
+            <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-emerald-500 rounded-2xl border-4 border-white flex items-center justify-center text-white z-20 shadow-lg">
+              <ShieldCheck className="w-5 h-5" />
+            </div>
+          </div>
+          <div className="z-10">
+            <h3 className="text-xl font-black text-slate-900">{customer.name}</h3>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-1">ID: {customer.id}</p>
+
+            <div className="flex flex-col gap-2 mt-6">
+              <div className="flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-xl text-xs font-bold text-slate-600">
+                <Phone className="w-3.5 h-3.5 text-slate-400" />
+                {customer.phone}
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-xl text-xs font-bold text-slate-600">
+                <Mail className="w-3.5 h-3.5 text-slate-400" />
+                {customer.email}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* DFS & Financial Score Visualizer */}
+        <div className="xl:col-span-2 bg-slate-900 rounded-[40px] p-8 text-white relative overflow-hidden group shadow-2xl shadow-slate-900/40">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 blur-[80px] rounded-full translate-x-1/2 -translate-y-1/2" />
+          <div className="relative z-10 flex flex-col h-full">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h4 className="text-lg font-black tracking-tight italic flex items-center gap-2">
+                  <Award className="w-5 h-5 text-primary" />
+                  Dash Financial Score (DFS)
+                </h4>
+                <p className="text-white/50 text-[10px] font-bold uppercase tracking-widest mt-1">AI Behavior Rating</p>
+              </div>
+              <div className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest">
+                Top 2% Globally
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-[24px] shadow-soft border border-slate-100">
-              <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-6">Attached Documents</h3>
-              <div className="space-y-4">
-                {customer.documents.map((doc) => (
-                  <div key={doc.name} className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100 group">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center border border-slate-200">
-                        <FileText className="w-5 h-5 text-slate-400" />
-                      </div>
-                      <div>
-                        <p className="text-xs font-bold text-slate-800 truncate max-w-[120px]">{doc.name}</p>
-                        <p className="text-[10px] text-slate-400">{doc.size}</p>
-                      </div>
-                    </div>
-                    <button className="p-2 hover:bg-white rounded-lg transition-all text-slate-400 hover:text-primary">
-                      <Download className="w-4 h-4" />
-                    </button>
+            <div className="flex-1 flex items-center justify-around gap-12">
+              <div className="relative w-40 h-40 flex items-center justify-center">
+                <svg className="w-full h-full -rotate-90">
+                  <circle cx="80" cy="80" r="70" stroke="currentColor" strokeWidth="12" fill="transparent" className="text-white/5" />
+                  <circle cx="80" cy="80" r="70" stroke="currentColor" strokeWidth="12" fill="transparent" strokeDasharray="440" strokeDashoffset={440 - (440 * (customer.dfsScore / 1000))} className="text-primary transition-all duration-1000 ease-out" strokeLinecap="round" />
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-4xl font-black tracking-tight">{customer.dfsScore}</span>
+                  <span className="text-[10px] font-bold text-white/40 uppercase">Out of 1000</span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-x-12 gap-y-6">
+                {[
+                  { label: 'Reliability', value: 'Excellent' },
+                  { label: 'Refund Ratio', value: '< 0.1%' },
+                  { label: 'Avg Spend', value: `$${customer.stats.totalSpend / 12}/mo` },
+                  { label: 'Tier Status', value: customer.loyaltyLevel },
+                ].map(idx => (
+                  <div key={idx.label}>
+                    <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest">{idx.label}</p>
+                    <p className="text-sm font-black mt-1">{idx.value}</p>
                   </div>
                 ))}
               </div>
             </div>
           </div>
-        )}
+        </div>
 
-        {activeTab === 'Trips' && (
-          <div className="bg-white rounded-[24px] shadow-soft border border-slate-100 overflow-hidden">
-            <div className="p-6 border-b border-slate-50 flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <input type="text" placeholder="Search by Trip ID..." className="w-full pl-10 pr-4 py-2 bg-slate-50 border-transparent rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-primary/20 transition-all" />
+        {/* Global Stats Matrix */}
+        <div className="xl:col-span-1 bg-white p-8 rounded-[40px] border border-slate-100 shadow-xl shadow-slate-200/50 flex flex-col justify-between">
+          <div className="space-y-6">
+            {[
+              { label: 'Wallet Balance', value: `$${customer.stats.walletBalance}`, icon: Wallet, color: 'text-primary' },
+              { label: 'Success Rate', value: `${customer.stats.successRate}%`, icon: TrendingUp, color: 'text-emerald-500' },
+              { label: 'Cancellation', value: `${customer.stats.cancellationRate}%`, icon: XCircle, color: 'text-rose-500' },
+            ].map(stat => (
+              <div key={stat.label} className="flex items-center justify-between group">
+                <div className="flex items-center gap-3">
+                  <div className={cn("w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center transition-all group-hover:scale-110", stat.color)}>
+                    <stat.icon className="w-5 h-5" />
+                  </div>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{stat.label}</span>
+                </div>
+                <span className="text-sm font-black text-slate-900">{stat.value}</span>
               </div>
-              <div className="flex items-center gap-3">
-                <button 
-                  onClick={handleExportTrips}
-                  className="flex items-center gap-2 px-4 py-2 bg-slate-50 text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-100 transition-all"
-                >
-                  <Download className="w-4 h-4" /> Export
-                </button>
-                <button className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-xl text-xs font-bold hover:bg-primary/90 transition-all shadow-sm">
-                  <Filter className="w-4 h-4" /> Filter
-                </button>
+            ))}
+          </div>
+
+          <button className="w-full mt-8 py-3 bg-slate-50 hover:bg-slate-100 text-slate-900 border border-slate-100 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all">
+            Withdrawal History
+          </button>
+        </div>
+      </div>
+
+      {/* Tabs Navigation */}
+      <div className="flex p-1 bg-slate-100/50 rounded-2xl w-fit">
+        {['Overview', 'History', 'Support', 'Review'].map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={cn(
+              "px-8 py-2.5 text-xs font-black uppercase tracking-widest rounded-xl transition-all",
+              activeTab === tab
+                ? "bg-white text-slate-900 shadow-lg shadow-slate-200/50 scale-105"
+                : "text-slate-400 hover:text-slate-600"
+            )}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
+
+      {/* Dynamic Content Area */}
+      <div className="bg-white rounded-[40px] border border-slate-100 shadow-xl shadow-slate-200/50 min-h-[400px]">
+        {activeTab === 'Overview' && (
+          <div className="p-10 animate-in fade-in duration-500">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+              <div className="space-y-8">
+                <div>
+                  <h4 className="text-lg font-black text-slate-900 flex items-center gap-2">
+                    <Activity className="w-5 h-5 text-primary" />
+                    Usage Penetration
+                  </h4>
+                  <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mt-1">Multi-Service Utilization Score</p>
+                </div>
+
+                <div className="space-y-6">
+                  {[
+                    { service: 'Ride Hailing', usage: 85, color: 'bg-primary' },
+                    { service: 'Food Delivery', usage: 60, color: 'bg-emerald-500' },
+                    { service: 'Mart Shopping', usage: 45, color: 'bg-amber-500' },
+                    { service: 'Parcel Post', usage: 15, color: 'bg-blue-500' },
+                  ].map(svc => (
+                    <div key={svc.service} className="space-y-2">
+                      <div className="flex justify-between items-center px-1">
+                        <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest">{svc.service}</span>
+                        <span className="text-[10px] font-black text-slate-400 italic">{svc.usage}%</span>
+                      </div>
+                      <div className="w-full h-1.5 bg-slate-50 rounded-full overflow-hidden">
+                        <div className={cn("h-full rounded-full transition-all duration-1000", svc.color)} style={{ width: `${svc.usage}%` }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="bg-slate-50/50 rounded-[32px] p-8 border border-slate-100 flex flex-col justify-between">
+                <div className="flex items-start justify-between mb-8">
+                  <div>
+                    <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest">Attached KYC Documents</h4>
+                    <p className="text-slate-400 text-[10px] font-bold uppercase mt-1">Legally verified documents</p>
+                  </div>
+                  <button className="text-primary hover:text-primary-dark transition-colors">
+                    <Plus className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <div className="space-y-4">
+                  {customer.documents.map(doc => (
+                    <div key={doc.name} className="flex items-center justify-between p-4 bg-white border border-slate-100 rounded-2xl group hover:shadow-lg hover:shadow-slate-200/50 transition-all">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-primary transition-colors">
+                          <FileText className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-black text-slate-900">{doc.name}</p>
+                          <p className="text-[10px] font-bold text-slate-400 uppercase">{doc.size} &bull; {doc.type}</p>
+                        </div>
+                      </div>
+                      <button className="p-2 text-slate-400 hover:text-slate-900">
+                        <Download className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
+          </div>
+        )}
+
+        {activeTab === 'History' && (
+          <div className="animate-in fade-in duration-500">
+            <div className="p-8 border-b border-slate-50 flex flex-col md:flex-row justify-between items-center gap-4">
+              <div className="flex items-center gap-3 overflow-x-auto w-full md:w-auto scrollbar-hide p-1">
+                {['All', 'Ride', 'Food', 'Mart', 'Shopping', 'Parcel'].map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setHistoryCategory(cat as any)}
+                    className={cn(
+                      "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+                      historyCategory === cat ? "bg-slate-900 text-white" : "bg-slate-50 text-slate-400 hover:bg-slate-100"
+                    )}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+              <div className="relative group w-full md:w-64">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input type="text" placeholder="Filter orders..." className="w-full pl-11 pr-4 py-2 bg-slate-50 rounded-xl text-xs font-medium outline-none border border-transparent focus:border-primary/20 transition-all" />
+              </div>
+            </div>
+
             <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
+              <table className="w-full text-left">
                 <thead>
                   <tr className="bg-slate-50/50">
-                    <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Trip ID</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Date & Time</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Driver</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Trip Type</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Cost</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Status</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-right">Action</th>
+                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Service / ID</th>
+                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Provider</th>
+                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Date</th>
+                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Amount</th>
+                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Status</th>
+                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-right">Details</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
-                  {trips.map((trip) => (
-                    <tr key={trip.id} className="hover:bg-slate-50/50 transition-colors group">
-                      <td className="px-6 py-4">
-                        <span className="text-xs font-bold text-slate-800">{trip.id}</span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="text-xs text-slate-500">{trip.date}</span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-full bg-slate-100 overflow-hidden">
-                            <img src={`https://picsum.photos/seed/${trip.driver}/50/50`} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                  {serviceHistory.map((history) => (
+                    <tr key={history.id} className="group hover:bg-slate-50/50 transition-all duration-300">
+                      <td className="px-8 py-6">
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-white transition-all">
+                            <history.icon className="w-4 h-4" />
                           </div>
-                          <span className="text-xs font-medium text-slate-700">{trip.driver}</span>
+                          <div>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{history.service}</p>
+                            <p className="text-sm font-black text-slate-900">{history.id}</p>
+                          </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4">
-                        <span className="text-[10px] font-bold px-2 py-1 bg-blue-50 text-blue-600 rounded-lg uppercase">{trip.type}</span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="text-xs font-bold text-slate-800">${trip.cost.toFixed(2)}</span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className={cn(
-                          "text-[10px] font-bold px-2 py-1 rounded-lg uppercase",
-                          trip.status === 'Completed' ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600"
+                      <td className="px-8 py-6 text-sm font-bold text-slate-700">{history.provider}</td>
+                      <td className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">{history.date}</td>
+                      <td className="px-8 py-6 text-sm font-black text-slate-900">${history.amount.toFixed(2)}</td>
+                      <td className="px-8 py-6">
+                        <div className={cn(
+                          "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border",
+                          history.status === 'Completed' || history.status === 'Delivered' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+                            history.status === 'Cancelled' ? "bg-rose-50 text-rose-600 border-rose-100" : "bg-amber-50 text-amber-600 border-amber-100"
                         )}>
-                          {trip.status}
-                        </span>
+                          {history.status}
+                        </div>
                       </td>
-                      <td className="px-6 py-4 text-right">
-                        <button className="p-2 hover:bg-primary/10 rounded-lg transition-all text-slate-400 hover:text-primary">
-                          <Eye className="w-4 h-4" />
+                      <td className="px-8 py-6 text-right">
+                        <button className="p-2 text-slate-400 hover:text-slate-900 transition-colors">
+                          <ChevronRight className="w-5 h-5" />
                         </button>
                       </td>
                     </tr>
@@ -327,124 +356,94 @@ export const CustomerDetails: React.FC<CustomerDetailsProps> = ({ customerId, on
           </div>
         )}
 
-        {activeTab === 'Transaction' && (
-          <div className="bg-white rounded-[24px] shadow-soft border border-slate-100 overflow-hidden">
-            <div className="p-6 border-b border-slate-50 flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <input type="text" placeholder="Search by Transaction ID..." className="w-full pl-10 pr-4 py-2 bg-slate-50 border-transparent rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-primary/20 transition-all" />
-              </div>
-              <div className="flex items-center gap-3">
-                <button 
-                  onClick={handleExportTransactions}
-                  className="flex items-center gap-2 px-4 py-2 bg-slate-50 text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-100 transition-all"
-                >
-                  <Download className="w-4 h-4" /> Export
+        {activeTab === 'Support' && (
+          <div className="p-10 animate-in fade-in duration-500">
+            <div className="max-w-4xl mx-auto space-y-10">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 rounded-[24px] bg-slate-900 flex items-center justify-center text-primary shadow-xl">
+                    <MessageSquare className="w-8 h-8" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-black text-slate-900 tracking-tight italic">Support &amp; Resolution Hub</h3>
+                    <p className="text-slate-400 text-sm font-medium">Logged complaints and resolution tracking for 30 days.</p>
+                  </div>
+                </div>
+                <button className="btn-primary-2026 px-6 py-3 rounded-2xl bg-slate-900 text-white font-black text-xs uppercase tracking-widest shadow-xl">
+                  New Internal Ticket
                 </button>
               </div>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-slate-50/50">
-                    <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Transaction ID</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Account Type</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Debit</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Credit</th>
-                    <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Balance</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-50">
-                  {transactions.map((txn) => (
-                    <tr key={txn.id} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="px-6 py-4">
-                        <span className="text-xs font-mono text-slate-500">{txn.id}</span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="text-xs font-medium text-slate-700">{txn.type}</span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="text-xs font-bold text-red-500">{txn.debit > 0 ? `-$${txn.debit.toFixed(2)}` : '-'}</span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="text-xs font-bold text-emerald-500">{txn.credit > 0 ? `+$${txn.credit.toFixed(2)}` : '-'}</span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="text-xs font-bold text-slate-800">${txn.balance.toFixed(2)}</span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+
+              <div className="space-y-4">
+                {complaints.map(tkt => (
+                  <div key={tkt.id} className="flex items-center justify-between p-6 bg-slate-50/50 border border-slate-100 rounded-[32px] group hover:bg-white hover:shadow-2xl hover:shadow-slate-200/50 transition-all duration-500">
+                    <div className="flex items-center gap-6">
+                      <div className="w-12 h-12 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 group-hover:text-primary transition-all">
+                        <ShieldAlert className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-[10px] font-black text-slate-900 bg-slate-200/50 px-2 py-0.5 rounded-md uppercase">{tkt.category}</span>
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{tkt.date}</span>
+                        </div>
+                        <h4 className="text-sm font-black text-slate-900">{tkt.subject}</h4>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Reference: {tkt.id}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-6">
+                      <div className={cn(
+                        "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border shadow-sm",
+                        tkt.status === 'Resolved' ? "bg-emerald-500 text-white border-emerald-400" : "bg-amber-500 text-white border-amber-400"
+                      )}>
+                        {tkt.status}
+                      </div>
+                      <button className="p-2 text-slate-300 hover:text-slate-900 transition-colors">
+                        <ChevronRight className="w-6 h-6" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}
 
         {activeTab === 'Review' && (
-          <div className="space-y-6">
-            <div className="flex bg-white rounded-xl shadow-sm border border-slate-100 p-1 w-fit">
-              <button 
-                onClick={() => setReviewTab('Given')}
-                className={cn(
-                  "px-6 py-2 text-xs font-bold rounded-lg transition-all",
-                  reviewTab === 'Given' ? "bg-primary/10 text-primary" : "text-slate-500 hover:bg-slate-50"
-                )}
-              >
-                Review Given To Driver
-              </button>
-              <button 
-                onClick={() => setReviewTab('From')}
-                className={cn(
-                  "px-6 py-2 text-xs font-bold rounded-lg transition-all",
-                  reviewTab === 'From' ? "bg-primary/10 text-primary" : "text-slate-500 hover:bg-slate-50"
-                )}
-              >
-                Review From Driver
-              </button>
+          <div className="p-10 animate-in fade-in duration-500 flex flex-col items-center justify-center text-center py-24 space-y-6">
+            <div className="w-24 h-24 rounded-full bg-slate-50 flex items-center justify-center text-amber-500 border border-slate-100">
+              <Star className="w-12 h-12 fill-current" />
             </div>
-
-            <div className="bg-white rounded-[24px] shadow-soft border border-slate-100 overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="bg-slate-50/50">
-                      <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Trip ID</th>
-                      <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Reviewer</th>
-                      <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Rating</th>
-                      <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Comment</th>
-                      <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Date</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-50">
-                    {reviews.map((review) => (
-                      <tr key={review.id} className="hover:bg-slate-50/50 transition-colors">
-                        <td className="px-6 py-4">
-                          <span className="text-xs font-bold text-slate-800">{review.id}</span>
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className="text-xs font-medium text-slate-700">{review.reviewer}</span>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-0.5">
-                            {[...Array(5)].map((_, i) => (
-                              <Star key={i} className={cn("w-3 h-3", i < review.rating ? "text-yellow-400 fill-yellow-400" : "text-slate-200")} />
-                            ))}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <p className="text-xs text-slate-500 italic">"{review.comment}"</p>
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className="text-xs text-slate-400">{review.date}</span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+            <div>
+              <h4 className="text-xl font-black text-slate-900">Rating &amp; Review Metrics</h4>
+              <p className="text-slate-400 text-sm font-medium mt-1 italic">Aggregating reviews from drivers and merchants...</p>
             </div>
           </div>
         )}
+      </div>
+
+      {/* Featured Insight Overlay */}
+      <div className="bg-emerald-500 rounded-[40px] p-10 text-white relative overflow-hidden group shadow-2xl shadow-emerald-500/30 flex flex-col lg:flex-row items-center gap-10">
+        <div className="lg:w-2/3 space-y-4 relative z-10 text-center lg:text-left">
+          <h3 className="text-2xl font-black tracking-tight italic flex items-center justify-center lg:justify-start gap-2">
+            <TrendingUp className="w-8 h-8" />
+            High Retention Analysis
+          </h3>
+          <p className="text-lg opacity-90 font-medium leading-relaxed max-w-2xl">
+            This customer exhibits atypical loyalty metrics. Their DFS score suggests
+            eligibility for the <strong>DashDrive Preferred Loan Program</strong> and advanced
+            repayment terms for PayLater (BNPL) services.
+          </p>
+        </div>
+        <div className="lg:w-1/3 flex justify-end">
+          <div className="p-6 bg-white/10 rounded-[32px] border border-white/20 backdrop-blur-xl flex flex-col items-center gap-2">
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50">Customer LTV</p>
+            <h4 className="text-3xl font-black italic">$42.8k</h4>
+            <div className="flex items-center gap-1 text-[10px] font-black text-emerald-200">
+              <ArrowUpRight className="w-3 h-3" />
+              +12% TREND
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

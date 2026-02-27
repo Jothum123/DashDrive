@@ -36,7 +36,6 @@ import { cn } from './types';
 import Dashboard from './components/Dashboard';
 import Orders from './components/Orders';
 import MenuMaker from './components/MenuMaker';
-import Analytics from './components/Analytics';
 import Feedback from './components/Feedback';
 import Kitchen from './components/Kitchen';
 import Inventory from './components/Inventory';
@@ -98,13 +97,7 @@ export default function App() {
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
-  const performanceItems = [
-    { id: 'analytics', label: 'Analytics' },
-    { id: 'feedback', label: 'Feedback' },
-    { id: 'reports', label: 'Reports' },
-    { id: 'insights', label: 'Insights' },
-    { id: 'top-eats', label: 'Top Eats' },
-  ];
+
 
   const pizzaPlaceItems = [
     { id: 'marketing', label: 'Marketing', icon: Megaphone },

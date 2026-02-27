@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { 
-  User, Phone, Mail, CheckCircle2, XCircle, 
-  TrendingUp, Star, Download, FileText, 
+import {
+  User, Phone, Mail, CheckCircle2, XCircle,
+  TrendingUp, Star, Download, FileText,
   Search, Filter, ChevronRight, ArrowLeft,
   CreditCard, History, ShieldCheck, AlertCircle,
   Eye, MoreVertical, Trash2, Activity, Edit3,
   Ban, Bike, Car, Settings, Wallet, DollarSign,
-  Clock, PieChart, Banknote, ArrowUpRight
+  Clock, PieChart, Banknote, ArrowUpRight,
+  Crown, Award, Diamond, Target, Gift, Zap, Percent
 } from 'lucide-react';
 import { cn } from '../utils';
 
@@ -26,7 +27,11 @@ export const DriverDetails: React.FC<DriverDetailsProps> = ({ driverId, onBack }
     phone: '+1 555-****-0101',
     email: 'devid.jack@example.com',
     avatar: `https://picsum.photos/seed/${driverId}/200/200`,
-    level: 'Level 1',
+    tier: 'Platinum',
+    points: 16250,
+    peakPoints: 12450,
+    nextTierPoints: 25500,
+    acceptanceRate: 98.5,
     rating: 5.0,
     services: ['Ride Request', 'Parcel (Capacity Unlimited)'],
     stats: {
@@ -135,7 +140,7 @@ export const DriverDetails: React.FC<DriverDetailsProps> = ({ driverId, onBack }
       {/* Top Header: ID & Actions */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <button 
+          <button
             onClick={onBack}
             className="p-2 hover:bg-slate-100 rounded-xl transition-colors text-slate-500"
           >
@@ -155,7 +160,7 @@ export const DriverDetails: React.FC<DriverDetailsProps> = ({ driverId, onBack }
           </button>
           <div className="flex items-center gap-2 bg-white border border-slate-100 px-3 py-1.5 rounded-xl shadow-sm">
             <span className="text-[10px] font-bold text-slate-400 uppercase">Status</span>
-            <button 
+            <button
               onClick={() => setIsActive(!isActive)}
               className={cn(
                 "w-10 h-5 rounded-full relative transition-colors",
@@ -192,7 +197,10 @@ export const DriverDetails: React.FC<DriverDetailsProps> = ({ driverId, onBack }
           <div>
             <h3 className="text-xl font-bold text-slate-800">{driver.name}</h3>
             <div className="flex items-center justify-center gap-2 mt-1">
-              <span className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[10px] font-bold uppercase">{driver.level}</span>
+              <span className={cn(
+                "px-2 py-0.5 rounded text-[10px] font-bold uppercase",
+                driver.tier === 'Gold' ? "bg-yellow-50 text-yellow-600 border border-yellow-200" : "bg-slate-100 text-slate-600"
+              )}>{driver.tier} Tier</span>
               <div className="flex items-center gap-1 text-yellow-400">
                 <Star className="w-3 h-3 fill-yellow-400" />
                 <span className="text-xs font-bold text-slate-700">{driver.rating}</span>
@@ -287,14 +295,14 @@ export const DriverDetails: React.FC<DriverDetailsProps> = ({ driverId, onBack }
 
       {/* Tab Navigation */}
       <div className="flex border-b border-slate-100">
-        {['Overview', 'Vehicle', 'Trips', 'Transaction', 'Review'].map((tab) => (
+        {['Overview', 'Vehicle', 'Trips', 'Transaction', 'Rewards & Tier', 'Review'].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={cn(
               "px-8 py-4 text-sm font-bold transition-all relative",
-              activeTab === tab 
-                ? "text-primary" 
+              activeTab === tab
+                ? "text-primary"
                 : "text-slate-400 hover:text-slate-600"
             )}
           >
@@ -418,7 +426,7 @@ export const DriverDetails: React.FC<DriverDetailsProps> = ({ driverId, onBack }
                 <input type="text" placeholder="Search by Transaction ID..." className="w-full pl-10 pr-4 py-2 bg-slate-50 border-transparent rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-primary/20 transition-all" />
               </div>
               <div className="flex items-center gap-3">
-                <button 
+                <button
                   onClick={handleExportTransactions}
                   className="flex items-center gap-2 px-4 py-2 bg-slate-50 text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-100 transition-all"
                 >
@@ -448,8 +456,8 @@ export const DriverDetails: React.FC<DriverDetailsProps> = ({ driverId, onBack }
                       <td className="px-6 py-4">
                         <span className={cn(
                           "text-[10px] font-bold px-2 py-1 rounded-lg uppercase",
-                          txn.type === 'Received balance' ? "bg-emerald-50 text-emerald-600" : 
-                          txn.type === 'Withdraw' ? "bg-blue-50 text-blue-600" : "bg-amber-50 text-amber-600"
+                          txn.type === 'Received balance' ? "bg-emerald-50 text-emerald-600" :
+                            txn.type === 'Withdraw' ? "bg-blue-50 text-blue-600" : "bg-amber-50 text-amber-600"
                         )}>
                           {txn.type}
                         </span>
@@ -485,7 +493,7 @@ export const DriverDetails: React.FC<DriverDetailsProps> = ({ driverId, onBack }
                 <input type="text" placeholder="Search by Trip ID..." className="w-full pl-10 pr-4 py-2 bg-slate-50 border-transparent rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-primary/20 transition-all" />
               </div>
               <div className="flex items-center gap-3">
-                <button 
+                <button
                   onClick={handleExportTrips}
                   className="flex items-center gap-2 px-4 py-2 bg-slate-50 text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-100 transition-all"
                 >
@@ -538,6 +546,126 @@ export const DriverDetails: React.FC<DriverDetailsProps> = ({ driverId, onBack }
                           <Eye className="w-4 h-4" />
                         </button>
                       </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'Rewards & Tier' && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-in fade-in duration-500">
+            {/* Tier Progress Card */}
+            <div className="bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm space-y-8">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-yellow-50 rounded-2xl border border-yellow-200">
+                    <Award className="w-8 h-8 text-yellow-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-black text-slate-900 leading-none">{driver.tier} Tier</h3>
+                    <p className="text-xs font-bold text-slate-400 mt-2 uppercase tracking-widest">Active Status</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-2xl font-black text-slate-900">{driver.points.toLocaleString()}</p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mt-1">Total Points</p>
+                  <div className="mt-2 flex items-center justify-end gap-1.5 text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-100">
+                    <Zap className="w-2.5 h-2.5 fill-amber-600" />
+                    <span className="text-[9px] font-black">{driver.peakPoints.toLocaleString()} Peak Points</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex justify-between items-end text-[11px] font-bold">
+                  <span className="text-slate-400">NEXT TIER: DIAMOND</span>
+                  <span className="text-primary">{Math.round((driver.points / driver.nextTierPoints) * 100)}% Complete</span>
+                </div>
+                <div className="h-3 w-full bg-slate-50 rounded-full overflow-hidden border border-slate-100">
+                  <div
+                    className="h-full bg-[#0089D1] rounded-full transition-all duration-1000 shadow-lg shadow-[#0089D1]/20"
+                    style={{ width: `${(driver.points / driver.nextTierPoints) * 100}%` }}
+                  />
+                </div>
+                <p className="text-[10px] font-medium text-slate-400 text-center italic">Earn {(driver.nextTierPoints - driver.points).toLocaleString()} more points to reach Diamond</p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 pt-4">
+                <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                  <Target className="w-5 h-5 text-emerald-500 mb-2" />
+                  <p className="text-lg font-bold text-slate-900">{driver.acceptanceRate}%</p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase">Acceptance Rate</p>
+                </div>
+                <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                  <Clock className="w-5 h-5 text-indigo-500 mb-2" />
+                  <p className="text-lg font-bold text-slate-900">105/150</p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase">Monthly Trips</p>
+                </div>
+                <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                  <Star className="w-5 h-5 text-amber-500 mb-2" />
+                  <p className="text-lg font-bold text-slate-900">4.92</p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase">Avg. Rating</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Active Benefits Card */}
+            <div className="bg-slate-900 p-8 rounded-[32px] text-white space-y-8 relative overflow-hidden">
+              <div className="absolute -right-10 -top-10 w-40 h-40 bg-yellow-500/10 rounded-full blur-3xl" />
+              <div className="flex items-center gap-3">
+                <Gift className="w-5 h-5 text-yellow-500" />
+                <h3 className="text-sm font-bold uppercase tracking-widest opacity-60">Active Benefits</h3>
+              </div>
+
+              <div className="space-y-4">
+                {[
+                  { label: 'Platform Commission', value: '8%', icon: Percent },
+                  { label: 'Bidding Advantage', value: 'Early Access', icon: Zap },
+                  { label: 'Zero-Comm Rides', value: '5/wk Left', icon: Activity },
+                ].map((benefit) => (
+                  <div key={benefit.label} className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/10">
+                    <div className="flex items-center gap-4">
+                      <div className="p-2 bg-white/10 rounded-xl">
+                        <benefit.icon className="w-4 h-4 text-yellow-500" />
+                      </div>
+                      <span className="text-[11px] font-bold opacity-80 uppercase tracking-tight">{benefit.label}</span>
+                    </div>
+                    <span className="text-xs font-black text-white">{benefit.value}</span>
+                  </div>
+                ))}
+              </div>
+
+              <button className="w-full py-4 bg-white text-slate-900 rounded-[20px] text-[11px] font-bold hover:bg-slate-100 transition-all">
+                View All Rewards
+              </button>
+            </div>
+
+            {/* Loyalty History (Small Table) */}
+            <div className="lg:col-span-2 bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm">
+              <div className="flex items-center gap-3 mb-6">
+                <History className="w-5 h-5 text-slate-400" />
+                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider">Rewards History</h3>
+              </div>
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b border-slate-50">
+                    <th className="pb-4 text-[9px] font-bold text-slate-400 uppercase tracking-widest text-left">EVENT</th>
+                    <th className="pb-4 text-[9px] font-bold text-slate-400 uppercase tracking-widest text-center">POINTS</th>
+                    <th className="pb-4 text-[9px] font-bold text-slate-400 uppercase tracking-widest text-right">DATE</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-50">
+                  {[
+                    { event: 'Tier Promotion: Gold', points: '+1500', date: 'Feb 12, 2024' },
+                    { event: 'Completed 100 Trips Bonus', points: '+250', date: 'Feb 10, 2024' },
+                    { event: 'Weekend Surge Bonus', points: '+50', date: 'Feb 05, 2024' },
+                  ].map((h, i) => (
+                    <tr key={i} className="group">
+                      <td className="py-4 text-xs font-bold text-slate-800">{h.event}</td>
+                      <td className="py-4 text-xs font-bold text-emerald-500 text-center">{h.points}</td>
+                      <td className="py-4 text-xs font-bold text-slate-400 text-right">{h.date}</td>
                     </tr>
                   ))}
                 </tbody>

@@ -1,11 +1,11 @@
 import React from 'react';
-import { 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
   Area,
   AreaChart
@@ -41,44 +41,44 @@ export const EarningChart = () => {
         </select>
       </div>
 
-      <div className="flex-1 w-full">
+      <div className="flex-1 w-full min-h-0">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data}>
             <defs>
               <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#00A884" stopOpacity={0.1}/>
-                <stop offset="95%" stopColor="#00A884" stopOpacity={0}/>
+                <stop offset="5%" stopColor="#00A884" stopOpacity={0.1} />
+                <stop offset="95%" stopColor="#00A884" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-            <XAxis 
-              dataKey="name" 
-              axisLine={false} 
-              tickLine={false} 
+            <XAxis
+              dataKey="name"
+              axisLine={false}
+              tickLine={false}
               tick={{ fill: '#94a3b8', fontSize: 12 }}
               dy={10}
             />
-            <YAxis 
-              axisLine={false} 
-              tickLine={false} 
+            <YAxis
+              axisLine={false}
+              tickLine={false}
               tick={{ fill: '#94a3b8', fontSize: 12 }}
               tickFormatter={(value) => `$${value}`}
             />
-            <Tooltip 
-              contentStyle={{ 
-                borderRadius: '12px', 
-                border: 'none', 
+            <Tooltip
+              contentStyle={{
+                borderRadius: '12px',
+                border: 'none',
                 boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
                 fontSize: '12px'
-              }} 
+              }}
             />
-            <Area 
-              type="monotone" 
-              dataKey="value" 
-              stroke="#00A884" 
+            <Area
+              type="monotone"
+              dataKey="value"
+              stroke="#00A884"
               strokeWidth={3}
-              fillOpacity={1} 
-              fill="url(#colorValue)" 
+              fillOpacity={1}
+              fill="url(#colorValue)"
             />
           </AreaChart>
         </ResponsiveContainer>
