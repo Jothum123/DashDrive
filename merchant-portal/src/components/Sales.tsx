@@ -43,70 +43,69 @@ const COLORS = ['#F97316', '#10B981'];
 const Sales = () => {
     return (
         <div className="space-y-8 pb-12">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-2xl font-bold">Sales Analysis</h1>
-                    <p className="text-sm text-gray-500">Track your revenue and customer growth.</p>
+            <div className="flex items-end justify-between">
+                <div className="space-y-1">
+                    <h1 className="text-4xl font-black text-black tracking-tighter">Financial Insights</h1>
+                    <p className="text-lg text-gray-400 font-medium">Network-wide revenue analysis and performance benchmarks.</p>
                 </div>
                 <div className="flex gap-3">
-                    <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-bold hover:bg-gray-50 transition-colors">
-                        <Calendar size={18} />
+                    <button className="flex items-center gap-2 px-4 py-2 bg-gray-50 border border-gray-100 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-gray-100 transition-colors">
+                        <Calendar size={14} />
                         Feb 1 - Feb 20, 2026
                     </button>
-                    <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-bold hover:bg-gray-50 transition-colors">
-                        <Download size={18} />
-                        EXPORT PDF
+                    <button className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-gray-800 transition-all shadow-lg">
+                        <Download size={14} />
+                        Export Report
                     </button>
                 </div>
             </div>
+
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Revenue Trend Chart */}
                 <div className="lg:col-span-2 bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
                     <div className="flex items-center justify-between mb-8">
                         <div>
-                            <h3 className="font-bold text-lg">Revenue Trend</h3>
-                            <p className="text-xs text-gray-400">Daily revenue breakdown for the current week.</p>
+                            <h3 className="font-black text-xl text-black tracking-tight">Revenue Velocity</h3>
+                            <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">Network-wide daily gross volume</p>
                         </div>
-                        <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
-                                <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Revenue</span>
-                            </div>
+                        <div className="flex bg-gray-50 p-1 rounded-lg border border-gray-100">
+                            <button className="px-4 py-1.5 text-[10px] font-black bg-white shadow-sm rounded-md uppercase tracking-wider">Day</button>
+                            <button className="px-4 py-1.5 text-[10px] font-bold text-gray-400 hover:text-black uppercase tracking-wider">Week</button>
                         </div>
                     </div>
                     <div className="h-[300px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={revenueData}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F3F4F6" />
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F9FAFB" />
                                 <XAxis
                                     dataKey="day"
                                     axisLine={false}
                                     tickLine={false}
-                                    tick={{ fontSize: 12, fill: '#9CA3AF' }}
+                                    tick={{ fontSize: 10, fill: '#9CA3AF', fontWeight: 900 }}
                                     dy={10}
                                 />
                                 <YAxis
                                     axisLine={false}
                                     tickLine={false}
-                                    tick={{ fontSize: 12, fill: '#9CA3AF' }}
-                                    tickFormatter={(value) => `$${value}`}
+                                    tick={{ fontSize: 10, fill: '#9CA3AF', fontWeight: 900 }}
+                                    tickFormatter={(value) => `£${value / 1000}k`}
                                 />
                                 <Tooltip
-                                    cursor={{ fill: '#F97316', opacity: 0.05 }}
+                                    cursor={{ fill: '#000', opacity: 0.05 }}
                                     contentStyle={{
                                         borderRadius: '16px',
                                         border: 'none',
-                                        boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
+                                        boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)',
                                         padding: '12px 16px'
                                     }}
-                                    formatter={(value: number) => [`$${value.toLocaleString()}`, 'Revenue']}
+                                    formatter={(value: number) => [`£${value.toLocaleString()}`, 'Revenue']}
                                 />
                                 <Bar
                                     dataKey="revenue"
-                                    fill="#F97316"
-                                    radius={[6, 6, 0, 0]}
-                                    barSize={40}
+                                    fill="#10B981"
+                                    radius={[4, 4, 0, 0]}
+                                    barSize={32}
                                 />
                             </BarChart>
                         </ResponsiveContainer>

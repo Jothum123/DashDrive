@@ -1,6 +1,9 @@
 import { supabase } from "../lib/supabase";
 import axios from "axios";
 import { auditLogService } from "./auditLogService";
+import { offlineQueue } from "./offlineQueue";
+// Integration note: User should install @react-native-community/netinfo
+// import NetInfo from "@react-native-community/netinfo";
 
 // This should be your external naming backend URL
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || "https://your-node-backend.com";
@@ -11,65 +14,56 @@ export const orderService = {
    */
     async updateOrderStatus(orderId: string, status: string, externalOrderId?: string, userId?: string, reason?: string) {
         try {
-            // 1. Update Supabase
-            const { data: orderData, error: fetchError } = await supabase
-                .from("orders")
-                .select("total_amount")
-                .eq("id", orderId)
-                .single();
+            // Check connectivity (Simplified for now, expecting NetInfo integration)
+            const isOnline = true; // TODO: Wire this to NetInfo.fetch().isConnected
 
-            if (fetchError) throw fetchError;
-
-            const { error: supabaseError } = await supabase
-                .from("orders")
-                .update({
-                    status,
-                    accepted_at: status === 'in_progress' ? new Date().toISOString() : undefined,
-                    completed_at: status === 'completed' ? new Date().toISOString() : undefined,
-                })
-                .eq("id", orderId);
-
-            if (supabaseError) throw supabaseError;
-
-            // 2. If rejected/unfulfilled, log to unfulfilled_orders
-            if (status === 'unfulfilled') {
-                await supabase
-                    .from("unfulfilled_orders")
-                    .insert({
-                        order_id: orderId,
-                        reason: reason || 'Unknown',
-                        revenue_loss: orderData.total_amount,
-                    });
-            }
-
-            // 3. Audit Logging
-            if (userId) {
-                await auditLogService.logAction(
-                    'order',
+            if (!isOnline) {
+                // Offline Fallback: Queue the update with a local timestamp
+                const timestamp = new Date().toISOString();
+                offlineQueue.add({
                     orderId,
-                    `Status changed to ${status}${reason ? ` (Reason: ${reason})` : ''}`,
-                    userId
-                );
+                    status,
+                    externalOrderId,
+                    userId,
+                    reason,
+                    timestamp
+                });
+
+                // Optional: Optimistic local update via Supabase if direct access is allowed
+                // This will be overwritten by the authoritative backend sync later
+                return { success: true, offline: true };
             }
 
-            // 4. Sync back to Node backend
-            if (externalOrderId) {
+            // ==========================================
+            // 🚀 AUTHORITATIVE BACKEND PATH (ENTERPRISE)
+            // ==========================================
+            // Canonical API call - Server sets timestamps and broadcasts via Socket.io
+            const response = await axios.patch(`${BACKEND_URL}/api/orders/status`, {
+                orderId,
+                status,
+                reason,
+                userId // For backend-side audit logging
+            });
+
+            if (response.status !== 200) {
+                throw new Error("Backend status update failed");
+            }
+
+            // Sync with Node backend (Historical sync logic if still needed separately)
+            if (externalOrderId && !BACKEND_URL.includes("/api/orders/status")) {
                 await axios.patch(`${BACKEND_URL}/api/orders/${externalOrderId}/status`, {
                     status,
                     reason,
                 });
             }
 
-            return { success: true };
+            return { success: true, data: response.data };
         } catch (error) {
             console.error("Error updating order status:", error);
             return { success: false, error };
         }
     },
 
-    /**
-     * Fetch initial orders for a store
-     */
     async fetchOrders(storeId: string) {
         const { data, error } = await supabase
             .from("orders")
@@ -80,4 +74,29 @@ export const orderService = {
         if (error) throw error;
         return data;
     },
+
+    /**
+     * Fetch store metrics for the dashboard
+     */
+    async fetchStoreMetrics(storeId: string) {
+        const { data, error } = await supabase.rpc('get_store_metrics', {
+            p_store_id: storeId
+        });
+
+        if (error) throw error;
+        return data;
+    },
+
+    /**
+     * Fetch items for a specific order
+     */
+    async fetchOrderItems(orderId: string) {
+        const { data, error } = await supabase
+            .from('order_items')
+            .select('*')
+            .eq('order_id', orderId);
+
+        if (error) throw error;
+        return data;
+    }
 };

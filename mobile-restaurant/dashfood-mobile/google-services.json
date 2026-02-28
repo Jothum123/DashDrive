@@ -1,0 +1,29 @@
+{
+    "project_info": {
+        "project_number": "75435528340",
+        "project_id": "dashfood-685a2",
+        "storage_bucket": "dashfood-685a2.firebasestorage.app"
+    },
+    "client": [
+        {
+            "client_info": {
+                "mobilesdk_app_id": "1:75435528340:android:54ffb7631d02ccf133e481",
+                "android_client_info": {
+                    "package_name": "com.jojolw.dashfoodmobile"
+                }
+            },
+            "oauth_client": [],
+            "api_key": [
+                {
+                    "current_key": "AIzaSyAhNUNlj6TEtxkFnqnTb6VeKPku9fXq2Io"
+                }
+            ],
+            "services": {
+                "appinvite_service": {
+                    "other_platform_oauth_client": []
+                }
+            }
+        }
+    ],
+    "configuration_version": "1"
+}

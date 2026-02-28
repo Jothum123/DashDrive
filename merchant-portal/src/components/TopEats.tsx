@@ -20,22 +20,23 @@ const topEats = [
 const TopEats = () => {
     return (
         <div className="space-y-8 pb-12">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-2xl font-bold">Top Eats Leaderboard</h1>
-                    <p className="text-sm text-gray-500">Your best performing menu items this month.</p>
+            <div className="flex items-end justify-between">
+                <div className="space-y-1">
+                    <h1 className="text-4xl font-black text-black tracking-tighter">Product Intelligence</h1>
+                    <p className="text-lg text-gray-400 font-medium">Global item performance and popularity leaderboard across all zones.</p>
                 </div>
                 <div className="flex gap-3">
-                    <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-bold hover:bg-gray-50 transition-colors">
-                        <Filter size={18} />
-                        Filter
+                    <button className="flex items-center gap-2 px-4 py-2 bg-gray-50 border border-gray-100 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-gray-100 transition-colors">
+                        <Filter size={14} />
+                        All Categories
                     </button>
-                    <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-bold hover:bg-gray-50 transition-colors">
-                        <Download size={18} />
-                        Export
+                    <button className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-gray-800 transition-all shadow-lg">
+                        <Download size={14} />
+                        Export Data
                     </button>
                 </div>
             </div>
+
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="bg-gradient-to-br from-amber-500 to-orange-600 p-8 rounded-3xl text-white shadow-lg overflow-hidden relative group">
@@ -112,9 +113,14 @@ const TopEats = () => {
                                     </td>
                                     <td className="p-6 text-sm font-bold text-gray-600">{item.rating} / 5.0</td>
                                     <td className="p-6">
-                                        <button className="px-4 py-1.5 bg-gray-100 text-gray-600 rounded-full text-xs font-bold group-hover:bg-orange-500 group-hover:text-white transition-all">
-                                            PROMOTE
-                                        </button>
+                                        <div className="flex items-center gap-2">
+                                            <button className="px-3 py-1 bg-gray-50 text-black border border-gray-100 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-emerald-50 hover:text-emerald-600 transition-all">
+                                                Promote
+                                            </button>
+                                            <button className="px-3 py-1 bg-gray-50 text-gray-400 border border-gray-100 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-rose-50 hover:text-rose-600 transition-all">
+                                                Disable
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))}

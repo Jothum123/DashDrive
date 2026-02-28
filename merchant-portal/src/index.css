@@ -1,6 +1,53 @@
 @import "tailwindcss";
 
+@layer theme {
+    :root {
+        --primary: #00ff90;
+        --secondary: #000000;
+        --accent-gray: #adadad;
+        --accent-light: #e7e8ec;
+        --radius-premium: 32px;
+    }
+}
+
 body {
     margin: 0;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', 'Outfit', sans-serif;
+    background-color: #f8f9fa;
+    color: #000000;
+    -webkit-font-smoothing: antialiased;
+}
+
+@layer utilities {
+    .glass {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .card-premium {
+        background: #ffffff;
+        border-radius: var(--radius-premium);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .card-premium:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.1);
+    }
+
+    .bg-brand-primary {
+        background-color: var(--primary);
+    }
+
+    .text-brand-primary {
+        color: var(--primary);
+    }
+
+    .border-brand-primary {
+        border-color: var(--primary);
+    }
 }

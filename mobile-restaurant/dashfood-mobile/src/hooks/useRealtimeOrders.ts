@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import { useOrderStore } from "../store/useOrderStore";
+import { notificationService } from "../services/notificationService";
 
 export const useRealtimeOrders = (storeId?: string) => {
     const { addOrder, updateOrder } = useOrderStore();
@@ -24,6 +25,10 @@ export const useRealtimeOrders = (storeId?: string) => {
 
                     if (payload.eventType === "INSERT") {
                         addOrder(payload.new as any);
+                        notificationService.showLocalNotification(
+                            "New Order Received! 🍱",
+                            `Order for ${payload.new.customer_name} of $${payload.new.total_amount?.toFixed(2)}`
+                        );
                     } else if (payload.eventType === "UPDATE") {
                         updateOrder(payload.new as any);
                     }

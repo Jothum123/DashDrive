@@ -1,18 +1,28 @@
 import React, { useState } from 'react';
-import { 
-  MessageSquare, 
-  ChevronDown, 
-  Star, 
-  MoreHorizontal, 
+import {
+  MessageSquare,
+  ChevronDown,
+  Star,
+  MoreHorizontal,
   MessageCircle,
   Clock,
   ThumbsDown
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { cn } from '../types';
+import { api } from '../api';
 
 const Feedback = () => {
   const [activeSubTab, setActiveSubTab] = useState('Reviews');
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // In a real app, we'd get the store ID from a context
+    api.customers.getFeedback({ store_id: 'default' })
+      .then(res => setReviews(res.data))
+      .finally(() => setLoading(false));
+  }, []);
 
   const metrics = [
     { label: 'Customer reviews', value: '1,200' },
@@ -21,32 +31,6 @@ const Feedback = () => {
     { label: 'Review offers ROI', value: '6x', hasInfo: true },
   ];
 
-  const reviews = [
-    {
-      id: 1,
-      user: 'Leslie L',
-      status: 'New customer',
-      rating: 2,
-      store: 'Pizza Place',
-      comment: 'Missing my soda :(',
-      items: 2,
-      date: '11/15/21',
-      total: '$29.90',
-      timeLeft: '14 days left'
-    },
-    {
-      id: 2,
-      user: 'Tushar S',
-      status: 'Returning customer',
-      rating: 5,
-      store: 'Pizza Place',
-      comment: 'Best pizza in town! Always hot and fresh.',
-      items: 3,
-      date: '11/15/21',
-      total: '$45.20',
-      timeLeft: '14 days left'
-    }
-  ];
 
   return (
     <div className="max-w-6xl mx-auto py-8 px-4">

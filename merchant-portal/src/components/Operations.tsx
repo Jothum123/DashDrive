@@ -96,10 +96,13 @@ const Operations = () => {
             <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
                 <div className="p-6">
                     <div className="flex items-center justify-between mb-8">
-                        <h3 className="text-xl font-bold">Orders with issues</h3>
+                        <div>
+                            <h3 className="text-xl font-black text-black tracking-tight">Two-Clock Analytics</h3>
+                            <p className="text-sm text-gray-400 font-medium">Monitoring the delay between Kitchen Completion and Logistic Pickup.</p>
+                        </div>
                         <button className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs font-bold text-gray-600 hover:bg-gray-100 transition-colors">
                             <Download size={14} />
-                            Download
+                            Export Data
                         </button>
                     </div>
 
@@ -107,46 +110,57 @@ const Operations = () => {
                         <button
                             onClick={() => setActiveSubTab('inaccurate')}
                             className={cn(
-                                "px-4 py-2 rounded-full text-sm font-bold transition-all",
-                                activeSubTab === 'inaccurate' ? "bg-black text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                                "px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest transition-all",
+                                activeSubTab === 'inaccurate' ? "bg-black text-white" : "bg-gray-50 text-gray-400 hover:bg-gray-100"
                             )}
                         >
-                            Inaccurate Orders
+                            Kitchen (Prep Time)
                         </button>
                         <button
                             onClick={() => setActiveSubTab('unfulfilled')}
                             className={cn(
-                                "px-4 py-2 rounded-full text-sm font-bold transition-all",
-                                activeSubTab === 'unfulfilled' ? "bg-black text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                                "px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest transition-all",
+                                activeSubTab === 'unfulfilled' ? "bg-black text-white" : "bg-gray-50 text-gray-400 hover:bg-gray-100"
                             )}
                         >
-                            Unfulfilled orders
+                            Logistics (Shelf Wait)
                         </button>
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                         <div className="lg:col-span-3">
-                            <div className="flex gap-12 mb-8">
+                            <div className="grid grid-cols-3 gap-8 mb-8">
                                 <div>
-                                    <div className="flex items-center gap-1 text-xs text-gray-500 mb-1">
-                                        Inaccurate order rate
+                                    <div className="flex items-center gap-1 text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">
+                                        Avg Prep Time
                                         <Info size={14} className="text-gray-300" />
                                     </div>
                                     <div className="flex items-baseline gap-2">
-                                        <span className="text-2xl font-bold text-gray-900">1%</span>
-                                        <span className="text-xs font-bold text-red-500">↑ 32%</span>
+                                        <span className="text-3xl font-black text-black">12.4m</span>
+                                        <span className="text-xs font-bold text-emerald-500">↓ 8%</span>
                                     </div>
                                 </div>
                                 <div>
-                                    <div className="flex items-center gap-1 text-xs text-gray-500 mb-1">
-                                        Cost of Refunds
+                                    <div className="flex items-center gap-1 text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">
+                                        Shelf Wait Time
+                                        <Info size={14} className="text-gray-300" />
                                     </div>
                                     <div className="flex items-baseline gap-2">
-                                        <span className="text-2xl font-bold text-gray-900">(£107.40)</span>
-                                        <span className="text-xs font-bold text-red-500">↑ 22%</span>
+                                        <span className="text-3xl font-black text-black">6.2m</span>
+                                        <span className="text-xs font-bold text-rose-500">↑ 14%</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div className="flex items-center gap-1 text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">
+                                        SLA Fulfillment
+                                    </div>
+                                    <div className="flex items-baseline gap-2">
+                                        <span className="text-3xl font-black text-black">94.2%</span>
+                                        <span className="text-xs font-bold text-emerald-500">Stable</span>
                                     </div>
                                 </div>
                             </div>
+
 
                             <div className="h-[300px] w-full">
                                 <ResponsiveContainer width="100%" height="100%">

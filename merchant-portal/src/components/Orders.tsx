@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ChevronDown,
   Search,
@@ -8,50 +8,65 @@ import {
   MoreVertical,
   ChevronRight,
   Check,
-  Info
+  Info,
+  Clock,
+  MapPin,
+  ExternalLink,
+  ChevronUp,
+  Filter,
+  ShoppingBag
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../types';
+import { supabase } from '../lib/supabase';
+import { orderService } from '../services/orderService';
 
-type OrderTab = 'active' | 'history';
+type OrderTab = 'all' | 'active' | 'unfulfilled' | 'history';
 
-interface ActiveOrder {
+interface Order {
   id: string;
-  customer: string;
-  type: 'Pickup' | 'Delivery';
+  customer_name: string;
+  fulfillment_type: 'Pickup' | 'Delivery';
   status: string;
-  statusColor: string;
-  orderedAt: string;
-  relativeTime: string;
-  platform?: 'Uber' | '1st' | 'Med';
+  created_at: string;
+  total_amount: number;
+  external_order_id?: string;
+  store_id: string;
 }
 
-const activeOrdersData: ActiveOrder[] = [
-  { id: '1', customer: 'John Doe', type: 'Pickup', status: 'Preparing', statusColor: 'bg-gray-600', orderedAt: '11:00 am', relativeTime: '5 mins ago' },
-  { id: '2', customer: 'John Doe', type: 'Delivery', status: 'Preparing', statusColor: 'bg-gray-600', orderedAt: '10:45 am', relativeTime: '15 mins ago' },
-  { id: '3', customer: 'Wiz K.', type: 'Delivery', status: 'Ready for Delivery', statusColor: 'bg-gray-300', orderedAt: '10:20 am', relativeTime: '54 mins ago', platform: 'Uber' },
-  { id: '4', customer: 'Bubba K.', type: 'Delivery', status: 'Out for Delivery', statusColor: 'bg-gray-300', orderedAt: '9:50 am', relativeTime: '84 mins ago', platform: 'Uber' },
-  { id: '5', customer: 'Cheech Marin', type: 'Pickup', status: 'Ready for Pickup', statusColor: 'bg-gray-300', orderedAt: '9:10 am', relativeTime: '121 mins ago', platform: '1st' },
-  { id: '6', customer: 'Tommy Chong', type: 'Pickup', status: 'Ready for Pickup', statusColor: 'bg-gray-300', orderedAt: '8:59 am', relativeTime: '133 mins ago', platform: 'Med' },
-  { id: '7', customer: 'Willie N.', type: 'Delivery', status: 'Ready for Delivery', statusColor: 'bg-gray-300', orderedAt: '8:06 am', relativeTime: '3 hours ago', platform: 'Uber' },
-];
+const formatRelativeTime = (dateString: string) => {
+  const now = new Date();
+  const date = new Date(dateString);
+  const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / 60000);
 
-const historyOrdersData = [
-  { id: '#4E2A1', store: 'Gourmet Sushi (Canary Wharf)', date: 'Feb 18, 2024', time: '6:42 PM', fulfillment: 'Delivery', platform: 'Uber Eats', issue: 'Inaccurate', issueColor: 'text-orange-700 bg-orange-50 border-orange-100', payout: '£24.50', status: 'Completed' },
-  { id: '#8B9C2', store: 'Gourmet Sushi (Spitalfields)', date: 'Feb 18, 2024', time: '5:15 PM', fulfillment: 'Pickup', platform: 'Uber Eats', issue: 'Potentially Inaccurate', issueColor: 'text-orange-700 bg-orange-50 border-orange-100', payout: '£18.20', status: 'Completed' },
-  { id: '#3D5F9', store: 'Gourmet Sushi (Camden)', date: 'Feb 17, 2024', time: '8:30 PM', fulfillment: 'Delivery', platform: 'Uber Eats', issue: 'Unfulfilled', issueColor: 'text-gray-600 bg-gray-100 border-gray-200', payout: '£0.00', status: 'Canceled' },
-  { id: '#7A1E4', store: 'Gourmet Sushi (Notting Hill)', date: 'Feb 17, 2024', time: '7:12 PM', fulfillment: 'Delivery', platform: 'Uber Eats', issue: 'Inaccurate', issueColor: 'text-orange-700 bg-orange-50 border-orange-100', payout: '£32.10', status: 'Completed' },
-  { id: '#2C8G5', store: 'Gourmet Sushi (Battersea)', date: 'Feb 16, 2024', time: '1:45 PM', fulfillment: 'Pickup', platform: 'Uber Eats', issue: 'None', issueColor: 'hidden', payout: '£15.75', status: 'Completed' },
-  { id: '#9K4H3', store: 'Gourmet Sushi (Holborn)', date: 'Feb 16, 2024', time: '12:20 PM', fulfillment: 'Delivery', platform: 'Uber Eats', issue: 'Unfulfilled', issueColor: 'text-gray-600 bg-gray-100 border-gray-200', payout: '£0.00', status: 'Canceled' }
-];
+  if (diffInMinutes < 1) return 'Just now';
+  if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  if (diffInHours < 24) return `${diffInHours}h ago`;
+  return date.toLocaleDateString();
+};
+
+const getStatusStyles = (status: string) => {
+  switch (status.toLowerCase()) {
+    case 'pending': return "text-amber-500 bg-amber-500/10 border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.1)]";
+    case 'preparing':
+    case 'in_progress': return "text-blue-500 bg-blue-500/10 border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.1)]";
+    case 'ready': return "text-[#00ff90] bg-[#00ff90]/10 border-[#00ff90]/20 shadow-[0_0_15px_rgba(0,255,144,0.1)]";
+    case 'completed': return "text-zinc-400 bg-zinc-400/10 border-zinc-400/20";
+    case 'unfulfilled':
+    case 'cancelled': return "text-rose-500 bg-rose-500/10 border-rose-500/20 shadow-[0_0_15px_rgba(244,63,94,0.1)]";
+    default: return "text-zinc-400 bg-zinc-400/10 border-zinc-400/20";
+  }
+};
 
 const PlatformBadge = ({ type }: { type: 'Uber' | '1st' | 'Med' }) => {
   const styles = {
-    Uber: "bg-[#E6F4EA] text-[#0E8345]",
-    '1st': "bg-[#FFF8E1] text-[#F9A825]",
-    Med: "bg-[#F5F5F5] text-[#616161]"
+    Uber: "bg-black text-[#00ff90] border-zinc-800",
+    '1st': "bg-black text-white border-zinc-800",
+    Med: "bg-zinc-100 text-zinc-600 border-transparent"
   };
   return (
-    <span className={cn("px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-tight mr-2", styles[type])}>
+    <span className={cn("px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border", styles[type])}>
       {type}
     </span>
   );
@@ -60,276 +75,302 @@ const PlatformBadge = ({ type }: { type: 'Uber' | '1st' | 'Med' }) => {
 const Orders = () => {
   const [activeTab, setActiveTab] = useState<OrderTab>('active');
   const [activeFilter, setActiveFilter] = useState('All orders');
-  const [historySubTab, setHistorySubTab] = useState<'all' | 'unfulfilled'>('all');
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const STORE_ID = '476e91d7-3b2a-4e83-680a-7f61ff95bf3c';
+
+  useEffect(() => {
+    fetchInitialOrders();
+
+    const channel = supabase
+      .channel('schema-db-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'orders',
+          filter: `store_id=eq.${STORE_ID}`
+        },
+        (payload) => {
+          if (payload.eventType === 'INSERT') {
+            setOrders(current => [payload.new as Order, ...current]);
+          } else if (payload.eventType === 'UPDATE') {
+            setOrders(current => current.map(o => o.id === payload.new.id ? payload.new as Order : o));
+          } else if (payload.eventType === 'DELETE') {
+            setOrders(current => current.filter(o => o.id !== payload.old.id));
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  const fetchInitialOrders = async () => {
+    try {
+      const data = await orderService.fetchOrders(STORE_ID);
+      setOrders(data as Order[]);
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdateStatus = async (orderId: string, status: string) => {
+    try {
+      await orderService.updateOrderStatus(orderId, status);
+    } catch (error) {
+      console.error('Failed to update status:', error);
+    }
+  };
+
+  const activeOrders = orders.filter(o => ['pending', 'preparing', 'in_progress', 'ready'].includes(o.status));
+  const historyOrders = orders.filter(o => ['completed', 'cancelled', 'unfulfilled'].includes(o.status));
+  const unfulfilledOrders = orders.filter(o => o.status === 'unfulfilled');
+
+  const getDisplayOrders = () => {
+    let filtered = orders;
+    switch (activeTab) {
+      case 'active': filtered = activeOrders; break;
+      case 'history': filtered = historyOrders; break;
+      case 'unfulfilled': filtered = unfulfilledOrders; break;
+    }
+
+    if (searchQuery) {
+      filtered = filtered.filter(o =>
+        o.customer_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        o.id.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    if (activeFilter !== 'All orders') {
+      filtered = filtered.filter(o => {
+        if (activeFilter === 'New') return o.status === 'pending';
+        if (activeFilter === 'Preparing') return o.status === 'preparing' || o.status === 'in_progress';
+        if (activeFilter === 'Ready for Pickup') return o.status === 'ready' && o.fulfillment_type === 'Pickup';
+        if (activeFilter === 'Delivering') return o.status === 'ready' && o.fulfillment_type === 'Delivery';
+        return true;
+      });
+    }
+
+    return filtered;
+  };
 
   const filters = [
-    { label: 'All orders', count: 7 },
-    { label: 'New', count: 0 },
-    { label: 'Preparing', count: 0 },
-    { label: 'Ready for Pickup', count: 0 },
-    { label: 'Delivering', count: 3 },
+    { label: 'All orders', count: orders.length },
+    { label: 'New', count: orders.filter(o => o.status === 'pending').length },
+    { label: 'Preparing', count: orders.filter(o => o.status === 'preparing' || o.status === 'in_progress').length },
+    { label: 'Ready for Pickup', count: orders.filter(o => o.status === 'ready' && o.fulfillment_type === 'Pickup').length },
+    { label: 'Delivering', count: orders.filter(o => o.status === 'ready' && o.fulfillment_type === 'Delivery').length },
   ];
 
   return (
-    <div className="flex flex-col h-full bg-white self-stretch">
-      {/* Tab Navigation */}
-      <div className="px-8 pt-6 border-b border-gray-200 bg-white shrink-0">
-        <div className="flex gap-8">
-          {[
-            { id: 'active' as OrderTab, label: 'Active orders' },
-            { id: 'history' as OrderTab, label: 'Order history' }
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={cn(
-                "pb-4 text-sm font-semibold relative transition-colors",
-                activeTab === tab.id ? "text-black" : "text-gray-400 hover:text-black"
-              )}
-            >
-              {tab.label}
-              {activeTab === tab.id && (
-                <div className="absolute bottom-0 left-0 right-0 h-1 bg-black rounded-t-full" />
-              )}
-            </button>
-          ))}
+    <div className="flex flex-col h-full bg-transparent max-w-[1400px] mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      {/* Search and Action Bar */}
+      <div className="flex items-center justify-between gap-6">
+        <div className="relative flex-1 max-w-xl group">
+          <Search size={20} className="absolute left-6 top-1/2 -translate-y-1/2 text-zinc-500 group-focus-within:text-[#00ff90] transition-colors" />
+          <input
+            type="text"
+            placeholder="Search by Order ID or Customer..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-16 pr-6 py-4 bg-white border border-transparent rounded-[24px] text-sm font-bold focus:ring-4 focus:ring-[#00ff90]/10 focus:border-[#00ff90]/30 outline-none transition-all shadow-sm group-hover:shadow-md"
+          />
+        </div>
 
-          <div className="flex-1" />
-
-          {activeTab === 'active' && (
-            <div className="flex items-center gap-4">
-              <div className="relative mb-4">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-                <input
-                  type="text"
-                  placeholder="Search active orders"
-                  className="bg-gray-100 border-none rounded-lg py-2 pl-9 pr-4 text-sm w-72 focus:ring-2 focus:ring-black/5"
-                />
-              </div>
-              <button className="p-2 text-gray-400 mb-4 ml-2 hover:bg-gray-50 rounded-lg transition-colors"><MoreVertical size={20} /></button>
-            </div>
-          )}
+        <div className="flex items-center gap-4">
+          <button className="flex items-center gap-2 px-6 py-4 bg-white border border-zinc-100 rounded-[24px] text-xs font-black uppercase tracking-widest hover:bg-zinc-50 transition-all shadow-sm">
+            <Filter size={18} className="text-zinc-400" />
+            Advanced Filters
+          </button>
+          <button className="flex items-center gap-2 px-8 py-4 bg-black text-white rounded-[24px] text-xs font-black uppercase tracking-widest hover:bg-zinc-900 transition-all shadow-xl shadow-black/10">
+            <Zap size={18} className="text-[#00ff90]" />
+            Export Data
+          </button>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto bg-[#F6F6F6] p-8">
-        {activeTab === 'active' ? (
-          <div className="max-w-7xl mx-auto space-y-6">
-            {/* Filter Pills */}
-            <div className="flex flex-wrap gap-3">
-              {filters.map((filter) => (
-                <button
-                  key={filter.label}
-                  onClick={() => setActiveFilter(filter.label)}
-                  className={cn(
-                    "px-6 py-2 rounded-full text-sm font-bold transition-all border",
-                    activeFilter === filter.label
-                      ? "bg-[#333] border-[#333] text-white"
-                      : "bg-white border-gray-300 text-black hover:border-black"
-                  )}
-                >
-                  {filter.label} • {filter.count}
-                </button>
-              ))}
-            </div>
+      {/* Primary Navigation Tabs */}
+      <div className="bg-white p-2 rounded-[28px] shadow-sm border border-zinc-50 flex items-center justify-between">
+        <div className="flex items-center gap-1">
+          {[
+            { id: 'active', label: 'Active Pipeline', count: activeOrders.length },
+            { id: 'unfulfilled', label: 'Urgent/Unfulfilled', count: unfulfilledOrders.length, urgent: unfulfilledOrders.length > 0 },
+            { id: 'history', label: 'Operation History', count: historyOrders.length },
+            { id: 'all', label: 'Global View', count: orders.length }
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as OrderTab)}
+              className={cn(
+                "px-8 py-3 rounded-[20px] text-[13px] font-black uppercase tracking-wider transition-all relative flex items-center gap-3",
+                activeTab === tab.id ? "bg-black text-white shadow-lg" : "text-zinc-400 hover:text-black hover:bg-zinc-50"
+              )}
+            >
+              {tab.label}
+              <span className={cn(
+                "px-2 py-0.5 rounded-lg text-[10px] transform transition-all",
+                activeTab === tab.id ? "bg-[#00ff90] text-black" : "bg-zinc-100 text-zinc-400"
+              )}>
+                {tab.count}
+              </span>
+              {tab.urgent && <div className="absolute top-0 right-0 w-3 h-3 bg-rose-500 rounded-full border-2 border-white -translate-y-1 translate-x-1 animate-pulse" />}
+            </button>
+          ))}
+        </div>
 
-            {/* Selection Action Bar */}
-            <div className="bg-white border border-gray-200 shadow-sm rounded-sm px-6 py-4 flex items-center gap-4">
-              <div className="w-5 h-5 border-2 border-gray-200 rounded-sm flex items-center justify-center cursor-pointer hover:border-black transition-colors">
-                <div className="w-2.5 h-2.5 bg-transparent" />
-              </div>
-              <span className="text-sm font-bold text-gray-400">Select items to see actions</span>
-            </div>
+        <div className="flex items-center gap-6 px-6">
+          <div className="flex flex-col items-end">
+            <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest leading-none mb-1">Fleet Load</span>
+            <span className="text-[14px] font-black text-black">82% Capacity</span>
+          </div>
+          <div className="w-[80px] h-1.5 bg-zinc-100 rounded-full overflow-hidden">
+            <div className="w-[82%] h-full bg-[#00ff90] rounded-full" />
+          </div>
+        </div>
+      </div>
 
-            {/* Active Orders Table */}
-            <div className="bg-white rounded-sm border border-gray-200 shadow-sm overflow-hidden">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-[#EAEAEA] border-b border-gray-200">
-                    <th className="px-6 py-3 text-left text-[11px] font-black text-gray-500 uppercase tracking-widest">Customer</th>
-                    <th className="px-6 py-3 text-left text-[11px] font-black text-gray-500 uppercase tracking-widest">Type</th>
-                    <th className="px-6 py-3 text-left text-[11px] font-black text-gray-500 uppercase tracking-widest">Status</th>
-                    <th className="px-6 py-3 text-left text-[11px] font-black text-gray-500 uppercase tracking-widest flex items-center gap-1">
-                      Ordered At <ChevronDown size={14} />
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {activeOrdersData.map((order) => (
-                    <tr key={order.id} className="hover:bg-gray-50 transition-colors group">
-                      <td className="px-6 py-5">
-                        <div className="flex items-center text-sm font-bold text-black border-l-4 border-transparent group-hover:border-black pl-2">
-                          {order.platform && <PlatformBadge type={order.platform} />}
-                          {order.customer}
-                        </div>
-                      </td>
-                      <td className="px-6 py-5">
-                        <span className="text-sm font-bold text-gray-900">{order.type}</span>
-                      </td>
-                      <td className="px-6 py-5">
-                        <div className="flex items-center gap-2">
-                          <div className={cn("w-2.5 h-2.5 rounded-full", order.statusColor)} />
-                          <span className="text-sm font-bold text-gray-900">{order.status}</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-5">
-                        <div className="text-sm font-bold text-gray-900">
-                          {order.orderedAt} <span className="text-gray-400 ml-1">-{order.relativeTime}</span>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              <div className="px-6 py-4 bg-white border-t border-gray-100">
-                <span className="text-xs font-bold text-gray-400 italic">Showing 1 to 7 of 7 results</span>
-              </div>
-            </div>
+      {/* Modern Filter Pills */}
+      <div className="flex items-center gap-4 py-2">
+        {filters.map((filter) => (
+          <button
+            key={filter.label}
+            onClick={() => setActiveFilter(filter.label)}
+            className={cn(
+              "px-6 py-2.5 rounded-full text-[11px] font-black uppercase tracking-widest transition-all glass border",
+              activeFilter === filter.label
+                ? "bg-black text-white border-black shadow-lg shadow-black/10"
+                : "bg-white text-zinc-500 border-zinc-100 hover:border-zinc-300"
+            )}
+          >
+            {filter.label} <span className="ml-2 opacity-50">{filter.count}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Order Display Area */}
+      <div className="space-y-4">
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-32 space-y-4">
+            <div className="w-12 h-12 border-4 border-[#00ff90]/20 border-t-[#00ff90] rounded-full animate-spin" />
+            <span className="text-xs font-black text-zinc-400 uppercase tracking-widest">Initalizing Hub...</span>
           </div>
         ) : (
-          <div className="max-w-7xl mx-auto space-y-6">
-            <h1 className="text-4xl font-black text-black mb-2">Orders</h1>
-            <p className="text-sm text-gray-600 mb-8">
-              Review your orders in real time. For detailed view of your pay, go to <button className="text-blue-600 underline font-medium">Payouts by order.</button>
-            </p>
+          <AnimatePresence mode="popLayout">
+            {getDisplayOrders().length > 0 ? (
+              getDisplayOrders().map((order, i) => (
+                <motion.div
+                  layout
+                  key={order.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.4, delay: i * 0.05, ease: [0.23, 1, 0.32, 1] }}
+                  className="card-premium p-6 border-none group hover:bg-black transition-all duration-300 relative overflow-hidden"
+                >
+                  <div className="flex items-center justify-between gap-8 relative z-10">
+                    <div className="flex items-center gap-8 flex-1">
+                      <div className="flex flex-col gap-2 min-w-[200px]">
+                        <div className="flex items-center gap-3">
+                          <PlatformBadge type="Uber" />
+                          <span className="text-[11px] font-black text-zinc-400 group-hover:text-zinc-500 uppercase tracking-[0.15em]">ID: #{order.id.slice(0, 8).toUpperCase()}</span>
+                        </div>
+                        <h3 className="text-lg font-black text-black group-hover:text-white transition-colors">{order.customer_name || 'Anonymous Fleet'}</h3>
+                      </div>
 
-            <div className="flex gap-8 border-b border-gray-200">
-              <button
-                onClick={() => setHistorySubTab('all')}
-                className={cn(
-                  "pb-4 text-sm font-bold relative transition-colors",
-                  historySubTab === 'all' ? "text-black" : "text-gray-400 hover:text-black"
-                )}
-              >
-                All
-                {historySubTab === 'all' && (
-                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-black rounded-t-full" />
-                )}
-              </button>
-              <button
-                onClick={() => setHistorySubTab('unfulfilled')}
-                className={cn(
-                  "pb-4 text-sm font-bold relative transition-colors flex items-center gap-2",
-                  historySubTab === 'unfulfilled' ? "text-black" : "text-gray-400 hover:text-black"
-                )}
-              >
-                Unfulfilled
-                <span className="bg-[#E6F4EA] text-[#0E8345] px-1.5 py-0.5 rounded text-[10px] font-black uppercase tracking-tight">New</span>
-                {historySubTab === 'unfulfilled' && (
-                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-black rounded-t-full" />
-                )}
-              </button>
-            </div>
+                      <div className="h-10 w-[1px] bg-zinc-100 group-hover:bg-zinc-800 transition-colors" />
 
-            {/* Alert Bar */}
-            <div className="bg-[#FFF8E1] border border-[#FFE082] rounded-xl px-6 py-5 flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="bg-orange-100 p-2 rounded-lg">
-                  <AlertTriangle className="text-orange-600" size={20} />
-                </div>
-                <div>
-                  <h3 className="text-sm font-black text-black">5 order issues with potential deduction</h3>
-                  <p className="text-sm text-gray-600 mt-0.5">Review the order for more details</p>
-                </div>
-              </div>
-              <button className="bg-[#FFD54F] hover:bg-[#FFC107] text-black px-6 py-2.5 rounded-full text-sm font-black transition-colors">
-                View orders
-              </button>
-            </div>
+                      <div className="flex flex-col gap-1.5 min-w-[140px]">
+                        <div className="flex items-center gap-2 text-zinc-400 group-hover:text-zinc-500">
+                          <MapPin size={14} />
+                          <span className="text-[10px] font-black uppercase tracking-widest">{order.fulfillment_type}</span>
+                        </div>
+                        <span className="text-[11px] font-bold text-black group-hover:text-white transition-colors">Lynwood Cluster</span>
+                      </div>
 
-            {/* Detailed Filters */}
-            <div className="flex flex-wrap items-center gap-2">
-              <button className="px-4 py-2 bg-white border border-gray-200 rounded-full text-sm font-bold flex items-center gap-2 hover:bg-gray-50 transition-colors">
-                All stores (6) <ChevronDown size={16} className="text-gray-400" />
-              </button>
-              <button className="px-4 py-2 bg-white border border-gray-200 rounded-full text-sm font-bold flex items-center gap-2 hover:bg-gray-50 transition-colors">
-                2024/02/12 - 2024/02/18 <ChevronDown size={16} className="text-gray-400" />
-              </button>
-              <button className="px-4 py-2 bg-white border border-gray-200 rounded-full text-sm font-bold flex items-center gap-2 hover:bg-gray-50 transition-colors relative">
-                Sort <ChevronDown size={16} className="text-gray-400" />
-                <div className="absolute -top-1 right-0 w-4 h-4 bg-[#FFD54F] rounded-full flex items-center justify-center text-[10px] font-black border-2 border-[#F6F6F6]">1</div>
-              </button>
-              <button className="px-4 py-2 bg-white border border-gray-200 rounded-full text-sm font-bold flex items-center gap-2 hover:bg-gray-50 transition-colors">
-                Order issue <ChevronDown size={16} className="text-gray-400" />
-              </button>
-              <button className="px-6 py-2 bg-white border border-gray-200 rounded-full text-sm font-bold hover:bg-gray-50 transition-colors text-gray-600">
-                Uber One member
-              </button>
-              <button className="p-2 bg-white border border-gray-200 rounded-full hover:bg-gray-50 transition-colors text-gray-400">
-                <Search size={18} />
-              </button>
-            </div>
+                      <div className="h-10 w-[1px] bg-zinc-100 group-hover:bg-zinc-800 transition-colors" />
 
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-black text-black">1,596 Orders</span>
-              <Info size={14} className="text-gray-300" />
-            </div>
-
-            {/* History Orders Table */}
-            <div className="bg-white rounded-sm border border-gray-200 shadow-sm overflow-hidden">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-white border-b border-gray-100">
-                    <th className="px-6 py-5 text-left text-[11px] font-black text-gray-400 uppercase tracking-widest">Order</th>
-                    <th className="px-6 py-5 text-left text-[11px] font-black text-gray-400 uppercase tracking-widest">Details</th>
-                    <th className="px-6 py-5 text-left text-[11px] font-black text-gray-400 uppercase tracking-widest text-center">Fulfillment type</th>
-                    <th className="px-6 py-5 text-left text-[11px] font-black text-gray-400 uppercase tracking-widest text-center">Issue</th>
-                    <th className="px-6 py-5 text-right text-[11px] font-black text-gray-400 uppercase tracking-widest">Net payout</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-50">
-                  {historyOrdersData.map((order) => (
-                    <tr key={order.id} className="hover:bg-gray-50 transition-colors group">
-                      <td className="px-6 py-6">
-                        <div className="space-y-1">
-                          <div className="text-sm font-black text-blue-600 hover:underline cursor-pointer">{order.id}</div>
+                      <div className="flex-1 flex flex-col gap-1.5">
+                        <div className="flex items-center gap-2">
                           <div className={cn(
-                            "text-[10px] font-black uppercase inline-block",
-                            order.status === 'Canceled' ? "text-rose-500" : "text-gray-400"
+                            "w-2 h-2 rounded-full",
+                            order.status === 'pending' ? "bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)] animate-pulse" :
+                              order.status === 'ready' ? "bg-[#00ff90] shadow-[0_0_8px_rgba(0,255,144,0.5)]" : "bg-zinc-300"
+                          )} />
+                          <span className={cn(
+                            "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all",
+                            getStatusStyles(order.status)
                           )}>
-                            {order.status}
-                          </div>
+                            {order.status.replace('_', ' ')}
+                          </span>
+                          {order.status === 'pending' && <span className="text-[9px] font-black text-rose-500 uppercase tracking-widest">SLA Alert</span>}
                         </div>
-                      </td>
-                      <td className="px-6 py-6">
-                        <div className="space-y-1">
-                          <div className="text-sm font-black text-black leading-tight">{order.store}</div>
-                          <div className="text-xs text-gray-500 font-medium">{order.date} • {order.time}</div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-6 border-x border-gray-50/50">
-                        <div className="flex flex-col items-center">
-                          <div className="text-sm font-black text-black leading-tight">{order.fulfillment}</div>
-                          <div className="text-[11px] text-gray-400 font-bold">{order.platform}</div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-6">
-                        <div className="flex justify-center">
-                          <div className={cn(
-                            "inline-flex items-center gap-1.5 px-3 py-1 rounded text-[10px] font-black uppercase border tracking-tight",
-                            order.issueColor === 'hidden' ? "invisible" : order.issueColor
-                          )}>
-                            <AlertTriangle size={10} className="fill-current" />
-                            {order.issue}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-6">
-                        <div className="text-right text-sm font-black text-black">{order.payout}</div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              <div className="px-6 py-4 bg-white border-t border-gray-100 flex items-center justify-between">
-                <span className="text-xs font-bold text-gray-400 italic">Showing 1 to 6 of 1,596 results</span>
-                <div className="flex gap-2">
-                  <button className="px-3 py-1 border border-gray-200 rounded text-xs font-bold text-gray-400 cursor-not-allowed">Previous</button>
-                  <button className="px-3 py-1 border border-gray-200 rounded text-xs font-bold text-black hover:bg-gray-50">Next</button>
+                        <span className="text-[11px] font-bold text-zinc-400 group-hover:text-zinc-500">Received {formatRelativeTime(order.created_at)}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-6 text-right">
+                      <div className="flex flex-col items-end">
+                        <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest leading-none mb-1">Payload</span>
+                        <span className="text-xl font-black text-black group-hover:text-[#00ff90] transition-colors leading-none tracking-tight">£{order.total_amount.toFixed(2)}</span>
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        {order.status === 'pending' && (
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleUpdateStatus(order.id, 'preparing'); }}
+                            className="px-6 py-3 bg-[#00ff90] text-black rounded-xl text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-[#00ff90]/20"
+                          >
+                            Accept
+                          </button>
+                        )}
+                        {['preparing', 'in_progress'].includes(order.status) && (
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleUpdateStatus(order.id, 'ready'); }}
+                            className="px-6 py-3 bg-[#00ff90] text-black rounded-xl text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-[#00ff90]/20"
+                          >
+                            Mark Ready
+                          </button>
+                        )}
+                        {order.status === 'ready' && (
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleUpdateStatus(order.id, 'completed'); }}
+                            className="px-6 py-3 bg-[#00ff90] text-black rounded-xl text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-[#00ff90]/20"
+                          >
+                            Complete
+                          </button>
+                        )}
+                        <button className="p-3 bg-zinc-50 group-hover:bg-zinc-900 rounded-xl text-zinc-400 hover:text-white transition-all">
+                          <MoreVertical size={18} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))
+            ) : (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="py-32 flex flex-col items-center justify-center text-center space-y-4"
+              >
+                <div className="w-20 h-20 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-300">
+                  <ShoppingBag size={32} />
                 </div>
-              </div>
-            </div>
-          </div>
+                <div className="space-y-1">
+                  <h4 className="text-lg font-black text-zinc-400">No active operational traffic</h4>
+                  <p className="text-sm font-medium text-zinc-400">All orders are historically archived or currently silent.</p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         )}
       </div>
     </div>

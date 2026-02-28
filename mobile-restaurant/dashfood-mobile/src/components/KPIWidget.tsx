@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Text } from '../../components/Themed';
 import { Ionicons } from '@expo/vector-icons';
+import { Colors } from '../theme/colors';
 
 interface KPIWidgetProps {
     label: string;
@@ -26,7 +27,7 @@ export default function KPIWidget({ label, value, trend, icon, color }: KPIWidge
                 <View style={styles.trendContainer}>
                     <Text style={[
                         styles.trend,
-                        { color: isPositive ? '#4CAF50' : isNeutral ? '#888' : '#F44336' }
+                        { color: isPositive ? Colors.primary : isNeutral ? Colors.textSecondary : Colors.rejected }
                     ]}>
                         {trend}
                     </Text>
@@ -40,12 +41,12 @@ export default function KPIWidget({ label, value, trend, icon, color }: KPIWidge
 const styles = StyleSheet.create({
     container: {
         width: '48%',
-        backgroundColor: '#1E1E1E',
+        backgroundColor: Colors.surface,
         borderRadius: 20,
         padding: 16,
         marginBottom: 16,
         borderWidth: 1,
-        borderColor: 'rgba(255, 255, 255, 0.05)',
+        borderColor: Colors.border,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.2,
@@ -66,14 +67,14 @@ const styles = StyleSheet.create({
     label: {
         fontSize: 13,
         fontWeight: '500',
-        color: '#8E8E93',
+        color: Colors.textSecondary,
         marginBottom: 4,
         letterSpacing: 0.3,
     },
     value: {
         fontSize: 24,
         fontWeight: '700',
-        color: '#FFFFFF',
+        color: Colors.textPrimary,
         marginBottom: 6,
     },
     trendContainer: {
@@ -86,7 +87,7 @@ const styles = StyleSheet.create({
     },
     trendLabel: {
         fontSize: 11,
-        color: '#8E8E93',
+        color: Colors.textMuted,
         marginLeft: 4,
     },
 });

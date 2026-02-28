@@ -7,21 +7,55 @@ import KPIWidget from '../../src/components/KPIWidget';
 import ActivityItem from '../../src/components/ActivityItem';
 import { useStoreContext } from '../../src/store/useStoreContext';
 import { supabase } from '../../src/lib/supabase';
+import { orderService } from '../../src/services/orderService';
+import { useKitchenLoadPredictor } from '../../src/hooks/useKitchenLoadPredictor';
+import { useReadyShelfMonitor } from '../../src/hooks/useReadyShelfMonitor';
+import KitchenLoadCard from '../../src/components/KitchenLoadCard';
+import ReadyShelfCard from '../../src/components/ReadyShelfCard';
 
 export default function HomeScreen() {
     const { activeStoreId, setActiveStoreId } = useStoreContext();
     const [stores, setStores] = useState<any[]>([]);
     const [showSelector, setShowSelector] = useState(false);
+    const [metrics, setMetrics] = useState({
+        orders_today: 0,
+        total_revenue: 0,
+        avg_prep_min: 0,
+        live_issues: 0,
+        new_count: 0,
+        in_progress_count: 0,
+        ready_count: 0,
+        avg_ready_wait_min: 0
+    });
+
+    const prediction = useKitchenLoadPredictor(metrics);
+    const monitor = useReadyShelfMonitor(metrics);
 
     useEffect(() => {
         fetchStores();
     }, []);
+
+    useEffect(() => {
+        if (activeStoreId) {
+            fetchMetrics();
+        }
+    }, [activeStoreId]);
 
     const fetchStores = async () => {
         const { data } = await supabase.from('stores').select('id, name');
         setStores(data || []);
         if (data && data.length > 0 && !activeStoreId) {
             setActiveStoreId(data[0].id);
+        }
+    };
+
+    const fetchMetrics = async () => {
+        if (!activeStoreId) return;
+        try {
+            const data = await orderService.fetchStoreMetrics(activeStoreId);
+            if (data) setMetrics(data);
+        } catch (error) {
+            console.error("Error fetching metrics:", error);
         }
     };
 
@@ -35,13 +69,19 @@ export default function HomeScreen() {
                         <Text style={styles.title}>Dashboard</Text>
                         <Pressable style={styles.storeSelector} onPress={() => setShowSelector(true)}>
                             <Text style={styles.storeName}>{activeStore?.name || 'All Stores'}</Text>
-                            <Ionicons name="chevron-down" size={16} color="#007AFF" style={{ marginLeft: 4 }} />
+                            <Ionicons name="chevron-down" size={16} color="#00ff90" style={{ marginLeft: 4 }} />
                         </Pressable>
                     </View>
                     <View style={styles.avatar}>
                         <Ionicons name="person" size={24} color="#8E8E93" />
                     </View>
                 </View>
+
+                {/* 🍳 Kitchen Load Predictor Card */}
+                <KitchenLoadCard prediction={prediction} />
+
+                {/* 🧺 Ready Shelf Monitor Card */}
+                <ReadyShelfCard monitor={monitor} />
 
                 <Modal visible={showSelector} transparent animationType="slide">
                     <Pressable style={styles.modalOverlay} onPress={() => setShowSelector(false)}>
@@ -61,7 +101,7 @@ export default function HomeScreen() {
                                         <Text style={[styles.storeOptionText, activeStoreId === item.id && styles.activeStoreOption]}>
                                             {item.name}
                                         </Text>
-                                        {activeStoreId === item.id && <Ionicons name="checkmark-circle" size={24} color="#007AFF" />}
+                                        {activeStoreId === item.id && <Ionicons name="checkmark-circle" size={24} color="#00ff90" />}
                                     </Pressable>
                                 )}
                             />
@@ -72,28 +112,28 @@ export default function HomeScreen() {
                 <View style={styles.kpiGrid}>
                     <KPIWidget
                         label="Orders Today"
-                        value="48"
+                        value={metrics.orders_today.toString()}
                         trend="+15%"
                         icon="receipt"
                         color="#34C759"
                     />
                     <KPIWidget
                         label="Net Revenue"
-                        value="$1,420"
+                        value={`$${metrics.total_revenue.toLocaleString()}`}
                         trend="+12%"
                         icon="stats-chart"
-                        color="#007AFF"
+                        color="#00ff90"
                     />
                     <KPIWidget
                         label="Avg Prep"
-                        value="12m"
+                        value={`${metrics.avg_prep_min}m`}
                         trend="-3m"
                         icon="timer"
                         color="#FF9500"
                     />
                     <KPIWidget
                         label="Live Issues"
-                        value="1"
+                        value={metrics.live_issues.toString()}
                         trend="0"
                         icon="warning"
                         color="#FF3B30"
@@ -118,8 +158,8 @@ export default function HomeScreen() {
                             <Text style={styles.actionLabel}>Stock</Text>
                         </Pressable>
                         <Pressable style={styles.quickAction}>
-                            <View style={[styles.actionIcon, { backgroundColor: 'rgba(0, 122, 255, 0.15)' }]}>
-                                <Ionicons name="headset" size={26} color="#007AFF" />
+                            <View style={[styles.actionIcon, { backgroundColor: 'rgba(0, 255, 144, 0.15)' }]}>
+                                <Ionicons name="headset" size={26} color="#00ff90" />
                             </View>
                             <Text style={styles.actionLabel}>Help</Text>
                         </Pressable>
@@ -190,7 +230,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginTop: 6,
-        backgroundColor: 'rgba(0, 122, 255, 0.1)',
+        backgroundColor: 'rgba(0, 255, 144, 0.1)',
         paddingHorizontal: 10,
         paddingVertical: 4,
         borderRadius: 8,
@@ -198,7 +238,7 @@ const styles = StyleSheet.create({
     },
     storeName: {
         fontSize: 15,
-        color: '#007AFF',
+        color: '#00ff90',
         fontWeight: '700',
     },
     avatar: {
@@ -246,7 +286,7 @@ const styles = StyleSheet.create({
         opacity: 0.7,
     },
     activeStoreOption: {
-        color: '#007AFF',
+        color: '#00ff90',
         fontWeight: '800',
         opacity: 1,
     },
@@ -273,7 +313,7 @@ const styles = StyleSheet.create({
     },
     sectionLink: {
         fontSize: 14,
-        color: '#007AFF',
+        color: '#00ff90',
         fontWeight: '600',
     },
     quickActionsGrid: {

@@ -2,9 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Pressable, Alert } from 'react-native';
 import { Text } from '../../components/Themed';
 import { Ionicons } from '@expo/vector-icons';
-import StatusBadge from './StatusBadge';
+import StatusBadge from '@/src/components/StatusBadge';
 import { orderService } from '../services/orderService';
 import { useAuthStore } from '../store/useAuthStore';
+import OrderDetailModal from './OrderDetailModal';
+
+import SlaTimer from './SlaTimer';
+import { Colors } from '../theme/colors';
+import { usePrepTimer } from '../hooks/usePrepTimer';
+import { useSLASettings } from "../store/useSLASettings";
+import { usePickupDelayMonitor } from '../hooks/usePickupDelayMonitor';
+// Note: In a production app, we'd pass the current load factor from the parent dashboard
+// For this standalone card, we'll assume a moderate load factor of 1.2x if not provided
+const MOCK_LOAD_FACTOR = 1.2;
 
 interface OrderItem {
     name: string;
@@ -19,220 +29,381 @@ interface Order {
     total_amount: number;
     created_at: string;
     accepted_at?: string;
+    ready_at?: string;
     items?: OrderItem[];
 }
 
-export default function OrderCard({ order }: { order: Order }) {
-    const [elapsed, setElapsed] = useState<string>('00:00');
-
-    useEffect(() => {
-        if (order.status === 'completed' || order.status === 'unfulfilled') {
-            return;
-        }
-
-        const timer = setInterval(() => {
-            const startTime = order.accepted_at ? new Date(order.accepted_at) : new Date(order.created_at);
-            const seconds = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
-            const m = Math.floor(seconds / 60);
-            const s = seconds % 60;
-            setElapsed(`${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`);
-        }, 1000);
-
-        return () => clearInterval(timer);
-    }, [order.created_at, order.accepted_at, order.status]);
-
+export default function OrderCard({ order, isTablet = false }: { order: Order; isTablet?: boolean }) {
+    const [showDetails, setShowDetails] = useState(false);
     const { user, hasRole } = useAuthStore();
 
-    const handleAction = async (nextStatus: string, reason?: string) => {
-        if (!user) return;
-        await orderService.updateOrderStatus(order.id, nextStatus, order.external_order_id, user.id, reason);
-    };
+    const { warningMinutes, breachMinutes } = useSLASettings();
+    const [prepMinutes, setPrepMinutes] = useState(0);
 
-    const handleReject = () => {
-        Alert.alert(
-            "Reject Order",
-            "Please select a reason for rejection",
-            [
-                { text: "Out of Stock", onPress: () => handleAction('unfulfilled', 'out_of_stock') },
-                { text: "Too Busy", onPress: () => handleAction('unfulfilled', 'too_busy') },
-                { text: "Kitchen Closed", onPress: () => handleAction('unfulfilled', 'kitchen_closed') },
-                { text: "Cancel", style: "cancel" }
-            ]
-        );
-    };
+    // Predictive ETA Logic
+    const avgPrep = 12; // Static fallback or derived from store metrics
+    const expectedPrepMinutes = Math.round(avgPrep * MOCK_LOAD_FACTOR);
+    const expectedReadyAt = new Date(new Date(order.created_at).getTime() + expectedPrepMinutes * 60000);
+    const etaString = expectedReadyAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-    const renderActions = () => {
+    const pickup = usePickupDelayMonitor(order);
+
+    useEffect(() => {
+        // The usePrepTimer hook is called here to update the state variable
+        const currentPrepTime = usePrepTimer(order.status, order.created_at, order.accepted_at);
+        setPrepMinutes(currentPrepTime);
+    }, [order.status, order.created_at, order.accepted_at]);
+
+    const elapsedMinutes = Math.floor((Date.now() - new Date(order.created_at).getTime()) / 60000);
+    const isEscalated = (order.status !== 'completed' && order.status !== 'unfulfilled') && elapsedMinutes >= breachMinutes;
+
+    const getNextAction = () => {
         switch (order.status) {
-            case 'new':
-                return (
-                    <View style={styles.actions}>
-                        <Pressable
-                            style={[styles.button, styles.acceptButton]}
-                            onPress={() => handleAction('in_progress')}
-                        >
-                            <Text style={styles.buttonText}>Accept</Text>
-                        </Pressable>
-                        {hasRole(['manager', 'owner']) && (
-                            <Pressable
-                                style={[styles.button, styles.rejectButton]}
-                                onPress={handleReject}
-                            >
-                                <Text style={styles.rejectButtonText}>Reject</Text>
-                            </Pressable>
-                        )}
-                    </View>
-                );
-            case 'in_progress':
-                return (
-                    <Pressable
-                        style={[styles.button, styles.readyButton]}
-                        onPress={() => handleAction('ready')}
-                    >
-                        <Text style={styles.buttonText}>Mark Ready</Text>
-                    </Pressable>
-                );
-            case 'ready':
-                return (
-                    <Pressable
-                        style={[styles.button, styles.completeButton]}
-                        onPress={() => handleAction('completed')}
-                    >
-                        <Text style={styles.buttonText}>Complete Order</Text>
-                    </Pressable>
-                );
-            default:
-                return null;
+            case 'new': return 'ACCEPT';
+            case 'in_progress': return 'MARK READY';
+            case 'ready': return 'COMPLETE';
+            default: return null;
         }
     };
 
-    const isLate = parseInt(elapsed.split(':')[0]) >= 15;
+    const handleAction = async () => {
+        if (!user) return;
+
+        let nextStatus: 'new' | 'in_progress' | 'ready' | 'completed' | 'unfulfilled' = 'new';
+        if (order.status === 'new') nextStatus = 'in_progress';
+        else if (order.status === 'in_progress') nextStatus = 'ready';
+        else if (order.status === 'ready') nextStatus = 'completed';
+
+        if (nextStatus !== 'new') {
+            await orderService.updateOrderStatus(
+                order.id,
+                nextStatus,
+                order.external_order_id,
+                user.id
+            );
+        }
+    };
+
+    const isNew = order.status === 'new';
 
     return (
-        <View style={styles.container}>
+        <View style={[
+            styles.container,
+            isNew && styles.newOrderGlow,
+            isTablet && styles.tabletContainer
+        ]}>
             <View style={styles.header}>
-                <View>
-                    <Text style={styles.orderId}>#{order.id.slice(0, 8).toUpperCase()}</Text>
-                    <Text style={styles.customerName}>{order.customer_name}</Text>
+                <View style={{ flex: 1 }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Text style={styles.orderId}>#{order.id.slice(0, 8).toUpperCase()}</Text>
+                            {isNew && <View style={styles.newPulse} />}
+                        </View>
+                        {order.status === 'in_progress' && (
+                            <View style={styles.prepTimerContainer}>
+                                <Ionicons name="restaurant-outline" size={12} color={Colors.preparing} />
+                                <Text style={styles.prepTimerText}>{prepMinutes} min</Text>
+                            </View>
+                        )}
+                        {order.status === 'new' && (
+                            <View style={styles.etaContainer}>
+                                <Ionicons name="time-outline" size={12} color="#8E8E93" />
+                                <Text style={styles.etaText}>Exp. Ready {etaString}</Text>
+                            </View>
+                        )}
+                        {order.status === 'ready' && pickup.delayed && (
+                            <View style={[styles.delayBadge, { backgroundColor: 'rgba(239, 68, 68, 0.1)' }]}>
+                                <Ionicons name="alert-circle" size={12} color="#EF4444" />
+                                <Text style={[styles.delayBadgeText, { color: '#EF4444' }]}>Delayed ({pickup.minutes}m)</Text>
+                            </View>
+                        )}
+                        {order.status === 'ready' && pickup.warning && (
+                            <View style={[styles.delayBadge, { backgroundColor: 'rgba(245, 158, 11, 0.1)' }]}>
+                                <Ionicons name="hourglass-outline" size={12} color="#F59E0B" />
+                                <Text style={[styles.delayBadgeText, { color: '#F59E0B' }]}>Waiting ({pickup.minutes}m)</Text>
+                            </View>
+                        )}
+                    </View>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4 }}>
+                        <Text style={[styles.customerName, isTablet && styles.tabletCustomerName]}>
+                            {order.customer_name}
+                        </Text>
+                        {isEscalated && (
+                            <View style={styles.escalationBadge}>
+                                <Text style={styles.escalationBadgeText}>🚨 ESCALATED</Text>
+                            </View>
+                        )}
+                    </View>
                 </View>
-                <StatusBadge status={order.status} />
+                {!isTablet && <StatusBadge status={order.status} />}
             </View>
 
-            <View style={styles.divider} />
+            {order.items && order.items.length > 0 && (
+                <View style={[styles.itemsPreview, isTablet && styles.tabletItemsPreview]}>
+                    {order.items.slice(0, isTablet ? 5 : 2).map((item, idx) => (
+                        <View key={idx} style={styles.itemRow}>
+                            <Text style={styles.itemQuantity}>{item.quantity}x</Text>
+                            <Text style={styles.itemName} numberOfLines={1}>{item.name}</Text>
+                        </View>
+                    ))}
+                    {order.items.length > (isTablet ? 5 : 2) && (
+                        <Text style={styles.moreItems}>+ {order.items.length - (isTablet ? 5 : 2)} more items</Text>
+                    )}
+                </View>
+            )}
 
             <View style={styles.details}>
                 <View style={styles.detailRow}>
-                    <Ionicons name="time-outline" size={16} color={isLate ? "#F44336" : "#888"} />
-                    <Text style={[styles.detailText, isLate && styles.lateText]}>
-                        {order.status === 'completed' ? 'Finished' : elapsed}
-                    </Text>
+                    <SlaTimer createdAt={order.created_at} status={order.status} />
                 </View>
-                <View style={styles.detailRow}>
-                    <Ionicons name="cash-outline" size={16} color="#888" />
+                <View style={[styles.detailRow, { marginLeft: 'auto' }]}>
+                    <Ionicons name="cash-outline" size={14} color={Colors.textSecondary} />
                     <Text style={styles.detailText}>${order.total_amount.toFixed(2)}</Text>
                 </View>
             </View>
 
-            {renderActions()}
+            {getNextAction() && (
+                <Pressable
+                    style={[
+                        styles.button,
+                        order.status === 'new' && styles.acceptButton,
+                        order.status === 'in_progress' && styles.readyButton,
+                        order.status === 'ready' && styles.completeButton,
+                    ]}
+                    onPress={handleAction}
+                >
+                    <Text style={[
+                        styles.buttonText,
+                        order.status === 'ready' && { color: '#000' }
+                    ]}>
+                        {getNextAction()}
+                    </Text>
+                </Pressable>
+            )}
+
+            <Pressable style={styles.detailsLink} onPress={() => setShowDetails(true)}>
+                <Text style={styles.detailsLinkText}>Full Details</Text>
+                <Ionicons name="chevron-forward" size={14} color={Colors.primary} />
+            </Pressable>
+
+            <OrderDetailModal
+                visible={showDetails}
+                onClose={() => setShowDetails(false)}
+                orderId={order.id}
+                customerName={order.customer_name}
+            />
         </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#1E1E1E',
-        borderRadius: 24,
-        padding: 20,
-        marginBottom: 16,
+        backgroundColor: Colors.surface,
+        borderRadius: 16,
+        padding: 16,
+        marginBottom: 12,
         borderWidth: 1,
-        borderColor: 'rgba(255, 255, 255, 0.05)',
+        borderColor: Colors.border,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 6 },
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.4,
+        shadowRadius: 8,
+        elevation: 4,
+    },
+    tabletContainer: {
+        padding: 14,
+        marginBottom: 8,
+    },
+    newOrderGlow: {
+        borderColor: Colors.primary,
+        shadowColor: Colors.primary,
         shadowOpacity: 0.3,
-        shadowRadius: 12,
-        elevation: 6,
+        shadowRadius: 10,
+    },
+    newPulse: {
+        width: 8,
+        height: 8,
+        borderRadius: 4,
+        backgroundColor: Colors.primary,
+        marginLeft: 8,
     },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'flex-start',
-        marginBottom: 16,
+        marginBottom: 12,
     },
     orderId: {
-        fontSize: 12,
-        fontWeight: '700',
-        color: '#8E8E93',
-        letterSpacing: 1,
+        fontSize: 10,
+        fontWeight: '900',
+        color: Colors.textSecondary,
+        letterSpacing: 1.5,
         textTransform: 'uppercase',
     },
     customerName: {
-        fontSize: 20,
-        fontWeight: '700',
-        color: '#FFFFFF',
-        marginTop: 4,
+        fontSize: 18,
+        fontWeight: '800',
+        color: Colors.textPrimary,
+        marginTop: 2,
     },
-    divider: {
-        height: 1,
-        backgroundColor: 'rgba(255, 255, 255, 0.05)',
-        marginBottom: 16,
+    tabletCustomerName: {
+        fontSize: 16,
     },
     details: {
         flexDirection: 'row',
-        marginBottom: 20,
+        marginBottom: 12,
         backgroundColor: 'rgba(255, 255, 255, 0.03)',
-        borderRadius: 12,
-        padding: 12,
+        borderRadius: 8,
+        padding: 8,
     },
     detailRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginRight: 24,
     },
     detailText: {
-        fontSize: 15,
-        fontWeight: '600',
-        color: '#FFFFFF',
-        marginLeft: 6,
-    },
-    lateText: {
-        color: '#FF453A',
+        fontSize: 13,
+        fontWeight: '700',
+        color: Colors.textPrimary,
+        marginLeft: 4,
     },
     actions: {
         flexDirection: 'row',
-        gap: 12,
+        gap: 8,
     },
     button: {
         flex: 1,
-        height: 52,
-        borderRadius: 14,
+        height: 44,
+        borderRadius: 10,
         alignItems: 'center',
         justifyContent: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
     },
     acceptButton: {
-        backgroundColor: '#34C759',
+        backgroundColor: Colors.primary,
     },
     rejectButton: {
         backgroundColor: 'transparent',
-        borderWidth: 1.5,
-        borderColor: '#FF453A',
+        borderWidth: 1,
+        borderColor: Colors.rejected,
     },
     readyButton: {
-        backgroundColor: '#007AFF',
+        backgroundColor: Colors.preparing,
     },
     completeButton: {
-        backgroundColor: '#AF52DE',
+        backgroundColor: Colors.ready,
+    },
+    prepTimerContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: 'rgba(255, 150, 0, 0.1)',
+        paddingHorizontal: 8,
+        paddingVertical: 2,
+        borderRadius: 4,
+    },
+    prepTimerText: {
+        fontSize: 11,
+        fontWeight: '900',
+        color: Colors.preparing,
+        marginLeft: 4,
+    },
+    etaContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: 'rgba(255, 255, 255, 0.05)',
+        paddingHorizontal: 8,
+        paddingVertical: 2,
+        borderRadius: 4,
+    },
+    etaText: {
+        fontSize: 10,
+        fontWeight: '700',
+        color: '#8E8E93',
+        marginLeft: 4,
+        letterSpacing: 0.3,
+    },
+    escalationBadge: {
+        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+        paddingHorizontal: 8,
+        paddingVertical: 2,
+        borderRadius: 4,
+        marginLeft: 8,
+        borderWidth: 1,
+        borderColor: 'rgba(239, 68, 68, 0.2)',
+    },
+    escalationBadgeText: {
+        color: '#EF4444',
+        letterSpacing: 0.5,
+    },
+    delayBadge: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 8,
+        paddingVertical: 2,
+        borderRadius: 4,
+        gap: 4,
+    },
+    delayBadgeText: {
+        fontSize: 10,
+        fontWeight: '900',
+        letterSpacing: 0.3,
     },
     buttonText: {
         color: '#FFFFFF',
-        fontWeight: '700',
-        fontSize: 16,
+        fontWeight: '900',
+        fontSize: 12,
+        letterSpacing: 1,
     },
     rejectButtonText: {
-        color: '#FF453A',
+        color: Colors.rejected,
+        fontWeight: '900',
+        fontSize: 12,
+    },
+    itemsPreview: {
+        backgroundColor: 'rgba(255, 255, 255, 0.02)',
+        borderRadius: 8,
+        padding: 10,
+        marginBottom: 12,
+        borderWidth: 1,
+        borderColor: 'rgba(255, 255, 255, 0.05)',
+    },
+    tabletItemsPreview: {
+        padding: 8,
+    },
+    itemRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 4,
+    },
+    itemQuantity: {
+        fontSize: 12,
+        fontWeight: '900',
+        color: Colors.primary,
+        width: 24,
+    },
+    itemName: {
+        fontSize: 13,
+        color: Colors.textPrimary,
+        fontWeight: '600',
+        flex: 1,
+    },
+    moreItems: {
+        fontSize: 11,
+        color: Colors.textSecondary,
+        marginTop: 2,
+        fontStyle: 'italic',
+    },
+    detailsLink: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 12,
+        paddingTop: 12,
+        borderTopWidth: 1,
+        borderTopColor: Colors.border,
+    },
+    detailsLinkText: {
+        fontSize: 12,
         fontWeight: '700',
-        fontSize: 16,
+        color: Colors.primary,
+        marginRight: 4,
     },
 });

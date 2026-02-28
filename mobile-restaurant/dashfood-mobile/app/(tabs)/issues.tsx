@@ -1,18 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, FlatList, Pressable } from 'react-native';
+import { StyleSheet, View, Pressable } from 'react-native';
+import { FlashList } from "@shopify/flash-list";
 import { Text } from '@/components/Themed';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { supabase } from '@/src/lib/supabase';
 import { Ionicons } from '@expo/vector-icons';
 import IssueCard, { Issue } from '../../src/components/IssueCard';
 
+import { useAuthStore } from '@/src/store/useAuthStore';
+import { socketService } from '@/src/lib/socket';
+
 export default function IssuesScreen() {
     const [issues, setIssues] = useState<Issue[]>([]);
     const [loading, setLoading] = useState(true);
+    const { user } = useAuthStore();
 
     useEffect(() => {
+        if (!user?.store_id) return;
+
         fetchIssues();
-    }, []);
+
+        // Realtime Escaltion Feed
+        socketService.on('newIssue', (issue: Issue) => {
+            console.log("Realtime (Socket): New Issue received", issue.id);
+            setIssues(prev => [issue, ...prev]);
+        });
+
+        return () => {
+            socketService.off('newIssue');
+        };
+    }, [user?.store_id]);
 
     const fetchIssues = async () => {
         try {
@@ -48,7 +65,7 @@ export default function IssuesScreen() {
                 </Pressable>
             </View>
 
-            <FlatList
+            <FlashList
                 data={issues}
                 keyExtractor={(item: any) => item.id}
                 renderItem={({ item }) => <IssueCard issue={item} />}

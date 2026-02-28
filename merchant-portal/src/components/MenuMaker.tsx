@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { 
-  Plus, 
-  Search, 
-  ChevronDown, 
-  Eye, 
-  History, 
+import {
+  Plus,
+  Search,
+  ChevronDown,
+  Eye,
+  History,
   Info,
   ExternalLink,
   Image as ImageIcon,
@@ -14,8 +14,18 @@ import {
   ChevronUp,
   ArrowLeft,
   StickyNote,
-  X
+  Globe,
+  X,
+  Layout,
+  Clock,
+  Tag,
+  ShoppingBag,
+  Zap,
+  Filter,
+  Layers,
+  Sparkles
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../types';
 import {
   DndContext,
@@ -123,11 +133,11 @@ const categoriesData = [
 ];
 
 const modifierGroupsData = [
-  { 
-    id: 'mg-1', 
-    name: 'Choose Meat Temperature', 
-    min: 1, 
-    max: 1, 
+  {
+    id: 'mg-1',
+    name: 'Choose Meat Temperature',
+    min: 1,
+    max: 1,
     options: [
       { name: 'Rare', price: 0 },
       { name: 'Medium Rare', price: 0 },
@@ -135,11 +145,11 @@ const modifierGroupsData = [
       { name: 'Well Done', price: 0 }
     ]
   },
-  { 
-    id: 'mg-2', 
-    name: 'Add Extra Toppings', 
-    min: 0, 
-    max: 5, 
+  {
+    id: 'mg-2',
+    name: 'Add Extra Toppings',
+    min: 0,
+    max: 5,
     options: [
       { name: 'Bacon', price: 1.50 },
       { name: 'Avocado', price: 2.00 },
@@ -156,10 +166,10 @@ interface SortableCategoryProps {
   key?: any;
 }
 
-const SortableCategory = ({ 
-  category, 
-  isExpanded, 
-  onToggle 
+const SortableCategory = ({
+  category,
+  isExpanded,
+  onToggle
 }: SortableCategoryProps) => {
   const {
     attributes,
@@ -178,39 +188,44 @@ const SortableCategory = ({
   };
 
   return (
-    <div 
-      ref={setNodeRef} 
-      style={style} 
-      className="bg-white border border-gray-200 rounded-sm overflow-hidden shadow-sm"
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="card-premium h-20 bg-white border-none shadow-sm flex items-center group overflow-hidden"
     >
-      <div className="flex items-center p-4 hover:bg-gray-50 transition-colors group">
-        <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing mr-4">
-          <GripVertical size={20} className="text-gray-300" />
-        </div>
-        <div className="flex-1 flex items-center gap-3">
-          <span className="font-bold text-emerald-600 text-lg cursor-pointer hover:underline">
-            {category.name}
-          </span>
-          <span className="px-2 py-0.5 bg-gray-100 text-gray-500 rounded-full text-xs font-bold">
-            {category.itemCount}
-          </span>
-        </div>
-        <button 
-          onClick={() => onToggle(category.id)}
-          className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-        >
-          {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-        </button>
+      <div {...attributes} {...listeners} className="w-14 h-full flex items-center justify-center text-zinc-200 group-hover:text-zinc-400 cursor-grab active:cursor-grabbing transition-colors bg-zinc-50/50">
+        <GripVertical size={20} />
       </div>
 
-      {isExpanded && (
-        <div className="bg-gray-50/50 px-8 py-4 border-t border-gray-100">
-          <div className="text-sm text-gray-400 italic">Items in this category will be listed here...</div>
+      <div className="flex-1 px-6 flex items-center justify-between">
+        <div className="space-y-0.5">
+          <div className="flex items-center gap-3">
+            <h3 className="font-black text-black tracking-tight text-lg group-hover:text-[#00ff90] transition-colors">{category.name}</h3>
+            <span className="text-[10px] font-black text-[#00ff90] uppercase tracking-widest px-2 py-0.5 bg-[#00ff90]/10 rounded-full">Primary</span>
+          </div>
+          <p className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em]">{category.itemCount} Units Registered</p>
         </div>
-      )}
+
+        <div className="flex items-center gap-6">
+          <div className="text-right">
+            <div className="text-[10px] font-black text-zinc-400 uppercase tracking-widest leading-none mb-1">Architecture</div>
+            <div className="text-sm font-black text-zinc-900 leading-none">Global Sync</div>
+          </div>
+          <button
+            onClick={() => onToggle(category.id)}
+            className={cn(
+              "w-10 h-10 rounded-xl flex items-center justify-center transition-all",
+              isExpanded ? "bg-black text-[#00ff90]" : "bg-zinc-50 text-zinc-400 hover:text-black"
+            )}
+          >
+            <ChevronDown size={18} className={cn("transition-transform duration-300", isExpanded ? "" : "-rotate-90")} />
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
+
 
 const MenuMaker = () => {
   const [activeSubTab, setActiveSubTab] = useState('Overview');
@@ -245,7 +260,13 @@ const MenuMaker = () => {
     })
   );
 
-  const subTabs = ['Overview', 'Menus', 'Categories', 'Items', 'Modifier Groups'];
+  const subTabs = [
+    { name: 'Overview', icon: Layout },
+    { name: 'Menus', icon: Clock },
+    { name: 'Categories', icon: Tag },
+    { name: 'Items', icon: ShoppingBag },
+    { name: 'Modifier Groups', icon: Zap }
+  ];
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -300,7 +321,7 @@ const MenuMaker = () => {
   };
 
   const toggleCategory = (id: string) => {
-    setExpandedCategories(prev => 
+    setExpandedCategories(prev =>
       prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]
     );
   };
@@ -314,218 +335,160 @@ const MenuMaker = () => {
 
   if (selectedItem) {
     return (
-      <div className="flex flex-col h-full bg-white">
-        {/* Sub Navigation (Sticky) */}
-        <div className="flex items-center justify-between border-b border-gray-100 px-8 shrink-0">
-          <div className="flex gap-8">
-            {subTabs.map((tab) => (
-              <button
-                key={tab}
-                className={cn(
-                  "py-4 text-sm font-medium relative transition-colors",
-                  tab === 'Items' ? "text-emerald-600" : "text-gray-400"
-                )}
-              >
-                {tab}
-                {tab === 'Items' && (
-                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-600" />
-                )}
-              </button>
-            ))}
+      <div className="flex flex-col h-full bg-white animate-in slide-in-from-right duration-500">
+        <div className="flex items-center justify-between border-b border-zinc-100 px-10 py-6 shrink-0 bg-white/80 backdrop-blur-md sticky top-0 z-50">
+          <div className="flex items-center gap-10">
+            <button
+              onClick={() => setSelectedItem(null)}
+              className="w-12 h-12 rounded-full border border-zinc-100 flex items-center justify-center text-zinc-400 hover:bg-black hover:text-white transition-all shadow-sm"
+            >
+              <ArrowLeft size={20} />
+            </button>
+            <div className="space-y-1">
+              <h2 className="text-2xl font-black tracking-tighter">{selectedItem.name}</h2>
+              <div className="flex items-center gap-3">
+                <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest px-2 py-0.5 border border-zinc-100 rounded-full">ID: {selectedItem.id}</span>
+                <span className="text-[10px] font-black text-[#00ff90] uppercase tracking-widest px-2 py-0.5 bg-[#00ff90]/10 rounded-full flex items-center gap-1">
+                  <div className="w-1.5 h-1.5 bg-[#00ff90] rounded-full animate-pulse" /> Live in Catalog
+                </span>
+              </div>
+            </div>
           </div>
 
-          <div className="flex items-center gap-6 text-emerald-600">
-            <button className="flex items-center gap-1.5 text-xs font-bold hover:underline">
-              <ExternalLink size={14} />
-              View Online
+          <div className="flex items-center gap-4">
+            <button className="px-8 py-3.5 bg-zinc-50 text-zinc-400 font-black text-[11px] uppercase tracking-widest rounded-2xl hover:bg-zinc-100 transition-all border border-zinc-100">
+              Discard Changes
             </button>
-            <button className="flex items-center gap-1.5 text-xs font-bold hover:underline">
-              <Info size={14} />
-              About
+            <button className="px-10 py-3.5 bg-black text-[#00ff90] font-black text-[11px] uppercase tracking-widest rounded-2xl hover:scale-105 transition-all shadow-xl shadow-black/10">
+              Persist Metadata
             </button>
           </div>
         </div>
 
-        {/* Item Detail View */}
-        <div className="flex-1 overflow-y-auto p-8 bg-white">
-          <div className="max-w-4xl mx-auto">
-            {/* Action Bar */}
-            <div className="flex items-center justify-between mb-8">
-              <button 
-                onClick={() => setSelectedItem(null)}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-              >
-                <ArrowLeft size={24} />
-              </button>
-              <div className="flex items-center gap-4">
-                <button className="px-6 py-2 bg-gray-100 text-black font-bold rounded-sm hover:bg-gray-200 transition-colors">
-                  Delete
-                </button>
-                <button className="px-6 py-2 bg-gray-100 text-black font-bold rounded-sm hover:bg-gray-200 transition-colors">
-                  Duplicate
-                </button>
-                <button className="px-6 py-2 bg-gray-100 text-gray-400 font-bold rounded-sm cursor-not-allowed">
-                  Save
-                </button>
-              </div>
-            </div>
-
-            {/* Image Upload Dropzone */}
-            <div className="mb-10">
-              <label className="text-sm font-bold text-gray-800 mb-2 block">Item Image</label>
-              <div className="border-2 border-dashed border-gray-200 rounded-sm p-8 flex flex-col items-center justify-center bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer group">
-                {selectedItem.image ? (
-                  <div className="relative w-40 h-40 mb-4">
-                    <img src={selectedItem.image} alt="" className="w-full h-full object-cover rounded-sm shadow-md" referrerPolicy="no-referrer" />
-                    <button className="absolute -top-2 -right-2 bg-white p-1 rounded-full shadow-md border border-gray-200 hover:bg-gray-50">
-                      <X size={14} />
-                    </button>
-                  </div>
-                ) : (
-                  <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4 group-hover:scale-110 transition-transform">
-                    <Plus size={24} className="text-emerald-600" />
-                  </div>
-                )}
-                <p className="text-sm font-bold text-emerald-600 hover:underline">
-                  {selectedItem.image ? 'Replace Image' : 'Add Image'}
-                </p>
-                <p className="text-xs text-gray-400 mt-1">Drag and drop or click to upload</p>
-              </div>
-            </div>
-
-            {/* Title Section */}
-            <div className="flex items-center justify-between border-b border-gray-200 pb-4 mb-8">
-              <h1 className="text-4xl font-bold">{selectedItem.name}</h1>
-              <button className="flex items-center gap-2 text-emerald-600 font-bold hover:underline">
-                <StickyNote size={18} />
-                Add Note
-              </button>
-            </div>
-
-            {/* Form Sections */}
-            <div className="space-y-10 max-w-2xl">
-              {/* Description */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-bold text-gray-800">Description (optional)</label>
-                  <span className="text-[10px] text-gray-400 font-bold uppercase">120 / 250</span>
-                </div>
-                <div className="bg-gray-50 rounded-sm overflow-hidden border border-transparent focus-within:border-emerald-500 transition-colors">
-                  <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 border-b border-gray-200">
-                    <button className="p-1 hover:bg-gray-200 rounded-sm font-serif font-bold text-xs">B</button>
-                    <button className="p-1 hover:bg-gray-200 rounded-sm font-serif italic text-xs">I</button>
-                    <button className="p-1 hover:bg-gray-200 rounded-sm text-xs">• List</button>
-                  </div>
-                  <textarea 
-                    defaultValue={selectedItem.description || ""}
-                    className="w-full p-4 bg-transparent border-none text-sm focus:ring-0 min-h-[120px] resize-none"
-                    placeholder="Tell customers about your item..."
-                  />
-                </div>
-              </div>
-
-              {/* Sell item on its own */}
-              <div className="space-y-4">
-                <label className="text-sm font-bold text-gray-800">Sell item on its own?</label>
-                <div className="flex gap-4">
-                  <button className="flex items-center gap-3 px-6 py-3 bg-white border border-gray-200 rounded-sm shadow-sm">
-                    <div className="w-5 h-5 rounded-full border-2 border-black flex items-center justify-center">
-                      <div className="w-2.5 h-2.5 bg-black rounded-full"></div>
-                    </div>
-                    <span className="font-bold">Yes</span>
-                  </button>
-                  <button className="flex items-center gap-3 px-6 py-3 bg-white border border-gray-100 rounded-sm">
-                    <div className="w-5 h-5 rounded-full border-2 border-gray-300"></div>
-                    <span className="font-bold">No</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Categories */}
-              <div className="space-y-2">
-                <div className="relative flex items-center bg-gray-50 rounded-sm p-2 gap-2">
-                  <Search size={16} className="text-gray-400 ml-2" />
-                  <div className="flex flex-wrap gap-2">
-                    <div className="flex items-center gap-1.5 bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-xs font-bold">
-                      Breakfast favorites
-                      <X size={14} className="cursor-pointer" />
-                    </div>
-                  </div>
-                  <input 
-                    type="text" 
-                    placeholder="Add a category" 
-                    className="flex-1 bg-transparent border-none focus:ring-0 text-sm py-1"
-                  />
-                  <X size={16} className="text-gray-400 mr-2 cursor-pointer" />
-                </div>
-                <p className="text-xs text-gray-500">Listed in the following menus: Breakfast</p>
-              </div>
-
-              {/* Pricing */}
-              <div className="space-y-6">
-                <div className="flex items-center gap-4 mb-4">
-                  <span className="text-sm font-bold text-gray-800">Priced by Weight?</span>
-                  <button className="w-12 h-6 bg-emerald-600 rounded-full relative transition-colors">
-                    <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full shadow-sm"></div>
-                  </button>
-                </div>
-
-                <div className="grid grid-cols-2 gap-8">
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold text-gray-800">Price per lb</label>
-                    <div className="flex items-center bg-gray-50 rounded-sm overflow-hidden border border-transparent focus-within:border-emerald-500">
-                      <div className="px-4 py-3 bg-gray-100 text-gray-500 text-sm">$</div>
-                      <input 
-                        type="text" 
-                        defaultValue="12.50"
-                        className="flex-1 bg-transparent border-none p-3 text-sm focus:ring-0"
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold text-gray-800">Tax Rate</label>
-                    <div className="flex items-center bg-gray-50 rounded-sm overflow-hidden border border-transparent focus-within:border-emerald-500">
-                      <input 
-                        type="text" 
-                        defaultValue="10"
-                        className="flex-1 bg-transparent border-none p-3 text-sm focus:ring-0"
-                      />
-                      <div className="px-4 py-3 bg-gray-100 text-gray-500 text-sm">%</div>
+        <div className="flex-1 overflow-y-auto bg-transparent">
+          <div className="max-w-[1000px] mx-auto py-16 px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
+              {/* Left Column: Media & Core Info */}
+              <div className="lg:col-span-1 space-y-10">
+                <div className="space-y-4">
+                  <label className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em]">Visual Representation</label>
+                  <div className="aspect-square rounded-[32px] overflow-hidden bg-zinc-50 border border-zinc-100 relative group cursor-pointer">
+                    {selectedItem.image ? (
+                      <img src={selectedItem.image} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center text-zinc-300 gap-4">
+                        <ImageIcon size={48} />
+                        <span className="text-[10px] font-black uppercase tracking-widest">No Media Attached</span>
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <button className="px-6 py-3 bg-white text-black font-black text-[10px] uppercase tracking-widest rounded-xl">Replace Asset</button>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <button className="text-emerald-600 font-bold text-sm hover:underline">
-                Add Menu Specific Pricing
-              </button>
-
-              {/* Dietary Tags */}
-              <div className="space-y-4">
-                <label className="text-sm font-bold text-gray-800">Dietary Tags</label>
-                <div className="flex flex-wrap gap-3">
-                  {['Vegan', 'Vegetarian', 'Gluten-Free', 'Halal', 'Kosher'].map(tag => (
-                    <button 
-                      key={tag}
+                <div className="card-premium p-6 space-y-6">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-black text-black uppercase tracking-widest">Inventory Status</span>
+                    <button
+                      onClick={() => setItemStock(prev => ({ ...prev, [selectedItem.id]: !prev[selectedItem.id] }))}
                       className={cn(
-                        "px-4 py-2 rounded-full text-xs font-bold border transition-all",
-                        tag === 'Gluten-Free' 
-                          ? "bg-emerald-600 border-emerald-600 text-white shadow-md shadow-emerald-200" 
-                          : "bg-white border-gray-200 text-gray-500 hover:border-emerald-600 hover:text-emerald-600"
+                        "w-12 h-6 rounded-full transition-all relative p-1",
+                        itemStock[selectedItem.id] ? "bg-[#00ff90]" : "bg-zinc-200"
                       )}
                     >
-                      {tag}
+                      <div className={cn("w-4 h-4 bg-white rounded-full shadow-sm transition-all", itemStock[selectedItem.id] ? "translate-x-6" : "")} />
                     </button>
-                  ))}
+                  </div>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-zinc-500">Node Sync</span>
+                      <span className="text-xs font-black text-black">Global Master</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-zinc-500">Last Modified</span>
+                      <span className="text-xs font-black text-black">2h ago by Admin</span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              {/* Out of stock toggle */}
-              <div className="flex items-center gap-4">
-                <span className="text-sm font-bold text-gray-800">Item out of stock?</span>
-                <button className="w-12 h-6 bg-gray-200 rounded-full relative transition-colors">
-                  <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow-sm"></div>
-                </button>
+              {/* Right Column: Configuration Matrix */}
+              <div className="lg:col-span-2 space-y-12">
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between border-b border-zinc-100 pb-4">
+                    <h3 className="text-2xl font-black text-black tracking-tighter">Identity & Context</h3>
+                    <div className="flex items-center gap-2">
+                      {['Vegan', 'Halal', 'Spicy'].map(tag => (
+                        <span key={tag} className="px-3 py-1 bg-zinc-50 border border-zinc-100 text-zinc-400 text-[9px] font-black uppercase tracking-widest rounded-full">{tag}</span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-8">
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Display Denomination</label>
+                      <input
+                        type="text"
+                        defaultValue={selectedItem.name}
+                        className="w-full bg-zinc-50 border-zinc-100 rounded-xl p-4 font-black text-sm focus:ring-4 focus:ring-[#00ff90]/5 focus:border-[#00ff90] transition-all"
+                      />
+                    </div>
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Pricing Structure ($)</label>
+                      <input
+                        type="text"
+                        defaultValue={selectedItem.price.replace('$', '')}
+                        className="w-full bg-zinc-50 border-zinc-100 rounded-xl p-4 font-black text-sm focus:ring-4 focus:ring-[#00ff90]/5 focus:border-[#00ff90] transition-all"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Narrative Description</label>
+                    <textarea
+                      defaultValue={selectedItem.description}
+                      className="w-full bg-zinc-50 border-zinc-100 rounded-2xl p-6 font-medium text-zinc-600 text-sm focus:ring-4 focus:ring-[#00ff90]/5 focus:border-[#00ff90] transition-all min-h-[160px] resize-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between border-b border-zinc-100 pb-4">
+                    <h3 className="text-2xl font-black text-black tracking-tighter">Architecture Mapping</h3>
+                    <button className="text-[10px] font-black text-[#00ff90] uppercase tracking-widest flex items-center gap-2 hover:underline">
+                      <Plus size={14} /> Add Modifier Group
+                    </button>
+                  </div>
+
+                  <div className="space-y-4">
+                    {modifierGroups.slice(0, 2).map((group, i) => (
+                      <div key={group.id} className="card-premium p-6 border-zinc-100 shadow-sm flex items-center justify-between group hover:border-[#00ff90]/30 transition-all">
+                        <div className="flex items-center gap-6">
+                          <div className="w-10 h-10 rounded-xl bg-zinc-50 flex items-center justify-center text-zinc-400 group-hover:bg-[#00ff90]/10 group-hover:text-[#00ff90] transition-colors">
+                            <Layers size={20} />
+                          </div>
+                          <div>
+                            <div className="text-sm font-black text-black">{group.name}</div>
+                            <div className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Required: {group.min} • Limit: {group.max}</div>
+                          </div>
+                        </div>
+                        <button className="text-zinc-300 hover:text-red-500 transition-colors">
+                          <X size={18} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-6 pt-10 border-t border-zinc-100">
+                  <button className="flex-1 py-5 bg-zinc-900 text-white font-black text-xs uppercase tracking-[0.3em] rounded-2xl hover:bg-black transition-all shadow-xl shadow-black/10">
+                    Duplicate Node
+                  </button>
+                  <button className="flex-1 py-5 bg-white border-2 border-red-50 text-red-500 font-black text-xs uppercase tracking-[0.3em] rounded-2xl hover:bg-red-50 transition-all">
+                    Terminate Asset
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -536,512 +499,417 @@ const MenuMaker = () => {
 
   return (
     <div className="flex flex-col h-full bg-white">
-      {/* Sub Navigation */}
-      <div className="flex items-center justify-between border-b border-gray-100 px-8 shrink-0">
-        <div className="flex gap-8">
+      {/* Premium Sub-Navigation */}
+      <div className="flex items-center justify-between border-b border-zinc-100 px-10 shrink-0 bg-white/50 backdrop-blur-xl sticky top-0 z-40">
+        <div className="flex gap-10">
           {subTabs.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveSubTab(tab)}
               className={cn(
-                "py-4 text-sm font-medium relative transition-colors",
-                activeSubTab === tab ? "text-emerald-600" : "text-gray-400 hover:text-black"
+                "py-6 text-[11px] font-black uppercase tracking-[0.2em] relative transition-all duration-300",
+                activeSubTab === tab ? "text-black" : "text-zinc-400 hover:text-black"
               )}
             >
               {tab}
               {activeSubTab === tab && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-600" />
+                <motion.div
+                  layoutId="subtab-indicator"
+                  className="absolute bottom-0 left-0 right-0 h-1 bg-[#00ff90] rounded-full"
+                />
               )}
             </button>
           ))}
         </div>
 
-        <div className="flex items-center gap-6 text-emerald-600">
-          <button className="flex items-center gap-1.5 text-xs font-bold hover:underline">
-            <ExternalLink size={14} />
-            View Online
+        <div className="flex items-center gap-8">
+          <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-[#00ff90] hover:underline">
+            <Globe size={14} /> Global Status: Online
           </button>
-          <button className="flex items-center gap-1.5 text-xs font-bold hover:underline">
-            <Info size={14} />
-            About
+          <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-black transition-colors">
+            <Info size={14} /> Documentation
           </button>
         </div>
       </div>
 
-      <div className="p-8 flex-1 overflow-y-auto bg-gray-50/50">
-        {activeSubTab === 'Overview' ? (
-          <div className="max-w-5xl mx-auto">
-            <div className="flex items-center justify-between mb-8">
-              <h1 className="text-4xl font-bold">Overview</h1>
-            </div>
-
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-8">
-                <div className="relative">
-                  <select className="appearance-none bg-gray-100 border-none rounded-sm px-4 py-2 pr-10 text-sm font-medium focus:ring-1 focus:ring-emerald-500 min-w-[180px]">
-                    <option>Breakfast</option>
-                    <option>Lunch</option>
-                    <option>Dinner</option>
-                  </select>
-                  <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                </div>
-                
-                <div className="flex items-center gap-2 text-sm">
-                  <span className="font-bold">Menu Hours</span>
-                  <button className="text-emerald-600 font-bold hover:underline">Edit</button>
-                  <span className="text-gray-500 ml-2">Every day: 4:00 AM - 10:00 AM</span>
+      <div className="flex-1 overflow-y-auto bg-transparent">
+        <div className="max-w-[1400px] mx-auto py-12 px-10 space-y-12 pb-32">
+          {/* Section Header */}
+          <div className="flex items-end justify-between">
+            <div className="space-y-2">
+              <div className="flex items-center gap-4">
+                <h1 className="text-5xl font-black text-black tracking-tighter uppercase">{activeSubTab}</h1>
+                <div className="px-3 py-1 bg-[#00ff90]/10 text-[#00ff90] rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                  <Sparkles size={12} /> Live Engine
                 </div>
               </div>
-              
-              <button className="bg-gray-100 text-gray-400 px-6 py-2 rounded-sm font-bold text-sm cursor-not-allowed">
-                Save
+              <p className="text-zinc-500 font-medium text-lg">Manage your {activeSubTab.toLowerCase()} infrastructure and deployment.</p>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <button className="bg-black text-[#00ff90] px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-[0.3em] hover:scale-105 transition-all shadow-xl shadow-black/10 flex items-center gap-3">
+                <Plus size={18} /> New {activeSubTab.replace('s', '')}
               </button>
             </div>
+          </div>
 
-            <div className="flex items-center gap-4 mb-6">
-              <button onClick={expandAll} className="text-emerald-600 text-sm font-bold hover:underline">Expand All</button>
-              <button onClick={collapseAll} className="text-emerald-600 text-sm font-bold hover:underline">Collapse All</button>
-            </div>
-
-            {/* Overview List */}
-            <div className="space-y-4">
-              {overviewData.map((category) => (
-                <div key={category.id} className="bg-white border border-gray-200 rounded-sm overflow-hidden shadow-sm">
-                  <div className="flex items-center p-4 hover:bg-gray-50 transition-colors group">
-                    <button 
-                      onClick={() => toggleCategory(category.id)}
-                      className="mr-4 text-gray-400 hover:text-black transition-colors"
-                    >
-                      {expandedCategories.includes(category.id) ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
-                    </button>
-                    <GripVertical size={20} className="text-gray-300 mr-4 cursor-grab active:cursor-grabbing" />
-                    <span className="flex-1 font-bold text-emerald-600 text-lg cursor-pointer hover:underline">
-                      {category.name}
-                    </span>
-                    <div className="flex items-center gap-6">
-                      <span className="text-sm text-gray-500">Items: {category.itemCount}</span>
-                      <button className="p-1 hover:bg-gray-100 rounded-full transition-colors">
-                        <MoreVertical size={20} className="text-gray-400" />
-                      </button>
-                    </div>
-                  </div>
-
-                  {expandedCategories.includes(category.id) && (
-                    <div className="bg-gray-50/50 px-8 py-4 space-y-2">
-                      {category.items.map((item) => (
-                        <div key={item.id} className="bg-white border border-gray-100 rounded-sm p-4 flex items-center hover:shadow-sm transition-all group">
-                          <GripVertical size={18} className="text-gray-300 mr-4 cursor-grab active:cursor-grabbing" />
-                          <span 
-                            onClick={() => handleEditItem(item)}
-                            className="flex-1 text-emerald-600 font-medium cursor-pointer hover:underline"
+          {/* Conditional Content Rendering */}
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+            {activeSubTab === 'Overview' && (
+              <div className="space-y-6">
+                {overviewData.map((category, i) => (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.1 }}
+                    key={category.id}
+                    className="card-premium overflow-hidden border-none shadow-sm"
+                  >
+                    <div className="p-8 flex items-center justify-between group cursor-pointer hover:bg-zinc-50 transition-all">
+                      <div className="flex items-center gap-8">
+                        <div className="flex items-center gap-4">
+                          <GripVertical size={20} className="text-zinc-200 group-hover:text-zinc-400 cursor-grab active:cursor-grabbing transition-colors" />
+                          <button
+                            onClick={() => toggleCategory(category.id)}
+                            className={cn(
+                              "w-10 h-10 rounded-xl flex items-center justify-center transition-all",
+                              expandedCategories.includes(category.id) ? "bg-black text-white" : "bg-zinc-100 text-zinc-400 group-hover:text-black"
+                            )}
                           >
-                            {item.name}
-                          </span>
-                          <div className="flex items-center gap-6">
-                            <span className="text-sm font-medium">{item.price}</span>
-                            <button className="p-1 hover:bg-gray-100 rounded-full transition-colors">
-                              <MoreVertical size={18} className="text-gray-400" />
-                            </button>
+                            <ChevronDown size={18} className={cn("transition-transform duration-300", expandedCategories.includes(category.id) ? "" : "-rotate-90")} />
+                          </button>
+                        </div>
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-4">
+                            <h3 className="text-2xl font-black text-black tracking-tighter">{category.name}</h3>
+                            <span className="text-[10px] font-black text-[#00ff90] uppercase tracking-widest px-2 py-0.5 bg-[#00ff90]/10 rounded-full">Primary</span>
                           </div>
+                          <p className="text-zinc-400 text-[10px] font-black uppercase tracking-[0.2em]">{category.itemCount} Units Registered</p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-10">
+                        <div className="flex -space-x-3">
+                          {category.items.slice(0, 3).map((item, idx) => (
+                            <div key={idx} className="w-10 h-10 rounded-full border-2 border-white bg-zinc-100 flex items-center justify-center text-[10px] font-black text-zinc-400 overflow-hidden">
+                              {item.name.charAt(0)}
+                            </div>
+                          ))}
+                        </div>
+                        <button className="w-12 h-12 rounded-full border border-zinc-100 flex items-center justify-center text-zinc-400 hover:bg-black hover:text-white transition-all">
+                          <MoreVertical size={20} />
+                        </button>
+                      </div>
+                    </div>
+
+                    <AnimatePresence>
+                      {expandedCategories.includes(category.id) && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          className="overflow-hidden bg-zinc-50/50 border-t border-zinc-100"
+                        >
+                          <div className="p-8 space-y-4">
+                            {category.items.map((item) => (
+                              <div key={item.id} className="bg-white p-6 rounded-[24px] border border-zinc-100/50 flex items-center group/item hover:border-[#00ff90]/30 hover:shadow-xl hover:shadow-[#00ff90]/5 transition-all">
+                                <div className="w-12 h-12 rounded-2xl bg-zinc-50 flex items-center justify-center text-zinc-300 group-hover/item:text-[#00ff90] transition-colors mr-6">
+                                  <GripVertical size={18} className="cursor-grab active:cursor-grabbing" />
+                                </div>
+                                <div className="flex-1 space-y-1">
+                                  <h4
+                                    onClick={() => handleEditItem(item)}
+                                    className="text-lg font-black text-black cursor-pointer hover:text-[#00ff90] transition-colors tracking-tight"
+                                  >
+                                    {item.name}
+                                  </h4>
+                                  <p className="text-zinc-400 text-xs font-medium max-w-md line-clamp-1">{item.description}</p>
+                                </div>
+                                <div className="flex items-center gap-12">
+                                  <div className="text-right">
+                                    <div className="text-[10px] font-black text-zinc-400 uppercase tracking-widest leading-none mb-1">MSRP</div>
+                                    <div className="text-xl font-black text-black leading-none">{item.price}</div>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <button onClick={() => handleEditItem(item)} className="px-6 py-2.5 bg-black text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-[#00ff90] hover:text-black transition-all">
+                                      Edit unit
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+
+            {activeSubTab === 'Menus' && (
+              <div className="space-y-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {menus.map((menu, i) => (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: i * 0.1 }}
+                      key={menu.id}
+                      className="card-premium p-8 group relative overflow-hidden bg-white hover:shadow-2xl hover:shadow-black/5 transition-all border-none"
+                    >
+                      <div className="relative z-10 space-y-6">
+                        <div className="w-12 h-12 rounded-2xl bg-[#00ff90]/10 flex items-center justify-center text-[#00ff90]">
+                          <Clock size={24} />
+                        </div>
+                        <div>
+                          <h3 className="text-2xl font-black text-black tracking-tighter group-hover:text-[#00ff90] transition-colors">{menu.name}</h3>
+                          <p className="text-zinc-400 font-bold text-sm mt-1">{menu.hours}</p>
+                        </div>
+                        <div className="flex items-center justify-between pt-4 border-t border-zinc-50">
+                          <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Architecture Active</span>
+                          <button className="text-[10px] font-black text-black uppercase tracking-widest hover:underline">Configure</button>
+                        </div>
+                      </div>
+                      <div className="absolute -right-4 -bottom-4 w-32 h-32 bg-[#00ff90]/5 rounded-full blur-3xl group-hover:bg-[#00ff90]/10 transition-colors" />
+                    </motion.div>
+                  ))}
+                </div>
+
+                <div className="card-premium p-10 bg-black text-white border-none shadow-2xl relative overflow-hidden">
+                  <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-[#00ff90] flex items-center justify-center text-black shadow-lg shadow-[#00ff90]/20">
+                          <Layers size={20} />
+                        </div>
+                        <h2 className="text-3xl font-black tracking-tighter">Global Schedule Matrix</h2>
+                      </div>
+                      <p className="text-zinc-400 max-w-xl font-medium">Coordinate your entire node network across time zones. Drag and select cells to assign menu availability with millisecond precision.</p>
+                    </div>
+                    <div className="flex items-center gap-3 bg-white/5 p-2 rounded-2xl border border-white/10">
+                      {['Breakfast', 'Lunch', 'Dinner'].map(type => (
+                        <div key={type} className="flex items-center gap-2 px-4 py-2">
+                          <div className={cn(
+                            "w-2 h-2 rounded-full",
+                            type === 'Breakfast' ? "bg-[#00ff90]" : type === 'Lunch' ? "bg-blue-400" : "bg-orange-400"
+                          )} />
+                          <span className="text-[10px] font-black uppercase tracking-widest text-zinc-300">{type}</span>
                         </div>
                       ))}
                     </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        ) : activeSubTab === 'Menus' ? (
-          <div className="max-w-5xl mx-auto">
-            <div className="flex items-center justify-between mb-8">
-              <h1 className="text-4xl font-bold">Menus</h1>
-              <button className="bg-black text-white px-6 py-2.5 rounded-sm font-bold flex items-center gap-2 hover:bg-gray-800 transition-colors">
-                <Plus size={18} />
-                New Menu
-              </button>
-            </div>
+                  </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-              {menus.map((menu) => (
-                <div key={menu.id} className="bg-white border border-gray-200 rounded-sm p-6 shadow-sm relative group hover:border-emerald-500 transition-colors">
-                  <div className="absolute top-4 right-4">
-                    <button 
-                      onClick={() => setOpenMenuId(openMenuId === menu.id ? null : menu.id)}
-                      className="p-1 hover:bg-gray-100 rounded-full transition-colors opacity-0 group-hover:opacity-100"
-                    >
-                      <MoreVertical size={20} className="text-gray-400" />
-                    </button>
-                    
-                    {openMenuId === menu.id && (
-                      <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-sm shadow-xl z-10 py-1">
-                        <button 
-                          onClick={() => duplicateMenu(menu)}
-                          className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 flex items-center gap-2"
-                        >
-                          Duplicate
-                        </button>
-                        <button className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 flex items-center gap-2">
-                          Edit Hours
-                        </button>
-                        <button className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 flex items-center gap-2 text-red-600">
-                          Delete
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                  <h3 className="text-xl font-bold text-emerald-600 mb-1 cursor-pointer hover:underline">{menu.name}</h3>
-                  <p className="text-sm text-gray-500">{menu.name} Menu • {menu.hours}</p>
-                </div>
-              ))}
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-sm p-8 shadow-sm select-none" onMouseLeave={handleMouseUp}>
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold">Schedule Matrix</h2>
-                <div className="flex gap-4">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-emerald-100 border border-emerald-300 rounded-full"></div>
-                    <span className="text-xs font-medium text-gray-500">Breakfast</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-blue-100 border border-blue-300 rounded-full"></div>
-                    <span className="text-xs font-medium text-gray-500">Lunch</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-orange-100 border border-orange-300 rounded-full"></div>
-                    <span className="text-xs font-medium text-gray-500">Dinner</span>
-                  </div>
-                </div>
-              </div>
-              <p className="text-sm text-gray-500 mb-6 italic">Click and drag across the grid to assign menu hours. Click a cell multiple times to cycle through menus.</p>
-              
-              <div className="grid grid-cols-8 border-t border-l border-gray-200" onMouseUp={handleMouseUp}>
-                <div className="p-4 border-r border-b border-gray-200 bg-gray-50 text-xs font-bold text-gray-400 uppercase">Time</div>
-                {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
-                  <div key={day} className="p-4 border-r border-b border-gray-200 bg-gray-50 text-xs font-bold text-gray-400 uppercase text-center">{day}</div>
-                ))}
-                
-                {[...Array(24)].map((_, h) => (
-                  <React.Fragment key={h}>
-                    <div className="p-2 border-r border-b border-gray-200 text-[10px] font-bold text-gray-400 uppercase flex items-center justify-center bg-gray-50/30">
-                      {h === 0 ? '12 AM' : h < 12 ? `${h} AM` : h === 12 ? '12 PM' : `${h - 12} PM`}
-                    </div>
-                    {[...Array(7)].map((_, d) => {
-                      const value = schedule[`${d}-${h}`];
-                      return (
-                        <div 
-                          key={d} 
-                          onMouseDown={() => handleMouseDown(d, h)}
-                          onMouseEnter={() => handleMouseEnter(d, h)}
-                          className={cn(
-                            "border-r border-b border-gray-200 h-10 relative group cursor-pointer transition-all duration-150",
-                            !value && "hover:bg-gray-50",
-                            value === 'Breakfast' && "bg-emerald-50",
-                            value === 'Lunch' && "bg-blue-50",
-                            value === 'Dinner' && "bg-orange-50"
-                          )}
-                        >
-                          {value && (
-                            <div className={cn(
-                              "absolute inset-0.5 border rounded-sm flex items-center justify-center overflow-hidden",
-                              value === 'Breakfast' && "bg-emerald-100 border-emerald-300 text-emerald-800",
-                              value === 'Lunch' && "bg-blue-100 border-blue-300 text-blue-800",
-                              value === 'Dinner' && "bg-orange-100 border-orange-300 text-orange-800"
-                            )}>
-                              <span className="text-[8px] font-bold uppercase truncate px-1">{value}</span>
+                  <div className="mt-12 overflow-hidden rounded-[32px] border border-white/5 bg-zinc-900/50 backdrop-blur-xl">
+                    <div className="grid grid-cols-8">
+                      <div className="p-5 border-r border-b border-white/5 text-[9px] font-black text-zinc-500 uppercase tracking-widest text-center">UTC+8</div>
+                      {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
+                        <div key={day} className="p-5 border-r border-b border-white/5 text-[9px] font-black text-zinc-400 uppercase tracking-widest text-center">{day}</div>
+                      ))}
+                      {[...Array(12)].map((_, h) => (
+                        <React.Fragment key={h}>
+                          <div className="p-4 border-r border-b border-white/5 text-[9px] font-black text-zinc-600 uppercase text-center">{h * 2}:00</div>
+                          {[...Array(7)].map((_, d) => (
+                            <div key={d} className="border-r border-b border-white/5 h-12 relative group cursor-pointer hover:bg-white/5 transition-colors">
+                              {h > 2 && h < 6 && (
+                                <div className="absolute inset-1.5 rounded-lg bg-[#00ff90]/10 border border-[#00ff90]/20 flex items-center justify-center">
+                                  <div className="w-1.5 h-1.5 bg-[#00ff90] rounded-full animate-pulse" />
+                                </div>
+                              )}
                             </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </React.Fragment>
-                ))}
-              </div>
-            </div>
-          </div>
-        ) : activeSubTab === 'Categories' ? (
-          <div className="max-w-5xl mx-auto">
-            <div className="flex items-center justify-between mb-8">
-              <h1 className="text-4xl font-bold">Categories</h1>
-              <button className="bg-black text-white px-6 py-2.5 rounded-sm font-bold flex items-center gap-2 hover:bg-gray-800 transition-colors">
-                <Plus size={18} />
-                New Category
-              </button>
-            </div>
-
-            <DndContext 
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-            >
-              <SortableContext 
-                items={categories.map(c => c.id)}
-                strategy={verticalListSortingStrategy}
-              >
-                <div className="space-y-4">
-                  {categories.map((category) => (
-                    <SortableCategory 
-                      key={category.id}
-                      category={category}
-                      isExpanded={expandedCategories.includes(category.id)}
-                      onToggle={toggleCategory}
-                    />
-                  ))}
-                </div>
-              </SortableContext>
-            </DndContext>
-          </div>
-        ) : activeSubTab === 'Items' ? (
-          <>
-            <div className="flex items-center justify-between mb-8">
-              <h1 className="text-3xl font-bold">Items</h1>
-              <button className="bg-black text-white px-6 py-2.5 rounded-sm font-bold flex items-center gap-2 hover:bg-gray-800 transition-colors">
-                <Plus size={18} />
-                New Item
-              </button>
-            </div>
-
-            {/* Filters */}
-            <div className="flex gap-4 mb-8">
-              <div className="relative flex-1 max-w-sm">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                <input 
-                  type="text" 
-                  placeholder="Search..." 
-                  className="w-full pl-10 pr-4 py-2 bg-gray-100 border-none rounded-sm text-sm focus:ring-1 focus:ring-emerald-500"
-                />
-              </div>
-              <button className="flex items-center justify-between gap-2 px-4 py-2 bg-gray-100 rounded-sm text-sm font-medium min-w-[200px]">
-                All
-                <ChevronDown size={16} />
-              </button>
-            </div>
-
-            {/* Table */}
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="border-b border-gray-100">
-                    <th className="pb-4 font-bold text-sm text-gray-800">Photo</th>
-                    <th className="pb-4 font-bold text-sm text-gray-800 flex items-center gap-1 cursor-pointer">
-                      <ChevronDown size={14} /> Name
-                    </th>
-                    <th className="pb-4 font-bold text-sm text-gray-800">Price</th>
-                    <th className="pb-4 font-bold text-sm text-gray-800">Menus</th>
-                    <th className="pb-4 font-bold text-sm text-gray-800">Categories</th>
-                    <th className="pb-4 font-bold text-sm text-gray-800">Used In</th>
-                    <th className="pb-4 font-bold text-sm text-gray-800">Contains</th>
-                    <th className="pb-4 font-bold text-sm text-gray-800">Last Updated</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-50">
-                  {menuItems.map((item) => (
-                    <tr key={item.id} className="group hover:bg-gray-50 transition-colors">
-                      <td className="py-4">
-                        <div className="w-12 h-12 bg-gray-100 rounded-sm overflow-hidden flex items-center justify-center">
-                          {item.image ? (
-                            <img src={item.image} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                          ) : (
-                            <ImageIcon size={20} className="text-gray-300" />
-                          )}
-                        </div>
-                      </td>
-                      <td 
-                        className="py-4"
-                      >
-                        <div className="flex items-center gap-3">
-                          <button 
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setItemStock(prev => ({ ...prev, [item.id]: !prev[item.id] }));
-                            }}
-                            className={cn(
-                              "w-10 h-5 rounded-full relative transition-colors shrink-0",
-                              itemStock[item.id] ? "bg-emerald-500" : "bg-gray-300"
-                            )}
-                            title={itemStock[item.id] ? "In Stock" : "Sold Out"}
-                          >
-                            <div className={cn(
-                              "absolute top-0.5 w-4 h-4 bg-white rounded-full shadow-sm transition-all",
-                              itemStock[item.id] ? "left-5.5" : "left-0.5"
-                            )}></div>
-                          </button>
-                          <span 
-                            onClick={() => handleEditItem(item)}
-                            className={cn(
-                              "font-medium hover:underline cursor-pointer",
-                              itemStock[item.id] ? "text-emerald-600" : "text-gray-400 line-through"
-                            )}
-                          >
-                            {item.name}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="py-4 text-sm">{item.price}</td>
-                      <td className="py-4 text-sm">{item.menus}</td>
-                      <td className="py-4 text-sm">{item.categories}</td>
-                      <td className="py-4 text-sm">{item.usedIn}</td>
-                      <td className="py-4 text-sm">{item.contains}</td>
-                      <td className="py-4 text-sm">{item.lastUpdated}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </>
-        ) : activeSubTab === 'Modifier Groups' ? (
-          <div className="max-w-5xl mx-auto">
-            <div className="flex items-center justify-between mb-8">
-              <h1 className="text-4xl font-bold">Modifier Groups</h1>
-              <button className="bg-black text-white px-6 py-2.5 rounded-sm font-bold flex items-center gap-2 hover:bg-gray-800 transition-colors">
-                <Plus size={18} />
-                New Group
-              </button>
-            </div>
-
-            <div className="space-y-6">
-              {modifierGroups.map((group) => (
-                <div key={group.id} className="bg-white border border-gray-200 rounded-sm p-6 shadow-sm">
-                  <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
-                    <div>
-                      <h3 className="text-xl font-bold text-emerald-600">{group.name}</h3>
-                      <p className="text-xs text-gray-400 mt-1 uppercase font-bold tracking-wider">
-                        {group.min === 1 && group.max === 1 ? 'Radio Buttons (Single Choice)' : 'Checkboxes (Multiple Choice)'}
-                      </p>
+                          ))}
+                        </React.Fragment>
+                      ))}
                     </div>
-                    <div className="flex items-center gap-8">
-                      <button 
-                        onClick={() => setLinkingGroup(group)}
-                        className="text-emerald-600 font-bold text-sm hover:underline"
-                      >
-                        Link to Items
-                      </button>
-                      <div className="flex flex-col items-center">
-                        <span className="text-[10px] font-bold text-gray-400 uppercase mb-2">Min</span>
-                        <div className="flex items-center bg-gray-100 rounded-sm overflow-hidden">
-                          <button onClick={() => updateModifierLimit(group.id, 'min', -1)} className="px-3 py-1 hover:bg-gray-200 transition-colors">-</button>
-                          <span className="px-4 py-1 font-bold text-sm min-w-[40px] text-center">{group.min}</span>
-                          <button onClick={() => updateModifierLimit(group.id, 'min', 1)} className="px-3 py-1 hover:bg-gray-200 transition-colors">+</button>
-                        </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeSubTab === 'Categories' && (
+              <div className="space-y-6">
+                <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                  <SortableContext items={categories.map(c => c.id)} strategy={verticalListSortingStrategy}>
+                    <div className="space-y-6">
+                      {categories.map((category) => (
+                        <SortableCategory
+                          key={category.id}
+                          category={category}
+                          isExpanded={expandedCategories.includes(category.id)}
+                          onToggle={toggleCategory}
+                        />
+                      ))}
+                    </div>
+                  </SortableContext>
+                </DndContext>
+              </div>
+            )}
+
+            {activeSubTab === 'Items' && (
+              <div className="card-premium bg-white border-none shadow-sm overflow-hidden p-0">
+                <div className="p-8 border-b border-zinc-50 flex items-center justify-between">
+                  <div className="flex items-center gap-4 bg-zinc-50 px-6 py-3 rounded-2xl border border-zinc-100 flex-1 max-w-md">
+                    <Search size={18} className="text-zinc-400" />
+                    <input type="text" placeholder="Filter items..." className="bg-transparent border-none outline-none font-bold text-sm" />
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <button className="p-3 text-zinc-400 hover:text-black transition-colors"><Filter size={18} /></button>
+                    <button className="flex items-center gap-2 px-6 py-3 border border-zinc-100 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-zinc-50">Bulk Actions</button>
+                  </div>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left">
+                    <thead className="bg-zinc-50/50">
+                      <tr>
+                        <th className="px-8 py-5 text-[10px] font-black text-zinc-400 uppercase tracking-widest">Entity</th>
+                        <th className="px-8 py-5 text-[10px] font-black text-zinc-400 uppercase tracking-widest">Valuation</th>
+                        <th className="px-8 py-5 text-[10px] font-black text-zinc-400 uppercase tracking-widest">Node Path</th>
+                        <th className="px-8 py-5 text-[10px] font-black text-zinc-400 uppercase tracking-widest">Configuration</th>
+                        <th className="px-8 py-5 text-[10px] font-black text-zinc-400 uppercase tracking-widest text-right">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-zinc-50">
+                      {menuItems.map((item) => (
+                        <tr key={item.id} className="group hover:bg-zinc-50/50 transition-all cursor-pointer" onClick={() => handleEditItem(item)}>
+                          <td className="px-8 py-6">
+                            <div className="flex items-center gap-4">
+                              <div className="w-12 h-12 rounded-2xl bg-zinc-100 overflow-hidden flex-shrink-0">
+                                {item.image ? <img src={item.image} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-zinc-300"><ImageIcon size={20} /></div>}
+                              </div>
+                              <div>
+                                <div className="text-sm font-black text-black">{item.name}</div>
+                                <div className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">ID: {item.id}</div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-8 py-6 text-sm font-black text-black">{item.price}</td>
+                          <td className="px-8 py-6 text-xs font-medium text-zinc-500">{item.categories}</td>
+                          <td className="px-8 py-6">
+                            <div className="flex items-center gap-2">
+                              <span className="px-2 py-1 bg-zinc-100 text-[9px] font-black text-zinc-500 uppercase tracking-widest rounded-md">{item.contains}</span>
+                            </div>
+                          </td>
+                          <td className="px-8 py-6 text-right">
+                            <button
+                              onClick={(e) => { e.stopPropagation(); setItemStock(prev => ({ ...prev, [item.id]: !prev[item.id] })); }}
+                              className={cn(
+                                "px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest transition-all",
+                                itemStock[item.id] ? "bg-[#00ff90]/10 text-[#00ff90] border border-[#00ff90]/20" : "bg-red-50 text-red-500 border border-red-100"
+                              )}
+                            >
+                              {itemStock[item.id] ? 'In Service' : 'Off-Line'}
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {activeSubTab === 'Modifier Groups' && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {modifierGroups.map((group) => (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    key={group.id}
+                    className="card-premium p-8 bg-white border-none shadow-sm space-y-8"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="space-y-1">
+                        <h3 className="text-2xl font-black text-black tracking-tighter uppercase">{group.name}</h3>
+                        <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">
+                          Architecture: {group.min === 1 && group.max === 1 ? 'Exclusive Selection' : 'Multi-Select Permitted'}
+                        </p>
                       </div>
-                      <div className="flex flex-col items-center">
-                        <span className="text-[10px] font-bold text-gray-400 uppercase mb-2">Max</span>
-                        <div className="flex items-center bg-gray-100 rounded-sm overflow-hidden">
-                          <button onClick={() => updateModifierLimit(group.id, 'max', -1)} className="px-3 py-1 hover:bg-gray-200 transition-colors">-</button>
-                          <span className="px-4 py-1 font-bold text-sm min-w-[40px] text-center">{group.max}</span>
-                          <button onClick={() => updateModifierLimit(group.id, 'max', 1)} className="px-3 py-1 hover:bg-gray-200 transition-colors">+</button>
-                        </div>
-                      </div>
-                      <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                        <MoreVertical size={20} className="text-gray-400" />
+                      <button onClick={() => setLinkingGroup(group)} className="w-10 h-10 rounded-xl bg-[#00ff90]/10 text-[#00ff90] flex items-center justify-center hover:bg-[#00ff90] hover:text-black transition-all">
+                        <ExternalLink size={18} />
                       </button>
                     </div>
-                  </div>
 
-                  <div className="space-y-3">
-                    {group.options.map((option, i) => (
-                      <div key={i} className="flex items-center justify-between p-3 bg-gray-50/50 rounded-sm border border-transparent hover:border-gray-200 transition-colors">
-                        <div className="flex items-center gap-4">
-                          {group.min === 1 && group.max === 1 ? (
-                            <div className="w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center">
-                              {i === 0 && <div className="w-2.5 h-2.5 bg-emerald-600 rounded-full"></div>}
-                            </div>
-                          ) : (
-                            <div className="w-5 h-5 rounded-sm border-2 border-gray-300 flex items-center justify-center">
-                              {i % 2 === 0 && <div className="w-3 h-3 bg-emerald-600 rounded-sm"></div>}
-                            </div>
-                          )}
-                          <span className="font-medium text-gray-700">{option.name}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-bold text-gray-400">+$</span>
-                          <input 
-                            type="text" 
-                            defaultValue={option.price.toFixed(2)}
-                            className="w-20 bg-white border border-gray-200 rounded-sm p-1 text-sm text-right focus:ring-1 focus:ring-emerald-500"
-                          />
-                        </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="bg-zinc-50 p-4 rounded-2xl border border-zinc-100 flex items-center justify-between">
+                        <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Min Depth</span>
+                        <span className="text-sm font-black">{group.min}</span>
                       </div>
-                    ))}
-                    <button className="flex items-center gap-2 text-emerald-600 text-sm font-bold hover:underline mt-4">
-                      <Plus size={16} />
-                      Add Option
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+                      <div className="bg-zinc-50 p-4 rounded-2xl border border-zinc-100 flex items-center justify-between">
+                        <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Max Depth</span>
+                        <span className="text-sm font-black">{group.max}</span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      {group.options.map((option, i) => (
+                        <div key={i} className="flex items-center justify-between p-4 bg-zinc-50/50 rounded-2xl border border-transparent hover:border-zinc-100 transition-all">
+                          <div className="flex items-center gap-3">
+                            <div className="w-2 h-2 rounded-full bg-[#00ff90] shadow-[0_0_10px_#00ff90]" />
+                            <span className="text-sm font-bold text-black">{option.name}</span>
+                          </div>
+                          <span className="text-xs font-black text-zinc-400 tracking-widest">+${option.price.toFixed(2)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            )}
           </div>
-        ) : (
-          <div className="flex items-center justify-center h-full text-gray-400">
-            {activeSubTab} screen coming soon.
-          </div>
-        )}
+        </div>
       </div>
 
       {/* Bulk Attachment Linker Modal */}
-      {linkingGroup && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-sm shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[80vh]">
-            <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-gray-50">
-              <div>
-                <h2 className="text-xl font-bold">Link "{linkingGroup.name}"</h2>
-                <p className="text-sm text-gray-500">Select items to attach this modifier group to.</p>
-              </div>
-              <button onClick={() => setLinkingGroup(null)} className="p-2 hover:bg-gray-200 rounded-full transition-colors">
-                <X size={20} />
-              </button>
-            </div>
-            
-            <div className="flex-1 overflow-y-auto p-6">
-              <div className="relative mb-6">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                <input 
-                  type="text" 
-                  placeholder="Search items..." 
-                  className="w-full pl-10 pr-4 py-2 bg-gray-100 border-none rounded-sm text-sm focus:ring-1 focus:ring-emerald-500"
-                />
+      <AnimatePresence>
+        {linkingGroup && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 p-8"
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              className="bg-white rounded-[40px] shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col max-h-[85vh] border border-white/20"
+            >
+              <div className="p-10 border-b border-zinc-50 flex items-center justify-between bg-zinc-50/50">
+                <div className="space-y-1">
+                  <h2 className="text-3xl font-black tracking-tighter uppercase">Link "{linkingGroup.name}"</h2>
+                  <p className="text-sm text-zinc-500 font-medium">Coordinate deployment across registered item nodes.</p>
+                </div>
+                <button onClick={() => setLinkingGroup(null)} className="w-12 h-12 rounded-full bg-white border border-zinc-100 flex items-center justify-center text-zinc-400 hover:text-black transition-all">
+                  <X size={24} />
+                </button>
               </div>
 
-              <div className="space-y-2">
-                {menuItems.map((item) => (
-                  <label key={item.id} className="flex items-center gap-4 p-3 hover:bg-gray-50 rounded-sm cursor-pointer border border-transparent hover:border-gray-100 transition-all group">
-                    <div className="w-5 h-5 rounded-sm border-2 border-gray-300 flex items-center justify-center group-hover:border-emerald-500 transition-colors">
-                      {parseInt(item.id) % 2 === 0 && <div className="w-3 h-3 bg-emerald-600 rounded-sm"></div>}
+              <div className="flex-1 overflow-y-auto p-10">
+                <div className="space-y-4">
+                  {menuItems.map((item) => (
+                    <div key={item.id} className="flex items-center gap-6 p-6 hover:bg-zinc-50 rounded-3xl cursor-pointer border-2 border-transparent hover:border-[#00ff90]/20 transition-all group">
+                      <div className="w-6 h-6 rounded-lg border-2 border-zinc-200 flex items-center justify-center transition-all group-hover:border-[#00ff90]">
+                        {parseInt(item.id) % 2 === 0 && <div className="w-3 h-3 bg-[#00ff90] rounded-sm" />}
+                      </div>
+                      <div className="w-14 h-14 bg-zinc-100 rounded-2xl overflow-hidden flex-shrink-0">
+                        {item.image ? <img src={item.image} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-zinc-300"><ImageIcon size={20} /></div>}
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-black text-lg text-black tracking-tight leading-none mb-1">{item.name}</p>
+                        <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">{item.categories}</p>
+                      </div>
                     </div>
-                    <div className="w-10 h-10 bg-gray-100 rounded-sm overflow-hidden shrink-0">
-                      {item.image ? (
-                        <img src={item.image} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                      ) : (
-                        <ImageIcon size={16} className="text-gray-300 m-auto mt-3" />
-                      )}
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-bold text-sm">{item.name}</p>
-                      <p className="text-xs text-gray-400">{item.categories}</p>
-                    </div>
-                  </label>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
 
-            <div className="p-6 border-t border-gray-100 bg-gray-50 flex justify-end gap-4">
-              <button 
-                onClick={() => setLinkingGroup(null)}
-                className="px-6 py-2 text-sm font-bold hover:underline"
-              >
-                Cancel
-              </button>
-              <button 
-                onClick={() => setLinkingGroup(null)}
-                className="px-8 py-2 bg-black text-white rounded-sm font-bold text-sm hover:bg-gray-800 transition-colors"
-              >
-                Save Changes
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+              <div className="p-10 border-t border-zinc-50 bg-white flex justify-end gap-6">
+                <button onClick={() => setLinkingGroup(null)} className="px-10 py-5 text-[11px] font-black uppercase tracking-widest text-zinc-400 hover:text-black">Cancel Transaction</button>
+                <button onClick={() => setLinkingGroup(null)} className="px-12 py-5 bg-black text-[#00ff90] rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] hover:scale-105 transition-all shadow-xl shadow-black/10">Push Configuration</button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

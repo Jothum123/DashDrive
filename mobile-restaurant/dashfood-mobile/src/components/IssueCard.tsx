@@ -5,10 +5,11 @@ import { Ionicons } from '@expo/vector-icons';
 
 export interface Issue {
     id: string;
-    type: 'missing_item' | 'late' | 'wrong_order' | 'refund' | 'complaint';
+    type: 'missing_item' | 'late' | 'wrong_order' | 'refund' | 'complaint' | 'pickup_delay';
     severity: 'low' | 'medium' | 'high' | 'critical';
     status: 'open' | 'reviewing' | 'resolved' | 'escalated';
     created_at: string;
+    resolution_notes?: string;
     orders: {
         customer_name: string;
         total_amount: number;
@@ -24,10 +25,20 @@ const SEVERITY_COLORS = {
 
 const TYPE_LABELS = {
     missing_item: 'Missing Item',
-    late: 'Late Delivery',
+    late: 'SLA Breach (Late)',
     wrong_order: 'Wrong Order',
     refund: 'Refund Request',
     complaint: 'Customer Complaint',
+    pickup_delay: 'Pickup Delay Risk',
+};
+
+const TYPE_ICONS: Record<Issue['type'], keyof typeof Ionicons.prototype.name> = {
+    missing_item: 'cube-outline',
+    late: 'timer-outline',
+    wrong_order: 'close-circle-outline',
+    refund: 'cash-outline',
+    complaint: 'chatbubble-outline',
+    pickup_delay: 'car-outline',
 };
 
 export default function IssueCard({ issue }: { issue: Issue }) {
@@ -42,7 +53,14 @@ export default function IssueCard({ issue }: { issue: Issue }) {
                 </Text>
             </View>
 
-            <Text style={styles.type}>{TYPE_LABELS[issue.type]}</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                <Ionicons name={TYPE_ICONS[issue.type] as any} size={24} color="#FFFFFF" />
+                <Text style={styles.type}>{TYPE_LABELS[issue.type]}</Text>
+            </View>
+
+            {issue.resolution_notes && (
+                <Text style={styles.notes} numberOfLines={2}>{issue.resolution_notes}</Text>
+            )}
 
             <View style={styles.orderInfo}>
                 <Ionicons name="person-outline" size={16} color="#888" />
@@ -104,8 +122,13 @@ const styles = StyleSheet.create({
         fontSize: 22,
         fontWeight: '800',
         color: '#FFFFFF',
-        marginBottom: 8,
         letterSpacing: -0.3,
+    },
+    notes: {
+        fontSize: 14,
+        color: '#8E8E93',
+        marginBottom: 16,
+        fontStyle: 'italic',
     },
     orderInfo: {
         flexDirection: 'row',
