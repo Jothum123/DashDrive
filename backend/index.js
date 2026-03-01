@@ -4,10 +4,15 @@ const { Server } = require('socket.io');
 const cors = require('cors');
 const morgan = require('morgan');
 const { createClient } = require('@supabase/supabase-js');
-const { Expo } = require('expo-server-sdk');
-
-// Initialize Expo SDK
-let expo = new Expo();
+// Initialize Expo SDK lazily
+let expo;
+const getExpo = async () => {
+    if (!expo) {
+        const { Expo } = await import('expo-server-sdk');
+        expo = new Expo();
+    }
+    return expo;
+};
 
 // Supabase Init (Using Render Env Vars)
 const supabaseUrl = process.env.SUPABASE_URL;
@@ -250,22 +255,25 @@ app.get('/health', (req, res) => {
 // ==========================
 
 const sendPushNotification = async (pushToken, title, body, data = {}) => {
-    if (!Expo.isExpoPushToken(pushToken)) {
-        console.error(`Push token ${pushToken} is not a valid Expo push token`);
-        return;
-    }
-
-    const message = {
-        to: pushToken,
-        sound: 'default',
-        title,
-        body,
-        data,
-        priority: 'high',
-    };
-
     try {
-        const ticketChunk = await expo.sendPushNotificationsAsync([message]);
+        const { Expo } = await import('expo-server-sdk');
+        const expoInstance = await getExpo();
+
+        if (!Expo.isExpoPushToken(pushToken)) {
+            console.error(`Push token ${pushToken} is not a valid Expo push token`);
+            return;
+        }
+
+        const message = {
+            to: pushToken,
+            sound: 'default',
+            title,
+            body,
+            data,
+            priority: 'high',
+        };
+
+        const ticketChunk = await expoInstance.sendPushNotificationsAsync([message]);
         console.log("Push Notification Sent:", ticketChunk);
     } catch (error) {
         console.error("Error sending push notification:", error);
