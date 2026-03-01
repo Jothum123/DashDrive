@@ -162,8 +162,8 @@ const Operations = () => {
                             </div>
 
 
-                            <div className="h-[300px] w-full">
-                                <ResponsiveContainer width="100%" height="100%">
+                            <div className="h-[300px] w-full" style={{ minHeight: 300 }}>
+                                <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                                     <LineChart data={lineData}>
                                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
                                         <XAxis
@@ -218,8 +218,8 @@ const Operations = () => {
 
                         <div className="border-l border-gray-100 pl-8">
                             <h4 className="font-bold text-gray-900 mb-6">Issue breakdown</h4>
-                            <div className="h-[180px] w-full mb-8">
-                                <ResponsiveContainer width="100%" height="100%">
+                            <div className="h-[180px] w-full mb-8" style={{ minHeight: 180 }}>
+                                <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                                     <PieChart>
                                         <Pie
                                             data={issueBreakdown}

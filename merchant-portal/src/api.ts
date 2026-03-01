@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
+const API_BASE_URL = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000') + '/api';
 
 /**
  * Enterprise API Utility for DashDrive Merchant Portal.
@@ -10,7 +10,7 @@ export const fetchFromAdmin = async (endpoint: string, options: RequestInit = {}
     // Auto-login for development if no token exists
     if (!token && endpoint !== '/auth/login') {
         try {
-            const loginRes = await fetch('http://localhost:8000/api/auth/login', {
+            const loginRes = await fetch(`${API_BASE_URL}/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: 'admin@dashdrive.com', password: 'password' })

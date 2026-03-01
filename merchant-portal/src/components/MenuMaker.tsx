@@ -335,160 +335,121 @@ const MenuMaker = () => {
 
   if (selectedItem) {
     return (
-      <div className="flex flex-col h-full bg-white animate-in slide-in-from-right duration-500">
-        <div className="flex items-center justify-between border-b border-zinc-100 px-10 py-6 shrink-0 bg-white/80 backdrop-blur-md sticky top-0 z-50">
-          <div className="flex items-center gap-10">
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-4">
             <button
               onClick={() => setSelectedItem(null)}
-              className="w-12 h-12 rounded-full border border-zinc-100 flex items-center justify-center text-zinc-400 hover:bg-black hover:text-white transition-all shadow-sm"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-stroke bg-white text-black hover:text-primary dark:border-strokedark dark:bg-boxdark dark:text-white"
             >
-              <ArrowLeft size={20} />
+              <ArrowLeft size={18} />
             </button>
-            <div className="space-y-1">
-              <h2 className="text-2xl font-black tracking-tighter">{selectedItem.name}</h2>
-              <div className="flex items-center gap-3">
-                <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest px-2 py-0.5 border border-zinc-100 rounded-full">ID: {selectedItem.id}</span>
-                <span className="text-[10px] font-black text-[#00ff90] uppercase tracking-widest px-2 py-0.5 bg-[#00ff90]/10 rounded-full flex items-center gap-1">
-                  <div className="w-1.5 h-1.5 bg-[#00ff90] rounded-full animate-pulse" /> Live in Catalog
-                </span>
-              </div>
+            <div>
+              <h2 className="text-title-md2 font-bold text-black dark:text-white">
+                Edit Item: {selectedItem.name}
+              </h2>
+              <p className="text-sm font-medium text-[#64748B]">ID: {selectedItem.id}</p>
             </div>
           </div>
-
           <div className="flex items-center gap-4">
-            <button className="px-8 py-3.5 bg-zinc-50 text-zinc-400 font-black text-[11px] uppercase tracking-widest rounded-2xl hover:bg-zinc-100 transition-all border border-zinc-100">
-              Discard Changes
+            <button onClick={() => setSelectedItem(null)} className="flex justify-center rounded border border-stroke py-2 px-6 font-medium text-black hover:shadow-1 dark:border-strokedark dark:text-white">
+              Cancel
             </button>
-            <button className="px-10 py-3.5 bg-black text-[#00ff90] font-black text-[11px] uppercase tracking-widest rounded-2xl hover:scale-105 transition-all shadow-xl shadow-black/10">
-              Persist Metadata
+            <button onClick={() => setSelectedItem(null)} className="flex justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:bg-opacity-90">
+              Save Changes
             </button>
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto bg-transparent">
-          <div className="max-w-[1000px] mx-auto py-16 px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
-              {/* Left Column: Media & Core Info */}
-              <div className="lg:col-span-1 space-y-10">
-                <div className="space-y-4">
-                  <label className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em]">Visual Representation</label>
-                  <div className="aspect-square rounded-[32px] overflow-hidden bg-zinc-50 border border-zinc-100 relative group cursor-pointer">
-                    {selectedItem.image ? (
-                      <img src={selectedItem.image} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                    ) : (
-                      <div className="w-full h-full flex flex-col items-center justify-center text-zinc-300 gap-4">
-                        <ImageIcon size={48} />
-                        <span className="text-[10px] font-black uppercase tracking-widest">No Media Attached</span>
-                      </div>
-                    )}
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <button className="px-6 py-3 bg-white text-black font-black text-[10px] uppercase tracking-widest rounded-xl">Replace Asset</button>
-                    </div>
-                  </div>
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+          {/* Left: General Info */}
+          <div className="lg:col-span-8 space-y-8">
+            <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+              <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
+                <h3 className="font-medium text-black dark:text-white">General Information</h3>
+              </div>
+              <div className="p-6.5 space-y-4.5">
+                <div>
+                  <label className="mb-2.5 block text-black dark:text-white">Item Name</label>
+                  <input type="text" defaultValue={selectedItem.name} className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary" />
                 </div>
-
-                <div className="card-premium p-6 space-y-6">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-black text-black uppercase tracking-widest">Inventory Status</span>
-                    <button
-                      onClick={() => setItemStock(prev => ({ ...prev, [selectedItem.id]: !prev[selectedItem.id] }))}
-                      className={cn(
-                        "w-12 h-6 rounded-full transition-all relative p-1",
-                        itemStock[selectedItem.id] ? "bg-[#00ff90]" : "bg-zinc-200"
-                      )}
-                    >
-                      <div className={cn("w-4 h-4 bg-white rounded-full shadow-sm transition-all", itemStock[selectedItem.id] ? "translate-x-6" : "")} />
-                    </button>
+                <div>
+                  <label className="mb-2.5 block text-black dark:text-white">Description</label>
+                  <textarea rows={4} defaultValue={selectedItem.description} className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary" />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="mb-2.5 block text-black dark:text-white">Price ($)</label>
+                    <input type="text" defaultValue={selectedItem.price.replace('$', '')} className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white" />
                   </div>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-zinc-500">Node Sync</span>
-                      <span className="text-xs font-black text-black">Global Master</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-zinc-500">Last Modified</span>
-                      <span className="text-xs font-black text-black">2h ago by Admin</span>
-                    </div>
+                  <div>
+                    <label className="mb-2.5 block text-black dark:text-white">Category</label>
+                    <input type="text" defaultValue={selectedItem.categories} className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white" />
                   </div>
                 </div>
               </div>
+            </div>
 
-              {/* Right Column: Configuration Matrix */}
-              <div className="lg:col-span-2 space-y-12">
-                <div className="space-y-6">
-                  <div className="flex items-center justify-between border-b border-zinc-100 pb-4">
-                    <h3 className="text-2xl font-black text-black tracking-tighter">Identity & Context</h3>
-                    <div className="flex items-center gap-2">
-                      {['Vegan', 'Halal', 'Spicy'].map(tag => (
-                        <span key={tag} className="px-3 py-1 bg-zinc-50 border border-zinc-100 text-zinc-400 text-[9px] font-black uppercase tracking-widest rounded-full">{tag}</span>
-                      ))}
+            <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+              <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
+                <h3 className="font-medium text-black dark:text-white">Modifier Groups</h3>
+              </div>
+              <div className="p-6.5 space-y-4">
+                {modifierGroups.slice(0, 2).map(group => (
+                  <div key={group.id} className="flex items-center justify-between p-4 border border-stroke rounded dark:border-strokedark">
+                    <div>
+                      <p className="font-bold text-black dark:text-white">{group.name}</p>
+                      <p className="text-xs text-[#64748B]">Min: {group.min} • Max: {group.max}</p>
                     </div>
+                    <button className="text-meta-1"><X size={18} /></button>
                   </div>
+                ))}
+                <button className="flex w-full items-center justify-center gap-2 rounded border border-stroke py-2 font-medium text-black hover:bg-gray dark:border-strokedark dark:text-white dark:hover:bg-meta-4">
+                  <Plus size={18} /> Add Group
+                </button>
+              </div>
+            </div>
+          </div>
 
-                  <div className="grid grid-cols-2 gap-8">
-                    <div className="space-y-3">
-                      <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Display Denomination</label>
-                      <input
-                        type="text"
-                        defaultValue={selectedItem.name}
-                        className="w-full bg-zinc-50 border-zinc-100 rounded-xl p-4 font-black text-sm focus:ring-4 focus:ring-[#00ff90]/5 focus:border-[#00ff90] transition-all"
-                      />
+          {/* Right: Media & Status */}
+          <div className="lg:col-span-4 space-y-8">
+            <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+              <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
+                <h3 className="font-medium text-black dark:text-white">Media Asset</h3>
+              </div>
+              <div className="p-6.5">
+                <div className="aspect-square w-full rounded border-2 border-dashed border-stroke flex items-center justify-center mb-4 dark:border-strokedark overflow-hidden">
+                  {selectedItem.image ? (
+                    <img src={selectedItem.image} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="text-[#64748B] flex flex-col items-center gap-2">
+                      <ImageIcon size={48} />
+                      <span className="text-xs">No image uploaded</span>
                     </div>
-                    <div className="space-y-3">
-                      <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Pricing Structure ($)</label>
-                      <input
-                        type="text"
-                        defaultValue={selectedItem.price.replace('$', '')}
-                        className="w-full bg-zinc-50 border-zinc-100 rounded-xl p-4 font-black text-sm focus:ring-4 focus:ring-[#00ff90]/5 focus:border-[#00ff90] transition-all"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Narrative Description</label>
-                    <textarea
-                      defaultValue={selectedItem.description}
-                      className="w-full bg-zinc-50 border-zinc-100 rounded-2xl p-6 font-medium text-zinc-600 text-sm focus:ring-4 focus:ring-[#00ff90]/5 focus:border-[#00ff90] transition-all min-h-[160px] resize-none"
-                    />
-                  </div>
+                  )}
                 </div>
+                <button className="w-full rounded bg-primary py-2 text-white font-medium hover:bg-opacity-90">Upload New</button>
+              </div>
+            </div>
 
-                <div className="space-y-6">
-                  <div className="flex items-center justify-between border-b border-zinc-100 pb-4">
-                    <h3 className="text-2xl font-black text-black tracking-tighter">Architecture Mapping</h3>
-                    <button className="text-[10px] font-black text-[#00ff90] uppercase tracking-widest flex items-center gap-2 hover:underline">
-                      <Plus size={14} /> Add Modifier Group
-                    </button>
-                  </div>
-
-                  <div className="space-y-4">
-                    {modifierGroups.slice(0, 2).map((group, i) => (
-                      <div key={group.id} className="card-premium p-6 border-zinc-100 shadow-sm flex items-center justify-between group hover:border-[#00ff90]/30 transition-all">
-                        <div className="flex items-center gap-6">
-                          <div className="w-10 h-10 rounded-xl bg-zinc-50 flex items-center justify-center text-zinc-400 group-hover:bg-[#00ff90]/10 group-hover:text-[#00ff90] transition-colors">
-                            <Layers size={20} />
-                          </div>
-                          <div>
-                            <div className="text-sm font-black text-black">{group.name}</div>
-                            <div className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Required: {group.min} • Limit: {group.max}</div>
-                          </div>
-                        </div>
-                        <button className="text-zinc-300 hover:text-red-500 transition-colors">
-                          <X size={18} />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-6 pt-10 border-t border-zinc-100">
-                  <button className="flex-1 py-5 bg-zinc-900 text-white font-black text-xs uppercase tracking-[0.3em] rounded-2xl hover:bg-black transition-all shadow-xl shadow-black/10">
-                    Duplicate Node
-                  </button>
-                  <button className="flex-1 py-5 bg-white border-2 border-red-50 text-red-500 font-black text-xs uppercase tracking-[0.3em] rounded-2xl hover:bg-red-50 transition-all">
-                    Terminate Asset
+            <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+              <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
+                <h3 className="font-medium text-black dark:text-white">Availability</h3>
+              </div>
+              <div className="p-6.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-black dark:text-white">Status</span>
+                  <button
+                    onClick={() => setItemStock(prev => ({ ...prev, [selectedItem.id]: !prev[selectedItem.id] }))}
+                    className={cn(
+                      "flex h-6 w-11 items-center rounded-full px-1 transition-all",
+                      itemStock[selectedItem.id] ? "bg-meta-3" : "bg-stroke dark:bg-strokedark"
+                    )}
+                  >
+                    <div className={cn("h-4 w-4 rounded-full bg-white shadow-toggle transition-all", itemStock[selectedItem.id] ? "translate-x-5" : "")} />
                   </button>
                 </div>
+                <p className="mt-2 text-xs text-[#64748B]">Toggling this will immediately affect visibility in the customer-facing apps.</p>
               </div>
             </div>
           </div>
@@ -498,416 +459,256 @@ const MenuMaker = () => {
   }
 
   return (
-    <div className="flex flex-col h-full bg-white">
-      {/* Premium Sub-Navigation */}
-      <div className="flex items-center justify-between border-b border-zinc-100 px-10 shrink-0 bg-white/50 backdrop-blur-xl sticky top-0 z-40">
-        <div className="flex gap-10">
+    <div className="flex flex-col gap-6">
+      {/* Breadcrumb / Header */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <h2 className="text-title-md2 font-bold text-black dark:text-white">
+          Menu Editor
+        </h2>
+
+        <nav>
+          <ol className="flex items-center gap-2">
+            <li><button className="font-medium text-[#64748B]">Dashboard /</button></li>
+            <li className="font-medium text-primary">Menu Editor</li>
+          </ol>
+        </nav>
+      </div>
+
+      {/* TailAdmin Sub-Navigation Tabs */}
+      <div className="rounded-sm border border-stroke bg-white p-1.5 shadow-default dark:border-strokedark dark:bg-boxdark">
+        <div className="flex flex-wrap gap-3">
           {subTabs.map((tab) => (
             <button
-              key={tab}
-              onClick={() => setActiveSubTab(tab)}
+              key={tab.name}
+              onClick={() => setActiveSubTab(tab.name)}
               className={cn(
-                "py-6 text-[11px] font-black uppercase tracking-[0.2em] relative transition-all duration-300",
-                activeSubTab === tab ? "text-black" : "text-zinc-400 hover:text-black"
+                "inline-flex items-center justify-center rounded-md py-3 px-4 text-sm font-medium transition-all duration-300 md:text-base lg:px-6",
+                activeSubTab === tab.name
+                  ? "bg-[#1C2434] text-white shadow-card"
+                  : "text-[#64748B] hover:bg-gray-100 hover:text-black dark:hover:bg-meta-4"
               )}
             >
-              {tab}
-              {activeSubTab === tab && (
-                <motion.div
-                  layoutId="subtab-indicator"
-                  className="absolute bottom-0 left-0 right-0 h-1 bg-[#00ff90] rounded-full"
-                />
-              )}
+              <tab.icon size={18} className="mr-2" />
+              {tab.name}
             </button>
           ))}
         </div>
-
-        <div className="flex items-center gap-8">
-          <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-[#00ff90] hover:underline">
-            <Globe size={14} /> Global Status: Online
-          </button>
-          <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-black transition-colors">
-            <Info size={14} /> Documentation
-          </button>
-        </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto bg-transparent">
-        <div className="max-w-[1400px] mx-auto py-12 px-10 space-y-12 pb-32">
-          {/* Section Header */}
-          <div className="flex items-end justify-between">
-            <div className="space-y-2">
-              <div className="flex items-center gap-4">
-                <h1 className="text-5xl font-black text-black tracking-tighter uppercase">{activeSubTab}</h1>
-                <div className="px-3 py-1 bg-[#00ff90]/10 text-[#00ff90] rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-                  <Sparkles size={12} /> Live Engine
-                </div>
-              </div>
-              <p className="text-zinc-500 font-medium text-lg">Manage your {activeSubTab.toLowerCase()} infrastructure and deployment.</p>
-            </div>
-
-            <div className="flex items-center gap-4">
-              <button className="bg-black text-[#00ff90] px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-[0.3em] hover:scale-105 transition-all shadow-xl shadow-black/10 flex items-center gap-3">
-                <Plus size={18} /> New {activeSubTab.replace('s', '')}
-              </button>
+      <div className="flex flex-col gap-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <h3 className="text-xl font-bold text-black dark:text-white">{activeSubTab}</h3>
+            <div className="px-2 py-1 bg-[#10B981]/10 text-[#10B981] rounded text-[10px] font-bold uppercase">
+              Live Sync
             </div>
           </div>
+          <button className="inline-flex items-center justify-center rounded-md bg-[#1C2434] py-2 px-6 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10">
+            <Plus size={18} className="mr-2" /> New {activeSubTab.replace('s', '')}
+          </button>
+        </div>
 
-          {/* Conditional Content Rendering */}
-          <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-            {activeSubTab === 'Overview' && (
-              <div className="space-y-6">
-                {overviewData.map((category, i) => (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.1 }}
-                    key={category.id}
-                    className="card-premium overflow-hidden border-none shadow-sm"
-                  >
-                    <div className="p-8 flex items-center justify-between group cursor-pointer hover:bg-zinc-50 transition-all">
-                      <div className="flex items-center gap-8">
-                        <div className="flex items-center gap-4">
-                          <GripVertical size={20} className="text-zinc-200 group-hover:text-zinc-400 cursor-grab active:cursor-grabbing transition-colors" />
-                          <button
-                            onClick={() => toggleCategory(category.id)}
-                            className={cn(
-                              "w-10 h-10 rounded-xl flex items-center justify-center transition-all",
-                              expandedCategories.includes(category.id) ? "bg-black text-white" : "bg-zinc-100 text-zinc-400 group-hover:text-black"
-                            )}
-                          >
-                            <ChevronDown size={18} className={cn("transition-transform duration-300", expandedCategories.includes(category.id) ? "" : "-rotate-90")} />
-                          </button>
+        {/* Section Content */}
+        <div className="grid grid-cols-1 gap-6 pb-20">
+          {activeSubTab === 'Overview' && (
+            <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+              <div className="p-6">
+                <div className="flex flex-col gap-4">
+                  {overviewData.map((category) => (
+                    <div key={category.id} className="border-b border-stroke pb-4 last:border-0 last:pb-0 dark:border-strokedark">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-3">
+                          <h4 className="font-bold text-black dark:text-white">{category.name}</h4>
+                          <span className="text-xs text-[#64748B]">{category.itemCount} items</span>
                         </div>
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-4">
-                            <h3 className="text-2xl font-black text-black tracking-tighter">{category.name}</h3>
-                            <span className="text-[10px] font-black text-[#00ff90] uppercase tracking-widest px-2 py-0.5 bg-[#00ff90]/10 rounded-full">Primary</span>
-                          </div>
-                          <p className="text-zinc-400 text-[10px] font-black uppercase tracking-[0.2em]">{category.itemCount} Units Registered</p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-10">
-                        <div className="flex -space-x-3">
-                          {category.items.slice(0, 3).map((item, idx) => (
-                            <div key={idx} className="w-10 h-10 rounded-full border-2 border-white bg-zinc-100 flex items-center justify-center text-[10px] font-black text-zinc-400 overflow-hidden">
-                              {item.name.charAt(0)}
-                            </div>
-                          ))}
-                        </div>
-                        <button className="w-12 h-12 rounded-full border border-zinc-100 flex items-center justify-center text-zinc-400 hover:bg-black hover:text-white transition-all">
-                          <MoreVertical size={20} />
+                        <button onClick={() => toggleCategory(category.id)} className="text-[#64748B] hover:text-black dark:hover:text-white">
+                          {expandedCategories.includes(category.id) ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                         </button>
                       </div>
-                    </div>
-
-                    <AnimatePresence>
                       {expandedCategories.includes(category.id) && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          className="overflow-hidden bg-zinc-50/50 border-t border-zinc-100"
-                        >
-                          <div className="p-8 space-y-4">
-                            {category.items.map((item) => (
-                              <div key={item.id} className="bg-white p-6 rounded-[24px] border border-zinc-100/50 flex items-center group/item hover:border-[#00ff90]/30 hover:shadow-xl hover:shadow-[#00ff90]/5 transition-all">
-                                <div className="w-12 h-12 rounded-2xl bg-zinc-50 flex items-center justify-center text-zinc-300 group-hover/item:text-[#00ff90] transition-colors mr-6">
-                                  <GripVertical size={18} className="cursor-grab active:cursor-grabbing" />
-                                </div>
-                                <div className="flex-1 space-y-1">
-                                  <h4
-                                    onClick={() => handleEditItem(item)}
-                                    className="text-lg font-black text-black cursor-pointer hover:text-[#00ff90] transition-colors tracking-tight"
-                                  >
-                                    {item.name}
-                                  </h4>
-                                  <p className="text-zinc-400 text-xs font-medium max-w-md line-clamp-1">{item.description}</p>
-                                </div>
-                                <div className="flex items-center gap-12">
-                                  <div className="text-right">
-                                    <div className="text-[10px] font-black text-zinc-400 uppercase tracking-widest leading-none mb-1">MSRP</div>
-                                    <div className="text-xl font-black text-black leading-none">{item.price}</div>
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                    <button onClick={() => handleEditItem(item)} className="px-6 py-2.5 bg-black text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-[#00ff90] hover:text-black transition-all">
-                                      Edit unit
-                                    </button>
-                                  </div>
-                                </div>
+                        <div className="pl-4 mt-3 space-y-3">
+                          {category.items?.map((item: any) => (
+                            <div key={item.id} className="flex items-center justify-between text-sm">
+                              <div className="flex flex-col">
+                                <span className="font-medium text-black dark:text-white">{item.name}</span>
+                                <span className="text-xs text-[#64748B]">{item.description}</span>
                               </div>
-                            ))}
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </motion.div>
-                ))}
-              </div>
-            )}
-
-            {activeSubTab === 'Menus' && (
-              <div className="space-y-12">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {menus.map((menu, i) => (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: i * 0.1 }}
-                      key={menu.id}
-                      className="card-premium p-8 group relative overflow-hidden bg-white hover:shadow-2xl hover:shadow-black/5 transition-all border-none"
-                    >
-                      <div className="relative z-10 space-y-6">
-                        <div className="w-12 h-12 rounded-2xl bg-[#00ff90]/10 flex items-center justify-center text-[#00ff90]">
-                          <Clock size={24} />
-                        </div>
-                        <div>
-                          <h3 className="text-2xl font-black text-black tracking-tighter group-hover:text-[#00ff90] transition-colors">{menu.name}</h3>
-                          <p className="text-zinc-400 font-bold text-sm mt-1">{menu.hours}</p>
-                        </div>
-                        <div className="flex items-center justify-between pt-4 border-t border-zinc-50">
-                          <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Architecture Active</span>
-                          <button className="text-[10px] font-black text-black uppercase tracking-widest hover:underline">Configure</button>
-                        </div>
-                      </div>
-                      <div className="absolute -right-4 -bottom-4 w-32 h-32 bg-[#00ff90]/5 rounded-full blur-3xl group-hover:bg-[#00ff90]/10 transition-colors" />
-                    </motion.div>
-                  ))}
-                </div>
-
-                <div className="card-premium p-10 bg-black text-white border-none shadow-2xl relative overflow-hidden">
-                  <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-[#00ff90] flex items-center justify-center text-black shadow-lg shadow-[#00ff90]/20">
-                          <Layers size={20} />
-                        </div>
-                        <h2 className="text-3xl font-black tracking-tighter">Global Schedule Matrix</h2>
-                      </div>
-                      <p className="text-zinc-400 max-w-xl font-medium">Coordinate your entire node network across time zones. Drag and select cells to assign menu availability with millisecond precision.</p>
-                    </div>
-                    <div className="flex items-center gap-3 bg-white/5 p-2 rounded-2xl border border-white/10">
-                      {['Breakfast', 'Lunch', 'Dinner'].map(type => (
-                        <div key={type} className="flex items-center gap-2 px-4 py-2">
-                          <div className={cn(
-                            "w-2 h-2 rounded-full",
-                            type === 'Breakfast' ? "bg-[#00ff90]" : type === 'Lunch' ? "bg-blue-400" : "bg-orange-400"
-                          )} />
-                          <span className="text-[10px] font-black uppercase tracking-widest text-zinc-300">{type}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="mt-12 overflow-hidden rounded-[32px] border border-white/5 bg-zinc-900/50 backdrop-blur-xl">
-                    <div className="grid grid-cols-8">
-                      <div className="p-5 border-r border-b border-white/5 text-[9px] font-black text-zinc-500 uppercase tracking-widest text-center">UTC+8</div>
-                      {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
-                        <div key={day} className="p-5 border-r border-b border-white/5 text-[9px] font-black text-zinc-400 uppercase tracking-widest text-center">{day}</div>
-                      ))}
-                      {[...Array(12)].map((_, h) => (
-                        <React.Fragment key={h}>
-                          <div className="p-4 border-r border-b border-white/5 text-[9px] font-black text-zinc-600 uppercase text-center">{h * 2}:00</div>
-                          {[...Array(7)].map((_, d) => (
-                            <div key={d} className="border-r border-b border-white/5 h-12 relative group cursor-pointer hover:bg-white/5 transition-colors">
-                              {h > 2 && h < 6 && (
-                                <div className="absolute inset-1.5 rounded-lg bg-[#00ff90]/10 border border-[#00ff90]/20 flex items-center justify-center">
-                                  <div className="w-1.5 h-1.5 bg-[#00ff90] rounded-full animate-pulse" />
-                                </div>
-                              )}
+                              <span className="font-bold text-black dark:text-white">{item.price}</span>
                             </div>
                           ))}
-                        </React.Fragment>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {activeSubTab === 'Categories' && (
-              <div className="space-y-6">
-                <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-                  <SortableContext items={categories.map(c => c.id)} strategy={verticalListSortingStrategy}>
-                    <div className="space-y-6">
-                      {categories.map((category) => (
-                        <SortableCategory
-                          key={category.id}
-                          category={category}
-                          isExpanded={expandedCategories.includes(category.id)}
-                          onToggle={toggleCategory}
-                        />
-                      ))}
-                    </div>
-                  </SortableContext>
-                </DndContext>
-              </div>
-            )}
-
-            {activeSubTab === 'Items' && (
-              <div className="card-premium bg-white border-none shadow-sm overflow-hidden p-0">
-                <div className="p-8 border-b border-zinc-50 flex items-center justify-between">
-                  <div className="flex items-center gap-4 bg-zinc-50 px-6 py-3 rounded-2xl border border-zinc-100 flex-1 max-w-md">
-                    <Search size={18} className="text-zinc-400" />
-                    <input type="text" placeholder="Filter items..." className="bg-transparent border-none outline-none font-bold text-sm" />
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <button className="p-3 text-zinc-400 hover:text-black transition-colors"><Filter size={18} /></button>
-                    <button className="flex items-center gap-2 px-6 py-3 border border-zinc-100 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-zinc-50">Bulk Actions</button>
-                  </div>
-                </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left">
-                    <thead className="bg-zinc-50/50">
-                      <tr>
-                        <th className="px-8 py-5 text-[10px] font-black text-zinc-400 uppercase tracking-widest">Entity</th>
-                        <th className="px-8 py-5 text-[10px] font-black text-zinc-400 uppercase tracking-widest">Valuation</th>
-                        <th className="px-8 py-5 text-[10px] font-black text-zinc-400 uppercase tracking-widest">Node Path</th>
-                        <th className="px-8 py-5 text-[10px] font-black text-zinc-400 uppercase tracking-widest">Configuration</th>
-                        <th className="px-8 py-5 text-[10px] font-black text-zinc-400 uppercase tracking-widest text-right">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-zinc-50">
-                      {menuItems.map((item) => (
-                        <tr key={item.id} className="group hover:bg-zinc-50/50 transition-all cursor-pointer" onClick={() => handleEditItem(item)}>
-                          <td className="px-8 py-6">
-                            <div className="flex items-center gap-4">
-                              <div className="w-12 h-12 rounded-2xl bg-zinc-100 overflow-hidden flex-shrink-0">
-                                {item.image ? <img src={item.image} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-zinc-300"><ImageIcon size={20} /></div>}
-                              </div>
-                              <div>
-                                <div className="text-sm font-black text-black">{item.name}</div>
-                                <div className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">ID: {item.id}</div>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-8 py-6 text-sm font-black text-black">{item.price}</td>
-                          <td className="px-8 py-6 text-xs font-medium text-zinc-500">{item.categories}</td>
-                          <td className="px-8 py-6">
-                            <div className="flex items-center gap-2">
-                              <span className="px-2 py-1 bg-zinc-100 text-[9px] font-black text-zinc-500 uppercase tracking-widest rounded-md">{item.contains}</span>
-                            </div>
-                          </td>
-                          <td className="px-8 py-6 text-right">
-                            <button
-                              onClick={(e) => { e.stopPropagation(); setItemStock(prev => ({ ...prev, [item.id]: !prev[item.id] })); }}
-                              className={cn(
-                                "px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest transition-all",
-                                itemStock[item.id] ? "bg-[#00ff90]/10 text-[#00ff90] border border-[#00ff90]/20" : "bg-red-50 text-red-500 border border-red-100"
-                              )}
-                            >
-                              {itemStock[item.id] ? 'In Service' : 'Off-Line'}
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-
-            {activeSubTab === 'Modifier Groups' && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {modifierGroups.map((group) => (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    key={group.id}
-                    className="card-premium p-8 bg-white border-none shadow-sm space-y-8"
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="space-y-1">
-                        <h3 className="text-2xl font-black text-black tracking-tighter uppercase">{group.name}</h3>
-                        <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">
-                          Architecture: {group.min === 1 && group.max === 1 ? 'Exclusive Selection' : 'Multi-Select Permitted'}
-                        </p>
-                      </div>
-                      <button onClick={() => setLinkingGroup(group)} className="w-10 h-10 rounded-xl bg-[#00ff90]/10 text-[#00ff90] flex items-center justify-center hover:bg-[#00ff90] hover:text-black transition-all">
-                        <ExternalLink size={18} />
-                      </button>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-zinc-50 p-4 rounded-2xl border border-zinc-100 flex items-center justify-between">
-                        <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Min Depth</span>
-                        <span className="text-sm font-black">{group.min}</span>
-                      </div>
-                      <div className="bg-zinc-50 p-4 rounded-2xl border border-zinc-100 flex items-center justify-between">
-                        <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Max Depth</span>
-                        <span className="text-sm font-black">{group.max}</span>
-                      </div>
-                    </div>
-
-                    <div className="space-y-3">
-                      {group.options.map((option, i) => (
-                        <div key={i} className="flex items-center justify-between p-4 bg-zinc-50/50 rounded-2xl border border-transparent hover:border-zinc-100 transition-all">
-                          <div className="flex items-center gap-3">
-                            <div className="w-2 h-2 rounded-full bg-[#00ff90] shadow-[0_0_10px_#00ff90]" />
-                            <span className="text-sm font-bold text-black">{option.name}</span>
-                          </div>
-                          <span className="text-xs font-black text-zinc-400 tracking-widest">+${option.price.toFixed(2)}</span>
                         </div>
-                      ))}
+                      )}
                     </div>
-                  </motion.div>
-                ))}
+                  ))}
+                </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
+
+          {activeSubTab === 'Menus' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {menus.map((menu: any) => (
+                <div key={menu.id} className="rounded-sm border border-stroke bg-white p-6 shadow-default dark:border-strokedark dark:bg-boxdark hover:shadow-md transition-shadow">
+                  <div className="flex items-center justify-between mb-5">
+                    <div className="w-12 h-12 rounded-lg bg-[#EFF4FB] flex items-center justify-center text-[#3C50E0] dark:bg-meta-4">
+                      <Clock size={24} />
+                    </div>
+                    <button className="text-[#64748B] hover:text-black dark:hover:text-white"><MoreVertical size={18} /></button>
+                  </div>
+                  <h3 className="text-lg font-bold text-black dark:text-white mb-1">{menu.name}</h3>
+                  <p className="text-xs text-[#64748B] font-medium mb-4">{menu.hours}</p>
+                  <div className="pt-4 border-t border-stroke dark:border-strokedark flex items-center justify-between text-xs">
+                    <span className="font-bold text-[#64748B]">Schedule Lock</span>
+                    <button className="font-bold text-[#3C50E0]">Configure</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {activeSubTab === 'Categories' && (
+            <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark overflow-hidden">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="bg-gray-2 border-b border-stroke dark:border-strokedark dark:bg-meta-4">
+                    <th className="px-6 py-4 text-sm font-bold text-black dark:text-white">Category Name</th>
+                    <th className="px-6 py-4 text-sm font-bold text-black dark:text-white">Items</th>
+                    <th className="px-6 py-4 text-sm font-bold text-black dark:text-white text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {categories.map((cat: any) => (
+                    <tr key={cat.id} className="border-b border-stroke last:border-0 dark:border-strokedark hover:bg-gray-2 dark:hover:bg-meta-4">
+                      <td className="px-6 py-4 text-sm font-medium text-black dark:text-white">{cat.name}</td>
+                      <td className="px-6 py-4 text-sm text-[#64748B]">{cat.itemCount} items</td>
+                      <td className="px-6 py-4 text-right">
+                        <button className="text-primary hover:underline font-medium text-sm">Edit</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {activeSubTab === 'Items' && (
+            <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark overflow-hidden">
+              <div className="p-4 border-b border-stroke dark:border-strokedark bg-gray-2 dark:bg-meta-4 flex items-center justify-between">
+                <div className="relative w-full max-w-100">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#64748B]" size={18} />
+                  <input type="text" placeholder="Search items..." className="w-full pl-12 pr-4 py-2 bg-white dark:bg-boxdark border border-stroke dark:border-strokedark rounded-md outline-none" />
+                </div>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="border-b border-stroke dark:border-strokedark bg-gray-2 dark:bg-meta-4">
+                      <th className="px-6 py-4 text-sm font-bold text-black dark:text-white">Item</th>
+                      <th className="px-6 py-4 text-sm font-bold text-black dark:text-white">Category</th>
+                      <th className="px-6 py-4 text-sm font-bold text-black dark:text-white">Price</th>
+                      <th className="px-6 py-4 text-sm font-bold text-black dark:text-white text-right">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {menuItems.map((item: any) => (
+                      <tr key={item.id} className="border-b border-stroke last:border-0 dark:border-strokedark hover:bg-gray-2 dark:hover:bg-meta-4 cursor-pointer" onClick={() => handleEditItem(item)}>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded overflow-hidden bg-gray-2">
+                              {item.image ? <img src={item.image} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-zinc-300"><ImageIcon size={18} /></div>}
+                            </div>
+                            <div>
+                              <p className="text-sm font-bold text-black dark:text-white">{item.name}</p>
+                              <p className="text-[10px] text-[#64748B]">ID: {item.id}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 text-sm text-[#64748B]">{item.categories}</td>
+                        <td className="px-6 py-4 text-sm font-bold text-black dark:text-white">{item.price}</td>
+                        <td className="px-6 py-4 text-right">
+                          <button
+                            onClick={(e) => { e.stopPropagation(); setItemStock(prev => ({ ...prev, [item.id]: !prev[item.id] })) }}
+                            className={cn("px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider", itemStock[item.id] ? "bg-meta-3/10 text-meta-3" : "bg-meta-1/10 text-meta-1")}
+                          >
+                            {itemStock[item.id] ? 'In Service' : 'Off-Line'}
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {activeSubTab === 'Modifier Groups' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {modifierGroups.map((group: any) => (
+                <div key={group.id} className="rounded-sm border border-stroke bg-white p-6 shadow-default dark:border-strokedark dark:bg-boxdark">
+                  <div className="flex items-start justify-between mb-6">
+                    <div>
+                      <h4 className="text-lg font-bold text-black dark:text-white">{group.name}</h4>
+                      <p className="text-xs text-[#64748B]">Target Node: Global</p>
+                    </div>
+                    <button onClick={() => setLinkingGroup(group)} className="text-primary hover:bg-[#EFF4FB] p-2 rounded dark:hover:bg-meta-4"><ExternalLink size={18} /></button>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 mb-6">
+                    <div className="bg-[#EFF4FB] dark:bg-meta-4 p-3 rounded flex justify-between">
+                      <span className="text-xs font-medium text-[#64748B]">Min</span>
+                      <span className="text-xs font-bold text-black dark:text-white">{group.min}</span>
+                    </div>
+                    <div className="bg-[#EFF4FB] dark:bg-meta-4 p-3 rounded flex justify-between">
+                      <span className="text-xs font-medium text-[#64748B]">Max</span>
+                      <span className="text-xs font-bold text-black dark:text-white">{group.max}</span>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    {group.options.map((opt: any, i: number) => (
+                      <div key={i} className="flex items-center justify-between text-sm py-1">
+                        <span className="text-[#64748B]">{opt.name}</span>
+                        <span className="font-bold text-black dark:text-white">+${opt.price.toFixed(2)}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
       {/* Bulk Attachment Linker Modal */}
       <AnimatePresence>
         {linkingGroup && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 p-8"
-          >
+          <div className="fixed inset-0 z-99999 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
             <motion.div
-              initial={{ scale: 0.9, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              className="bg-white rounded-[40px] shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col max-h-[85vh] border border-white/20"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="w-full max-w-142.5 rounded-lg bg-white py-12 px-8 text-center dark:bg-boxdark md:py-15 md:px-17.5"
             >
-              <div className="p-10 border-b border-zinc-50 flex items-center justify-between bg-zinc-50/50">
-                <div className="space-y-1">
-                  <h2 className="text-3xl font-black tracking-tighter uppercase">Link "{linkingGroup.name}"</h2>
-                  <p className="text-sm text-zinc-500 font-medium">Coordinate deployment across registered item nodes.</p>
-                </div>
-                <button onClick={() => setLinkingGroup(null)} className="w-12 h-12 rounded-full bg-white border border-zinc-100 flex items-center justify-center text-zinc-400 hover:text-black transition-all">
-                  <X size={24} />
+              <h3 className="pb-2 text-xl font-bold text-black dark:text-white sm:text-2xl">
+                Link "{linkingGroup.name}"
+              </h3>
+              <p className="text-[#64748B] mb-10">Select items to attach this modifier group.</p>
+              <div className="max-h-60 overflow-y-auto mb-10 space-y-2 text-left">
+                {menuItems.map(item => (
+                  <div key={item.id} className="flex items-center gap-3 p-3 border border-stroke rounded dark:border-strokedark">
+                    <input type="checkbox" className="h-4 w-4 rounded border-stroke" />
+                    <span className="text-sm font-medium text-black dark:text-white">{item.name}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="flex flex-wrap gap-3 mt-10">
+                <button onClick={() => setLinkingGroup(null)} className="flex-1 rounded border border-stroke py-3 px-6 font-medium text-black hover:shadow-1 dark:border-strokedark dark:text-white">
+                  Cancel
+                </button>
+                <button onClick={() => setLinkingGroup(null)} className="flex-1 rounded bg-primary py-3 px-6 font-medium text-white hover:bg-opacity-90">
+                  Confirm Link
                 </button>
               </div>
-
-              <div className="flex-1 overflow-y-auto p-10">
-                <div className="space-y-4">
-                  {menuItems.map((item) => (
-                    <div key={item.id} className="flex items-center gap-6 p-6 hover:bg-zinc-50 rounded-3xl cursor-pointer border-2 border-transparent hover:border-[#00ff90]/20 transition-all group">
-                      <div className="w-6 h-6 rounded-lg border-2 border-zinc-200 flex items-center justify-center transition-all group-hover:border-[#00ff90]">
-                        {parseInt(item.id) % 2 === 0 && <div className="w-3 h-3 bg-[#00ff90] rounded-sm" />}
-                      </div>
-                      <div className="w-14 h-14 bg-zinc-100 rounded-2xl overflow-hidden flex-shrink-0">
-                        {item.image ? <img src={item.image} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-zinc-300"><ImageIcon size={20} /></div>}
-                      </div>
-                      <div className="flex-1">
-                        <p className="font-black text-lg text-black tracking-tight leading-none mb-1">{item.name}</p>
-                        <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">{item.categories}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="p-10 border-t border-zinc-50 bg-white flex justify-end gap-6">
-                <button onClick={() => setLinkingGroup(null)} className="px-10 py-5 text-[11px] font-black uppercase tracking-widest text-zinc-400 hover:text-black">Cancel Transaction</button>
-                <button onClick={() => setLinkingGroup(null)} className="px-12 py-5 bg-black text-[#00ff90] rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] hover:scale-105 transition-all shadow-xl shadow-black/10">Push Configuration</button>
-              </div>
             </motion.div>
-          </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </div>
